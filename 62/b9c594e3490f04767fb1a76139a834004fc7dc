@@ -1,0 +1,52 @@
+tests/fixtures/sql/warehouse.sql
+  s_28356017e5b435::t_9ec8e0f2ae0877 6-7,22
+snowcap/resources/warehouse.py
+  s_28356017e5b435::t_c2ace53b2152a8 160-161
+  s_28356017e5b435::t_2e4c0cccea2b1f 227-228
+  s_28356017e5b435::t_b13355faf0788d 32-72,79-80,98-99,102-103,110-135,150-151,175-176,202-203,253-254,263-264,277-278
+snowcap/data_provider.py
+  s_28356017e5b435::t_551fdfee9029bc 389-399
+  s_28356017e5b435::t_d6a98448685692 3163,3165-3174,3177-3179,3184,3186-3187,3193-3195
+  s_28356017e5b435::t_620b16923e2c60 3164
+snowcap/resources/__init__.py
+  s_28356017e5b435::t_9a6ba448327f25 74,157-158
+tests/test_resource_types.py
+  s_28356017e5b435::t_fb884b42046c72 220-221,236-237,255-258,265-311
+tests/test_resources.py
+  s_28356017e5b435::t_f5254f49682aac 36-66
+tests/test_blueprint.py
+  s_28356017e5b435::t_46b6edec8699f8 774-807
+snowcap/lifecycle.py
+  s_28356017e5b435::t_206ba78ab9977f 374,411,416,435,455,474,488,510
+  s_28356017e5b435::t_f9ecf5b8524ee6 340,346-350,353,370-371,375-386,417-428,438-450,452,456-473,475-480,489-507,511-516
+  s_28356017e5b435::t_4001cd44a020ad 336,341-345,351-352,372-373
+tests/test_data_provider.py
+  s_28356017e5b435::t_fc3648b2bf5a74 36
+  s_28356017e5b435::t_e89a24fc475f91 645-739
+docs/resources/warehouse.md
+  s_28356017e5b435::t_b43a4c700f87da 87-88
+  s_28356017e5b435::t_afc139554e1427 23-24,43-70,75-78,81
+tests/test_lifecycle.py
+  s_28356017e5b435::t_a5cf1e39a0bfae 694-706
+  s_28356017e5b435::t_533db7a128b8dd 10
+snowcap/blueprint.py
+  s_28356017e5b435::t_2ef01ff7972fcb 2020-2028
+tests/fixtures/json/warehouse.json
+  s_28356017e5b435::t_20fad4b6fe46b7 6-7,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "62b9c594e3490f04767fb1a76139a834004fc7dc",
+  "prompts": {},
+  "sessions": {
+    "s_28356017e5b435": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019e8ffa-0a1e-7570-b017-d6984d34293b",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
