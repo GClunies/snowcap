@@ -1,0 +1,49 @@
+snowcap/resources/authentication_policy.py
+  s_5ac07151f8cfca::t_864477ac486101 4,17,32-46,55
+  s_5ac07151f8cfca::t_d43a56111aa1d4 116,125,130-134,147,155-158,170,184
+  s_5ac07151f8cfca::t_44cf56f91ab354 88-94,97-99
+  s_5ac07151f8cfca::t_4ae785cee37c8a 197
+  s_5ac07151f8cfca::t_cd0facaf1f5557 95-96
+docs/resources/authentication_policy.md
+  s_5ac07151f8cfca::t_672ff2ec8e80bf 15-34,43,51-54,67
+tests/fixtures/sql/authentication_policy.sql
+  s_5ac07151f8cfca::t_ab2e946a00bd5d 2-4
+tests/fixtures/json/authentication_policy.json
+  s_5ac07151f8cfca::t_e580db157a7fa9 14-21
+tests/test_resource_types.py
+  s_5ac07151f8cfca::t_9f278472245dde 999-1108
+  s_5ac07151f8cfca::t_d25dd1cb42e533 20
+snowcap/data_provider.py
+  s_5ac07151f8cfca::t_299fbb670c02f3 1510-1515,1519-1520,1522-1523
+  s_5ac07151f8cfca::t_7eb3ff50e241c0 1500-1509,1516-1518,1521,1524-1536
+  s_5ac07151f8cfca::t_48d5861b345ad7 1392-1393
+  s_5ac07151f8cfca::t_cf7d6221ac777a 1387-1391,1394-1395,1403
+tools/generate_resource_docs.py
+  s_5ac07151f8cfca::t_6733fa88bfdb9c 188-207
+  s_5ac07151f8cfca::t_1cdb5bae76fbe6 223
+  s_5ac07151f8cfca::t_a34476a4b3e567 13,18
+  s_5ac07151f8cfca::t_0a7a07324ad749 208-209,222,225,234-235
+  s_5ac07151f8cfca::t_375448e0c6e926 224
+tests/integration/data_provider/test_fetch_resource_simple.py
+  s_5ac07151f8cfca::t_2e8306c00a61af 49-54
+tests/test_data_provider.py
+  s_5ac07151f8cfca::t_7f618a7369d81a 427-470,482-509
+  s_5ac07151f8cfca::t_4bf5139cf1be50 30-31
+  s_5ac07151f8cfca::t_441e1545188512 471-481
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "09c9be70990bff902071d1e08064f21a7454e8b4",
+  "prompts": {},
+  "sessions": {
+    "s_5ac07151f8cfca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84738b5d-5000-4cc3-b52b-eab17bd97f04",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
