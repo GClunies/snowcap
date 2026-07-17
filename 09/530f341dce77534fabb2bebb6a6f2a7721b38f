@@ -1,0 +1,21 @@
+tests/test_lifecycle.py
+  s_c950bc791114f5::t_6a88b20f0db637 1142,1146
+snowcap/lifecycle.py
+  s_c950bc791114f5::t_4b9cbf4b77d8a4 598,602-604
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "09530f341dce77534fabb2bebb6a6f2a7721b38f",
+  "prompts": {},
+  "sessions": {
+    "s_c950bc791114f5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0de7b730-af18-4394-ad8f-c66ae125439d",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
