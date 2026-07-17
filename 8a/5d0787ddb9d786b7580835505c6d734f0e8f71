@@ -1,0 +1,82 @@
+tests/test_blueprint.py
+  s_ea4e071905ab90::t_602bfe8c7e0747 2
+  s_ea4e071905ab90::t_040f6bdc84f91e 50
+  s_ea4e071905ab90::t_4da81230af9e59 1104-1170
+  s_ea4e071905ab90::t_c15d577ef44922 1171-1193
+docs/SUMMARY.md
+  s_ea4e071905ab90::t_fe34a17e661052 38
+docs/resources/grant.md
+  s_ea4e071905ab90::t_3db60f14557ec1 123-125
+  s_ea4e071905ab90::t_f28340c2e9437e 62-66
+docs/resources/mcp_server.md
+  s_ea4e071905ab90::t_cc56e0ea817094 3-8
+  s_ea4e071905ab90::t_978c8687e1459b 12-18
+  s_ea4e071905ab90::t_3660a7fccd7b55 21-62
+  s_fc92c6c15a4e03::t_6db4c1ef147ea1 1-2,9-11,19-20,63-65
+snowcap/resources/mcp_server.py
+  s_ea4e071905ab90::t_baf7725a49655f 59,63-66
+  s_ea4e071905ab90::t_c13b417e0c04f7 2-16,19-28,40-58,60-62,67-69,76-81,83-129
+  s_ea4e071905ab90::t_0bdb4f8fedef72 1,17-18,29-39
+  s_ea4e071905ab90::t_45ca85d7e0bb51 70-75
+  s_ea4e071905ab90::t_72a223f667e835 82
+snowcap/data_provider.py
+  s_ea4e071905ab90::t_5f981801c16fa3 2043-2066
+  s_ea4e071905ab90::t_4073cb45b0f663 3771-3774
+tests/test_resource_types.py
+  s_ea4e071905ab90::t_40dd694d9edbfb 13-14,22
+  s_ea4e071905ab90::t_232069ca5c87bc 618-778,824
+  s_ea4e071905ab90::t_e204214ef37097 779-823
+snowcap/enums.py
+  s_ea4e071905ab90::t_0918a05e0418e2 81
+snowcap/privs.py
+  s_ea4e071905ab90::t_10228c68638b2e 186-192
+  s_ea4e071905ab90::t_b2860a74b9df7d 422
+  s_ea4e071905ab90::t_1ab765a095cafe 260
+  s_ea4e071905ab90::t_fc7d16c5e99ebe 475
+snowcap/blueprint.py
+  s_ea4e071905ab90::t_358c302e9d1e66 1778,1780,1782-1783
+  s_ea4e071905ab90::t_76aa8088e80fa5 1159-1163
+  s_ea4e071905ab90::t_a0265a7698ed5e 1152-1158
+  s_ea4e071905ab90::t_f4c0221f726c54 1164
+tests/fixtures/json/mcp_server.json
+  s_ea4e071905ab90::t_4960c1429cb4fc 1-5
+tests/test_lifecycle.py
+  s_ea4e071905ab90::t_98a6d94863c831 35
+  s_ea4e071905ab90::t_ad1227e083e2b8 1389-1462
+tests/fixtures/sql/mcp_server.sql
+  s_ea4e071905ab90::t_5ba9271915ec2e 1-7
+snowcap/resources/__init__.py
+  s_ea4e071905ab90::t_1789e14417039a 119
+  s_ea4e071905ab90::t_724cf85ecd9b3f 30
+tests/test_grant.py
+  s_ea4e071905ab90::t_48b7fc2dce398d 5
+  s_ea4e071905ab90::t_551f1c3b035047 177-195,197-210
+  s_ea4e071905ab90::t_4f4ac72ee1725b 196
+snowcap/lifecycle.py
+  s_ea4e071905ab90::t_dc4256ee2a18d7 403-408
+  s_ea4e071905ab90::t_8521b58c905034 395-402,409-410
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "8a5d0787ddb9d786b7580835505c6d734f0e8f71",
+  "prompts": {},
+  "sessions": {
+    "s_ea4e071905ab90": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5115fc1c-b39f-4382-83d5-775178360b87",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    },
+    "s_fc92c6c15a4e03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "18762530-0ff2-40fb-b444-ecab8579b664",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
