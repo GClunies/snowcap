@@ -1,0 +1,54 @@
+snowcap/enums.py
+  s_c950bc791114f5::t_a6e9d4126bb7a6 98
+snowcap/privs.py
+  s_c950bc791114f5::t_d524498e278a2f 290-297
+  s_c950bc791114f5::t_e73af6b8af46a9 439
+  s_c950bc791114f5::t_4c18087a5a3454 264
+snowcap/resources/resource.py
+  s_c950bc791114f5::t_818dc3b670b4e8 313-319
+tests/fixtures/sql/grant.sql
+  s_c950bc791114f5::t_a70eda5da34241 22
+tests/integration/test_grant_patterns.py
+  s_c950bc791114f5::t_2b2186d90e64c3 12,17
+  s_c950bc791114f5::t_3c4128d2f1e18f 331-406
+docs/snowflake-permissions.md
+  s_c950bc791114f5::t_b0551bc5dd3123 63-68
+mkdocs.yml
+  s_c950bc791114f5::t_cfeee53fbf7f7d 120
+docs/resources/semantic_view.md
+  s_c950bc791114f5::t_120363dde9bfd8 1-77,80-88
+  s_c950bc791114f5::t_5d7ecee8f82cbb 78-79
+tests/test_grant.py
+  s_c950bc791114f5::t_50ff11f4ad3ab2 177-209
+  s_c950bc791114f5::t_30ea2fd17b7482 680-716
+tests/test_privs.py
+  s_c950bc791114f5::t_172aba40f3369a 357-379,385
+  s_c950bc791114f5::t_e17210ba93f37c 380-384
+  s_c950bc791114f5::t_8f5d72d38dc33e 114
+  s_c950bc791114f5::t_06955fc964d858 800-808
+  s_c950bc791114f5::t_6503947b75c305 624-627
+  s_c950bc791114f5::t_5ce71cae85e29a 550-557
+  s_c950bc791114f5::t_c5b333aba7c18d 50
+  s_c950bc791114f5::t_83d6bbf58e1af2 237-240
+  s_c950bc791114f5::t_7fc19dca6d0e54 33
+docs/resources/grant.md
+  s_c950bc791114f5::t_010f0c936637c8 62-71
+  s_c950bc791114f5::t_c4751992780556 90-94,113-117
+  s_c950bc791114f5::t_a73631ee247859 208
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "36e0f7c91bc40acec976ef4438c706e7ae5bda87",
+  "prompts": {},
+  "sessions": {
+    "s_c950bc791114f5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0de7b730-af18-4394-ad8f-c66ae125439d",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
