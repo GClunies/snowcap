@@ -1,0 +1,70 @@
+tests/test_resources.py
+  s_0410ea409d76ff::t_2d9bce914dba32 107-123
+  s_0410ea409d76ff::t_9c9e88c0f3c1ce 74-86,89-106,124-181
+  s_0410ea409d76ff::t_22952591c201e7 87-88
+  s_0410ea409d76ff::t_a4862c59a56db9 1,15-20
+tests/test_grant.py
+  s_0410ea409d76ff::t_e2104f5f0d543a 177-180,182-183,185-186,188-190
+  s_0410ea409d76ff::t_7c80c7d1efd146 181,184,187
+tests/fixtures/sql/warehouse.sql
+  s_0410ea409d76ff::t_48f9bc0682fca7 27-34
+docs/resources/warehouse.md
+  s_0410ea409d76ff::t_9b53cc77643587 41-48,77-83,90,94,109-110
+tests/fixtures/json/warehouse.json
+  s_0410ea409d76ff::t_5cc3f3a3b84c89 8
+tests/test_data_provider.py
+  s_0410ea409d76ff::t_8a9d5b5b938dcf 777,781-782
+  s_0410ea409d76ff::t_a26825c6a41b7e 813-814,816
+  s_0410ea409d76ff::t_f45c4616aab95c 684
+  s_0410ea409d76ff::t_41a9fa8f4516fc 47-48
+  s_0410ea409d76ff::t_05ec8978a6400d 695,706,726,744-776,778-780,783-812,815,817-819
+snowcap/data_provider.py
+  s_0410ea409d76ff::t_dcc0eee5d43f99 44
+  s_0410ea409d76ff::t_95b6bd49d5c0da 3170-3172,3185,3192,3197,3200,3217-3223
+  s_0410ea409d76ff::t_a753fd0f33afec 3186-3191
+  s_0410ea409d76ff::t_2f8920bf633a92 3224
+snowcap/blueprint.py
+  s_0410ea409d76ff::t_d37a465af76e89 2316-2326
+  s_0410ea409d76ff::t_b491165ec3bdad 748-749
+  s_0410ea409d76ff::t_ebe443f8cefa5b 45
+snowcap/resources/warehouse.py
+  s_0410ea409d76ff::t_9c24467bd719ce 1
+  s_0410ea409d76ff::t_a81e18eae170f8 185,189
+  s_0410ea409d76ff::t_f985b57cc5627c 73-89
+  s_0410ea409d76ff::t_8b1d85d019f6d2 336
+  s_0410ea409d76ff::t_464fc842f81271 232-240
+  s_0410ea409d76ff::t_3b8c5b91887188 25
+  s_0410ea409d76ff::t_eefbe5c3ff8d18 99
+  s_0410ea409d76ff::t_ae5e63275ab5a7 155-156,158-166
+  s_0410ea409d76ff::t_87166ce47b75d3 267-274
+  s_0410ea409d76ff::t_ddc288d1d8d06e 284
+  s_0410ea409d76ff::t_4b495928401ad1 168-172
+  s_0410ea409d76ff::t_3efcb727e146d2 157
+  s_0410ea409d76ff::t_3914f44a595fdc 311
+  s_0410ea409d76ff::t_090f28f72b80c9 167
+tests/test_blueprint.py
+  s_0410ea409d76ff::t_bcf50452899ee2 944-974
+  s_0410ea409d76ff::t_07e0bc85461806 860-881,890,904-941
+  s_0410ea409d76ff::t_5af90f46e683ce 60
+  s_0410ea409d76ff::t_7566d2a567679a 56
+  s_0410ea409d76ff::t_97132fb3f8077a 4
+  s_0410ea409d76ff::t_ce73f86ab1abc0 975-992
+  s_0410ea409d76ff::t_2fc4ffb97b6106 901-903
+  s_0410ea409d76ff::t_abf1e101d86361 882-889,891-900,942-943
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "37a6c5147ac6f7646df25430521750c0d1c8bb7f",
+  "prompts": {},
+  "sessions": {
+    "s_0410ea409d76ff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7568aff1-e36b-4f93-b224-2eeb77692a46",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
