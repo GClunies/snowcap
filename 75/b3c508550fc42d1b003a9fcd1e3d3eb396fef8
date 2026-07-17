@@ -1,0 +1,68 @@
+snowcap/resources/__init__.py
+  s_bd9bcde57b15cb::t_9260a74bc4326c 55
+  s_bd9bcde57b15cb::t_ae34591befe1cc 143
+tests/integration/data_provider/test_fetch_resource.py
+  s_bd9bcde57b15cb::t_19b9787af40a11 415-435
+  s_bd9bcde57b15cb::t_647d8af3aee122 413-414
+tests/fixtures/json/snowflake_custom_oauth_security_integration.json
+  s_bd9bcde57b15cb::t_0dabbf4a89d900 1-18
+tests/test_data_provider.py
+  s_bd9bcde57b15cb::t_b257aa86b27035 36
+  s_bd9bcde57b15cb::t_d820255ad4d196 741-862
+docs/SUMMARY.md
+  s_bd9bcde57b15cb::t_76dd1a5b439805 61
+tests/test_lifecycle.py
+  s_bd9bcde57b15cb::t_dc38bf23c01834 1388-1394,1397-1444,1466-1491,1502-1507
+  s_bd9bcde57b15cb::t_75d4aa8ac21321 1492-1501
+  s_bd9bcde57b15cb::t_e39e12e45e3e26 1445-1465
+  s_bd9bcde57b15cb::t_ac7bb7735c6c28 1395-1396
+mkdocs.yml
+  s_bd9bcde57b15cb::t_dcdaf50a9bdb81 167
+snowcap/resources/security_integration.py
+  s_bd9bcde57b15cb::t_8cdd164e6d2f17 367
+  s_bd9bcde57b15cb::t_e151c942137665 549
+  s_bd9bcde57b15cb::t_b43e86805d4e92 43-52
+  s_bd9bcde57b15cb::t_04981c342c5dc4 410-414
+  s_bd9bcde57b15cb::t_0e9d77679d61bc 427
+  s_bd9bcde57b15cb::t_7e774b2f7b1b01 3,19-24
+  s_bd9bcde57b15cb::t_99469290634771 361-366,368-386,390,397-409,415-426,428-535
+  s_bd9bcde57b15cb::t_77646179d609d9 387-389,391-396
+  s_a3ef6b6f2bfe89::t_a295a84df4e22a 25-26
+snowcap/data_provider.py
+  s_bd9bcde57b15cb::t_9c3fc4b4815db3 15
+  s_bd9bcde57b15cb::t_a14a43ea0dc2ac 2550-2553,2555-2561,2563,2567-2571
+  s_bd9bcde57b15cb::t_00c42504912ef5 2554,2562,2564-2566
+docs/resources/snowflake_custom_oauth_security_integration.md
+  s_bd9bcde57b15cb::t_0b171605710c74 44-61
+  s_bd9bcde57b15cb::t_e1f4d3f220657a 3,8
+  s_bd9bcde57b15cb::t_97e4a434b3c313 74
+  s_bd9bcde57b15cb::t_efd81eebae4a5c 1-2,4-7,9-15,21-43,62-68,70-73,75-81
+  s_bd9bcde57b15cb::t_67b90defcf0eeb 69
+  s_bd9bcde57b15cb::t_83f95b45858210 16-20
+snowcap/builtins.py
+  s_bd9bcde57b15cb::t_918fbf049500a4 27-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "75b3c508550fc42d1b003a9fcd1e3d3eb396fef8",
+  "prompts": {},
+  "sessions": {
+    "s_a3ef6b6f2bfe89": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "93969f66-a26e-47b4-9c03-f268c0a1e4a5",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    },
+    "s_bd9bcde57b15cb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef3ac493-2ae2-4127-a8b9-904987bd06a4",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
