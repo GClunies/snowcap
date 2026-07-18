@@ -1,0 +1,26 @@
+tests/test_blueprint.py
+  s_ea4e071905ab90::t_e9f2757d6fe6d6 1194-1265
+snowcap/blueprint.py
+  s_ea4e071905ab90::t_3add9d5ec98c78 2361-2392
+  s_ea4e071905ab90::t_e07048a3251204 1161
+docs/resources/mcp_server.md
+  s_ea4e071905ab90::t_79e0886af9ee02 15-16
+snowcap/resources/mcp_server.py
+  s_ea4e071905ab90::t_77eef746aeeab1 63-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "da50360629a9cf441365b2a050052349c24457b1",
+  "prompts": {},
+  "sessions": {
+    "s_ea4e071905ab90": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5115fc1c-b39f-4382-83d5-775178360b87",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
