@@ -1,0 +1,21 @@
+TESTING.md
+  s_c53e72fc5602d2::t_09d653c9df6299 62-90
+.github/workflows/integration-tests.yml
+  s_c53e72fc5602d2::t_9fa9d56e82d9c1 1-122
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a32965ed8e11c563f51f5bcd672b668a8aacc57e",
+  "prompts": {},
+  "sessions": {
+    "s_c53e72fc5602d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7fbc51f1-3b29-4daf-86e7-905993fc66a5",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
