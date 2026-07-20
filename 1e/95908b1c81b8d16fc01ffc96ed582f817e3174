@@ -1,0 +1,26 @@
+.github/workflows/integration-waiver.yml
+  s_e54aa487316c70::t_33779cf86d2e32 44
+  s_e54aa487316c70::t_35caf8903071a1 56-57,60-63,68-69,71,77-78,80-81,83
+.github/workflows/integration-tests.yml
+  s_e54aa487316c70::t_4cde6cf5e8f4de 19-28
+  s_e54aa487316c70::t_22f6d41ab59274 226,244-256,260-261,265-270,272-273,275-280
+  s_e54aa487316c70::t_0620d9101df223 99,101,110
+  s_e54aa487316c70::t_d6fab64b4795e1 119-121
+  s_e54aa487316c70::t_e67b2e53e180d1 172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "1e95908b1c81b8d16fc01ffc96ed582f817e3174",
+  "prompts": {},
+  "sessions": {
+    "s_e54aa487316c70": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9abe1ff4-a1e7-4dab-b839-544ee3649316",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
