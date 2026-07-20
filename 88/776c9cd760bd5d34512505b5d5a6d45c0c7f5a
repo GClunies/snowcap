@@ -1,0 +1,23 @@
+TESTING.md
+  s_e54aa487316c70::t_1d3f356dafccf0 64-93,97,100-120
+.github/workflows/integration-waiver.yml
+  s_e54aa487316c70::t_07657353260d84 1-101
+.github/workflows/integration-tests.yml
+  s_e54aa487316c70::t_d4b9680a1c93a5 5-17,19-23,25-26,28-39,72-75,77-78,81-156,159-160,163-165,168,171,186-187,214-224,227-230,232-236,238-245,247-255,258-264,267-280
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "88776c9cd760bd5d34512505b5d5a6d45c0c7f5a",
+  "prompts": {},
+  "sessions": {
+    "s_e54aa487316c70": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9abe1ff4-a1e7-4dab-b839-544ee3649316",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
