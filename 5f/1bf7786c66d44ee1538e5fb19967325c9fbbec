@@ -1,0 +1,29 @@
+tests/test_manage_test_account.py
+  s_93fe009679304c::t_8a1b3bad831655 498,504-529
+  s_93fe009679304c::t_f6ec28d50f6d06 474
+  s_93fe009679304c::t_93e5f396fac9ed 320-322,324-329,334-335,338-340,343,349,354
+  s_93fe009679304c::t_861eed73df5c26 414-415,424
+  s_93fe009679304c::t_306912cbb7d01b 437
+tools/manage_test_account.py
+  s_93fe009679304c::t_31eb87544b91e2 277
+  s_93fe009679304c::t_c8c12b6548dd43 270-276,278,294-296,301-302,309,312-344
+  s_93fe009679304c::t_9344d4f5a53e32 250
+  s_93fe009679304c::t_836080f5e00937 387
+  s_93fe009679304c::t_d4dc4157516954 478-484
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "5f1bf7786c66d44ee1538e5fb19967325c9fbbec",
+  "prompts": {},
+  "sessions": {
+    "s_93fe009679304c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1be4c385-018f-4cac-9fdb-f146e020b344",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
