@@ -1,0 +1,58 @@
+TESTING.md
+  s_93fe009679304c::t_2f89aa9d47efc4 62-121,124
+  s_93fe009679304c::t_cdc8659335999a 125
+setup.py
+  s_93fe009679304c::t_da0ca7d9ba3e9b 52
+Makefile
+  s_e54aa487316c70::t_432d4eca4bf967 1,3
+  s_e54aa487316c70::t_c70da5ae8590b9 21-30
+tests/test_manage_test_account.py
+  s_93fe009679304c::t_ff279f7a20a82e 400
+  s_93fe009679304c::t_02196bc07761d7 436,497
+  s_93fe009679304c::t_f253e513ac3f0a 1-399,401-435,437-496,498-502
+tools/manage_test_account.py
+  s_e54aa487316c70::t_c63cc03690da9f 1,4-9,13-15,19,27,30-37,41-42,54-66,95-96,99,130-143,153-163,169-263,265-272,278,285-286,289-290,323-327,331-345,348-360,364-375,391,394,398-399,403-410,432-436,438-442,444-468
+  s_93fe009679304c::t_dc869e0688e2e0 144-152
+  s_93fe009679304c::t_f7f601283a6352 273-277,279-283,287-288,291-322,329-330,346-347,361-363,376-390,392-393,395-397,400-402
+  s_93fe009679304c::t_b461f2bde8e81c 164-168
+  s_93fe009679304c::t_fad5d64756c75a 264
+  s_93fe009679304c::t_e5f3aa50a1953c 437,443
+  s_93fe009679304c::t_8f9d6f255e80f3 38-40
+  s_e54aa487316c70::t_9ea93a12d0cd51 284
+  s_e54aa487316c70::t_f8f648efcfde72 469-470
+  s_dabf2d36d43a35::t_7ce5e9f9e25680 328
+.gitignore
+  s_e54aa487316c70::t_54871034cbe949 134-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "bae1abe8ce627e7b62d29c1edeea1929c4586e6a",
+  "prompts": {},
+  "sessions": {
+    "s_93fe009679304c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1be4c385-018f-4cac-9fdb-f146e020b344",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    },
+    "s_dabf2d36d43a35": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-abfed994ff4368530",
+        "model": "unknown"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    },
+    "s_e54aa487316c70": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9abe1ff4-a1e7-4dab-b839-544ee3649316",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
