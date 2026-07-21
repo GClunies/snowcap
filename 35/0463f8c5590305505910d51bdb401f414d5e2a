@@ -1,0 +1,25 @@
+tests/test_manage_test_account.py
+  s_93fe009679304c::t_7ee132d84d14ba 157
+  s_93fe009679304c::t_b7266788151969 164
+  s_93fe009679304c::t_8c18529d133921 172
+  s_93fe009679304c::t_bec7f35189fc6a 271,277-279
+TESTING.md
+  s_93fe009679304c::t_f4f2331032e8cd 73-75
+  s_93fe009679304c::t_007b5abc0a84ea 155
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "350463f8c5590305505910d51bdb401f414d5e2a",
+  "prompts": {},
+  "sessions": {
+    "s_93fe009679304c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1be4c385-018f-4cac-9fdb-f146e020b344",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
