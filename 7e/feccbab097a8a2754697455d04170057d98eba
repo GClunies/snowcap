@@ -1,0 +1,31 @@
+tests/test_manage_test_account.py
+  s_840c6bb92fb6b6::t_5fa03b297e638d 30,84,578
+  s_840c6bb92fb6b6::t_6f96da8e94756d 373-386
+  s_840c6bb92fb6b6::t_841275bac7f53d 248-284,286-291,322-372,392-404
+  s_840c6bb92fb6b6::t_d78f9f53a57435 285,292-321
+  s_840c6bb92fb6b6::t_92697a235dbad8 405-406
+tools/manage_test_account.py
+  s_840c6bb92fb6b6::t_fba5e1a7dfe20f 46-49,52,55-58,60,62,66-71,77-79
+  s_840c6bb92fb6b6::t_ee9607aee5eac0 74-76,85,95
+  s_840c6bb92fb6b6::t_9980eef8fc0265 45,50-51,53-54,59,61,63-65,72-73,80-83,90,100
+  s_840c6bb92fb6b6::t_5fa03b297e638d 374-379
+TESTING.md
+  s_840c6bb92fb6b6::t_620cb1e77d043e 78,80-85
+  s_840c6bb92fb6b6::t_6e8d4d8fc4b0b7 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "7efeccbab097a8a2754697455d04170057d98eba",
+  "prompts": {},
+  "sessions": {
+    "s_840c6bb92fb6b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e0d68450-3c48-40a2-a318-1b1a5f009afb",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
