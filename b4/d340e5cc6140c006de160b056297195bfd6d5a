@@ -1,0 +1,70 @@
+tests/integration/data_provider/test_fetch_resource_simple.py
+  s_840c6bb92fb6b6::t_b052210b1577e8 107-108
+  s_840c6bb92fb6b6::t_80201dfcabe68e 274
+tests/integration/test_blueprint.py
+  s_840c6bb92fb6b6::t_80201dfcabe68e 347-348,352,357,368,370,391-392
+  s_840c6bb92fb6b6::t_1223f84992be30 737-739,807-809,840-842
+snowcap/data_provider.py
+  s_840c6bb92fb6b6::t_1223f84992be30 3721
+  s_840c6bb92fb6b6::t_80201dfcabe68e 228-229,2938
+  s_840c6bb92fb6b6::t_7b152f6674426a 2809-2811
+tests/test_blueprint.py
+  s_840c6bb92fb6b6::t_1223f84992be30 541,575,613,650
+  s_840c6bb92fb6b6::t_305462f3cf893c 354-355
+tests/test_identifiers.py
+  s_840c6bb92fb6b6::t_80201dfcabe68e 22
+tools/manage_test_account.py
+  s_840c6bb92fb6b6::t_fadfe493d55f39 8,12-16
+  s_840c6bb92fb6b6::t_fc74748bcbf377 17
+tests/test_resources.py
+  s_840c6bb92fb6b6::t_80201dfcabe68e 215
+  s_840c6bb92fb6b6::t_305462f3cf893c 198,220,222
+snowcap/builtins.py
+  s_840c6bb92fb6b6::t_4960e7d120554f 26-27
+TESTING.md
+  s_840c6bb92fb6b6::t_80201dfcabe68e 521
+tools/test_account_configs/compute_pools.yml
+  s_840c6bb92fb6b6::t_6966ea5c46ca50 1
+tests/test_resource_rendering.py
+  s_840c6bb92fb6b6::t_80201dfcabe68e 8,17,28
+tools/test_account_configs/base.yml
+  s_840c6bb92fb6b6::t_50693e60cfea62 100-103
+  s_840c6bb92fb6b6::t_e935cda7bcc232 129-131,133-136
+  s_840c6bb92fb6b6::t_b7f6c6105f27c3 294-296,301-302
+  s_840c6bb92fb6b6::t_95e812e6d7fd23 154-159
+  s_840c6bb92fb6b6::t_d9105932ae7ae7 105,108,111,114,117,120
+  s_840c6bb92fb6b6::t_7dc9eb16144dc9 2
+  s_840c6bb92fb6b6::t_f10fb65c1e70d6 39
+  s_840c6bb92fb6b6::t_80201dfcabe68e 42,58,86,88,116,119,160-161,163-164
+  s_840c6bb92fb6b6::t_47a92fdb2ce26c 37
+  s_840c6bb92fb6b6::t_52c440455c9fef 40-41,43,54-57
+tools/test_account_configs/enterprise.yml
+  s_840c6bb92fb6b6::t_6966ea5c46ca50 1
+  s_840c6bb92fb6b6::t_707f55c0ffd22e 18-19,24,27
+examples/dbt-with-schema-access-role-tree.yml
+  s_840c6bb92fb6b6::t_80201dfcabe68e 3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,92,95,98,101,104,107,110,118-192,194-198,200-206,208-212,214-220,222-228,230-238,243,247,250,254,256
+  s_840c6bb92fb6b6::t_305462f3cf893c 242,255
+tools/test_account_configs/business_critical.yml
+  s_840c6bb92fb6b6::t_6966ea5c46ca50 1
+tests/test_container_service.py
+  s_840c6bb92fb6b6::t_80201dfcabe68e 28,36-39,43-44
+  s_840c6bb92fb6b6::t_305462f3cf893c 16
+tests/fixtures/sql/service.sql
+  s_840c6bb92fb6b6::t_80201dfcabe68e 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "b4d340e5cc6140c006de160b056297195bfd6d5a",
+  "prompts": {},
+  "sessions": {
+    "s_840c6bb92fb6b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e0d68450-3c48-40a2-a318-1b1a5f009afb",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
