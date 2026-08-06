@@ -1,0 +1,19 @@
+setup.py
+  s_840c6bb92fb6b6::t_2b56995810e355 59-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "55a9218af174a9d71ef6cb66f128973a8c3c8ced",
+  "prompts": {},
+  "sessions": {
+    "s_840c6bb92fb6b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e0d68450-3c48-40a2-a318-1b1a5f009afb",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
