@@ -1,0 +1,43 @@
+snowcap/props.py
+  s_fbcc847030e040::t_ebb1bf10af78d9 123-124
+tests/test_resource_types.py
+  s_fbcc847030e040::t_344a94185410c1 1227,1234,1242,1254-1255,1262,1273,1278,1286-1297,1306-1307,1310,1324,1339,1352,1358-1380,1390,1402,1408-1419
+  s_fbcc847030e040::t_824d4f84016d20 1420
+snowcap/resources/authentication_policy.py
+  s_fbcc847030e040::t_89f9e58910d357 154
+  s_fbcc847030e040::t_45f0b3f90e06ac 180
+  s_fbcc847030e040::t_1adffcf82849ba 136
+  s_fbcc847030e040::t_05dfff7e77b840 4
+  s_fbcc847030e040::t_9ed10d855e5e59 44,56
+tests/fixtures/json/authentication_policy.json
+  s_fbcc847030e040::t_56c0afebfda990 20-21
+tests/test_data_provider.py
+  s_fbcc847030e040::t_0cfabf4ef6bcaf 435-436,442,445-458,462-463,465,470,484-485,491,506-510
+  s_fbcc847030e040::t_c45abf7de940b0 522,532-542
+  s_fbcc847030e040::t_22afc12f9d4489 561-562,571
+  s_fbcc847030e040::t_8464f15daadc1e 511
+snowcap/data_provider.py
+  s_fbcc847030e040::t_5efeda6afd8a8b 1524-1528
+tests/fixtures/sql/authentication_policy.sql
+  s_fbcc847030e040::t_cdb7b59e753619 4
+tests/integration/data_provider/test_fetch_resource_simple.py
+  s_fbcc847030e040::t_1dad98f60f3265 54
+docs/resources/authentication_policy.md
+  s_fbcc847030e040::t_cd59d9a208188e 29,56,69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "c3484206d1ce1f60496941bef981317d449578ad",
+  "prompts": {},
+  "sessions": {
+    "s_fbcc847030e040": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6168b58d-57fe-4d58-96bc-aa9bcf931f31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
