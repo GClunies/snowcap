@@ -1,0 +1,25 @@
+snowcap/data_provider.py
+  s_fbcc847030e040::t_6c53373ba5d1d7 44,1502-1505
+snowcap/resources/authentication_policy.py
+  s_fbcc847030e040::t_6c53373ba5d1d7 46-56,111-116
+tests/test_resource_types.py
+  s_fbcc847030e040::t_6c53373ba5d1d7 1282-1298,1307-1334
+tests/test_data_provider.py
+  s_fbcc847030e040::t_6c53373ba5d1d7 512-536
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "eaa33504396f2a99843aa7743e49bae371339341",
+  "prompts": {},
+  "sessions": {
+    "s_fbcc847030e040": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6168b58d-57fe-4d58-96bc-aa9bcf931f31",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
