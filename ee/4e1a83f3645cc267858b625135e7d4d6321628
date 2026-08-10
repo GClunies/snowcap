@@ -1,0 +1,33 @@
+snowcap/data_provider.py
+  s_d19e3515e83937::t_509fc6a3e590a6 2700-2704,2708
+docs/resources/shared_database.md
+  s_d19e3515e83937::t_285fcadd79b1aa 41
+  s_d19e3515e83937::t_4177f5fce04595 81-85
+tests/test_resource_types.py
+  s_d19e3515e83937::t_b8fd5a225c9247 102-116
+tests/test_blueprint.py
+  s_d19e3515e83937::t_7398e96c0bd5d5 1417-1434,1439
+tests/test_yaml_config.py
+  s_d19e3515e83937::t_644f7503175325 659-669
+snowcap/resources/shared_database.py
+  s_d19e3515e83937::t_09a4f28a2d8ccf 51-52
+  s_d19e3515e83937::t_f8616e33ddb574 21-34
+tests/test_data_provider.py
+  s_d19e3515e83937::t_87ce955a5f1cbe 724-728,739,743-746,748
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "ee4e1a83f3645cc267858b625135e7d4d6321628",
+  "prompts": {},
+  "sessions": {
+    "s_d19e3515e83937": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eacdf406-e6ef-4fdd-818d-98118b7e2dcf",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
