@@ -1,0 +1,26 @@
+tests/test_privs.py
+  s_09d2c95580e094::t_54a574ad3ca8b6 430-433
+  s_09d2c95580e094::t_73eba5b65cc55c 651
+tests/test_grant.py
+  s_09d2c95580e094::t_3bb22a6440465d 519
+tests/integration/test_grant_patterns.py
+  s_09d2c95580e094::t_8d306749c89d42 342,346
+docs/snowflake-permissions.md
+  s_09d2c95580e094::t_d573192fba8723 74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "81f46f3b8eb6aa9fd05af3e3438dbddda0fab2e6",
+  "prompts": {},
+  "sessions": {
+    "s_09d2c95580e094": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0857ba65-ea6d-4583-9c72-8bf180e5f38a",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
