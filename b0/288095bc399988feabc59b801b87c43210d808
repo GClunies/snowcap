@@ -1,0 +1,20 @@
+docs/resources/grant.md
+  s_09d2c95580e094::t_afc8b4de5f17de 176
+  s_09d2c95580e094::t_366843906f7b7a 92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "b0288095bc399988feabc59b801b87c43210d808",
+  "prompts": {},
+  "sessions": {
+    "s_09d2c95580e094": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0857ba65-ea6d-4583-9c72-8bf180e5f38a",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
