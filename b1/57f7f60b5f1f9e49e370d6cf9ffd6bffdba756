@@ -1,0 +1,23 @@
+snowcap/data_provider.py
+  s_cb0a34ddc65189::t_b68eee2edfbc2e 2624-2626
+  s_cb0a34ddc65189::t_0e8da00a80653e 2635
+tests/test_data_provider.py
+  s_cb0a34ddc65189::t_1d51e6c6fb3e39 1155-1165
+  s_cb0a34ddc65189::t_8dc46ff8f26364 1153-1154
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "b157f7f60b5f1f9e49e370d6cf9ffd6bffdba756",
+  "prompts": {},
+  "sessions": {
+    "s_cb0a34ddc65189": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23378776-5e62-43db-96a2-d887f66e1180",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}

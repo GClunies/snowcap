@@ -1,0 +1,31 @@
+tests/test_lifecycle.py
+  s_cb0a34ddc65189::t_38170efe19aa25 1531-1544,1589-1592
+snowcap/resources/resource.py
+  s_cb0a34ddc65189::t_38170efe19aa25 216-218
+snowcap/blueprint.py
+  s_cb0a34ddc65189::t_38170efe19aa25 47,2347-2348,2360-2361,2373-2380
+tests/test_plan.py
+  s_cb0a34ddc65189::t_38170efe19aa25 13,88-108
+snowcap/resources/security_integration.py
+  s_cb0a34ddc65189::t_38170efe19aa25 367-378
+snowcap/data_provider.py
+  s_cb0a34ddc65189::t_38170efe19aa25 45,2616-2617,2620-2623
+tests/test_data_provider.py
+  s_cb0a34ddc65189::t_38170efe19aa25 1107-1139
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "81ac2017a393bbd1c9f78365dd7a8afe8dfe0f70",
+  "prompts": {},
+  "sessions": {
+    "s_cb0a34ddc65189": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23378776-5e62-43db-96a2-d887f66e1180",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
