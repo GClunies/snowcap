@@ -1,0 +1,14 @@
+tests/test_blueprint.py
+  h_54e5c83907823d 63,1444-1445,1456
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1aab7a6586be7fbb76abec26c19929ca86b099e0",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
