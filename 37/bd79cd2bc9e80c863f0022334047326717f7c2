@@ -1,0 +1,18 @@
+snowcap/resources/warehouse.py
+  h_54e5c83907823d 159
+tests/integration/data_provider/test_fetch_resource_simple.py
+  h_54e5c83907823d 310-316
+tests/test_resources.py
+  h_54e5c83907823d 130-138
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "37bd79cd2bc9e80c863f0022334047326717f7c2",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
