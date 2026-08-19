@@ -1,0 +1,28 @@
+.github/workflows/release-package.yml
+  h_54e5c83907823d 14-15,17,19,21
+.github/workflows/reset-test-account.yml
+  h_54e5c83907823d 40-41,43,45,48
+.github/workflows/run-tests.yml
+  h_54e5c83907823d 21-22,25,27,32-46
+Makefile
+  h_54e5c83907823d 6,9-11,14,17,24,31,34,37-38,42-44,48,58,60-61,64,67,70
+README.md
+  h_54e5c83907823d 100-117
+TESTING.md
+  h_54e5c83907823d 7,10-13,17,20-21,24-25
+pyproject.toml
+  h_54e5c83907823d 1-70
+uv.lock
+  h_54e5c83907823d 1-2004
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "2a76649e057a846de329c31c35b3e7c9c868a2cb",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
