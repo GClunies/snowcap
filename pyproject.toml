@@ -55,7 +55,6 @@ dev = [
     # ruff 0.16 changed the default rule selection and fails the codebase with 700+ new findings
     "ruff<0.16",
     "tabulate",
-    "twine!=5.1.0",
     "types-pytz",
     "types-pyyaml",
 ]
