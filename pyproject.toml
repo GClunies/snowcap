@@ -44,7 +44,6 @@ dev = [
     # Pinned: black's formatting changes between releases, and an unpinned
     # version means `make style` reformats files no one touched.
     "black==26.5.1",
-    "build",
     "codespell==2.2.6",
     "cryptography",
     "mypy",
