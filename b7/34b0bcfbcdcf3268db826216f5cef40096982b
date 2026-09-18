@@ -1,0 +1,14 @@
+.envrc
+  h_54e5c83907823d 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b734b0bcfbcdcf3268db826216f5cef40096982b",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
