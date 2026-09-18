@@ -1,0 +1,16 @@
+.github/workflows/release-package.yml
+  h_54e5c83907823d 23-24
+Makefile
+  h_54e5c83907823d 68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "9c9acfe59dd9960aad670094bbd59c6490040cec",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
