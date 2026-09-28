@@ -14,6 +14,12 @@ jobs:
       with:
           persist-credentials: false
           fetch-depth: 0
+    - name: actions/create-github-app-token
+      id: app-token
+      uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      with:
+        app-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
     - name: current_version
       run: echo "current_version=$(grep '# version' version.md | cut -d ' ' -f3)" >> $GITHUB_ENV
     - name: FragileTech/bump-version
@@ -24,8 +30,8 @@ jobs:
         files: version.md
         commit_name: Datacoves Bot
         commit_email: support+snowcap@datacoves.com
-        login: datacoves-sa
-        token: "${{ secrets.BOT_TOKEN }}"
+        login: x-access-token
+        token: "${{ steps.app-token.outputs.token }}"
     - name: Read new version from version.md
       run: echo "next_version=$(grep '# version' version.md | cut -d ' ' -f3)" >> $GITHUB_ENV
     - name: Generate release notes from commits
@@ -44,4 +50,4 @@ jobs:
         name: "v${{ env.next_version }}"
         body: ${{ steps.notes.outputs.notes }}
       env:
-        GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
