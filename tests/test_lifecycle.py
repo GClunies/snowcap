@@ -1316,6 +1316,30 @@ class TestTransferResource:
         # ResourceType.DATABASE_ROLE renders as "DATABASE ROLE"
         assert "TO DATABASE ROLE NEW_OWNER" in result
 
+    @pytest.mark.parametrize(
+        "resource_type,schema,object_type",
+        [
+            (ResourceType.API_INTEGRATION, None, "INTEGRATION"),
+            (ResourceType.CATALOG_INTEGRATION, None, "INTEGRATION"),
+            (ResourceType.EXTERNAL_ACCESS_INTEGRATION, None, "INTEGRATION"),
+            (ResourceType.NOTIFICATION_INTEGRATION, None, "INTEGRATION"),
+            (ResourceType.SECURITY_INTEGRATION, None, "INTEGRATION"),
+            (ResourceType.STORAGE_INTEGRATION, None, "INTEGRATION"),
+            (ResourceType.MATERIALIZED_VIEW, "MY_SCHEMA", "VIEW"),
+            (ResourceType.HYBRID_TABLE, "MY_SCHEMA", "TABLE"),
+        ],
+    )
+    def test_transfer_uses_snowflake_ownership_object_type(self, resource_type, schema, object_type):
+        """GRANT OWNERSHIP names some resource types by a broader object type.
+
+        https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+        """
+        database = "MY_DB" if schema else None
+        urn = make_urn(resource_type, "MY_OBJECT", database=database, schema=schema)
+        result = transfer_resource(urn, "NEW_OWNER", ResourceType.ROLE, copy_current_grants=True)
+        assert result.startswith(f"GRANT OWNERSHIP ON {object_type} ")
+        assert "MY_OBJECT TO ROLE NEW_OWNER COPY CURRENT GRANTS" in result
+
 
 # ============================================================================
 # Test tag masking policy reference functions
