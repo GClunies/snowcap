@@ -868,6 +868,21 @@ def transfer_resource(
     )
 
 
+# GRANT OWNERSHIP names these resource types by a broader object type, and rejects
+# their own names. Every integration subtype is also named INTEGRATION.
+# https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+_OWNERSHIP_OBJECT_TYPES = {
+    ResourceType.MATERIALIZED_VIEW: "VIEW",
+    ResourceType.HYBRID_TABLE: "TABLE",
+}
+
+
+def _ownership_object_type(resource_type: ResourceType) -> str:
+    if "INTEGRATION" in str(resource_type):
+        return "INTEGRATION"
+    return _OWNERSHIP_OBJECT_TYPES.get(resource_type, str(resource_type))
+
+
 def transfer__default(
     urn: URN,
     owner: str,
@@ -877,7 +892,7 @@ def transfer__default(
 ) -> str:
     return tidy_sql(
         "GRANT OWNERSHIP ON",
-        urn.resource_type,
+        _ownership_object_type(urn.resource_type),
         urn.fqn,
         "TO",
         owner_resource_type,
