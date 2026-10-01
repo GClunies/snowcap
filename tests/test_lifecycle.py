@@ -1328,6 +1328,10 @@ class TestTransferResource:
             (ResourceType.EXTERNAL_FUNCTION, "MY_SCHEMA", "FUNCTION"),
             (ResourceType.HYBRID_TABLE, "MY_SCHEMA", "TABLE"),
             (ResourceType.MATERIALIZED_VIEW, "MY_SCHEMA", "VIEW"),
+            # Types close to the mapped ones keep their own names.
+            (ResourceType.DYNAMIC_TABLE, "MY_SCHEMA", "DYNAMIC TABLE"),
+            (ResourceType.ICEBERG_TABLE, "MY_SCHEMA", "ICEBERG TABLE"),
+            (ResourceType.VIEW, "MY_SCHEMA", "VIEW"),
         ],
     )
     def test_transfer_uses_snowflake_ownership_object_type(self, resource_type, schema, object_type):
