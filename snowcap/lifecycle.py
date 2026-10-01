@@ -868,12 +868,14 @@ def transfer_resource(
     )
 
 
-# GRANT OWNERSHIP names these resource types by a broader object type, and rejects
-# their own names. Every integration subtype is also named INTEGRATION.
+# GRANT OWNERSHIP names these resource types by a broader object type. Snowflake
+# rejects EXTERNAL FUNCTION and the integration subtype names, and its usage notes
+# say to use VIEW for materialized views and TABLE for hybrid tables.
 # https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
 _OWNERSHIP_OBJECT_TYPES = {
-    ResourceType.MATERIALIZED_VIEW: "VIEW",
+    ResourceType.EXTERNAL_FUNCTION: "FUNCTION",
     ResourceType.HYBRID_TABLE: "TABLE",
+    ResourceType.MATERIALIZED_VIEW: "VIEW",
 }
 
 

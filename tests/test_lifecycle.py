@@ -1325,8 +1325,9 @@ class TestTransferResource:
             (ResourceType.NOTIFICATION_INTEGRATION, None, "INTEGRATION"),
             (ResourceType.SECURITY_INTEGRATION, None, "INTEGRATION"),
             (ResourceType.STORAGE_INTEGRATION, None, "INTEGRATION"),
-            (ResourceType.MATERIALIZED_VIEW, "MY_SCHEMA", "VIEW"),
+            (ResourceType.EXTERNAL_FUNCTION, "MY_SCHEMA", "FUNCTION"),
             (ResourceType.HYBRID_TABLE, "MY_SCHEMA", "TABLE"),
+            (ResourceType.MATERIALIZED_VIEW, "MY_SCHEMA", "VIEW"),
         ],
     )
     def test_transfer_uses_snowflake_ownership_object_type(self, resource_type, schema, object_type):
