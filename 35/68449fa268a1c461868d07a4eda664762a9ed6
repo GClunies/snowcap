@@ -1,0 +1,16 @@
+snowcap/blueprint.py
+  h_54e5c83907823d 7,891-913,1218
+tests/test_blueprint.py
+  h_54e5c83907823d 2852-2899
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3568449fa268a1c461868d07a4eda664762a9ed6",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
