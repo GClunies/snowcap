@@ -1,0 +1,32 @@
+snowcap/blueprint.py
+  h_54e5c83907823d 2595-2599,2601-2602
+snowcap/data_provider.py
+  h_54e5c83907823d 3670-3681,3689-3690
+snowcap/lifecycle.py
+  h_54e5c83907823d 447-462
+snowcap/props.py
+  h_54e5c83907823d 489-519
+snowcap/resources/resource_monitor.py
+  h_54e5c83907823d 10,26-31,41,49-67,85-90,101-106,122-128,140,153,165
+tests/fixtures/json/resource_monitor.json
+  h_54e5c83907823d 7-25
+tests/fixtures/sql/resource_monitor.sql
+  h_54e5c83907823d 7-10
+tests/integration/data_provider/test_fetch_resource_simple.py
+  h_54e5c83907823d 238-243
+tests/test_blueprint.py
+  h_54e5c83907823d 2908-3000
+tests/test_resource_types.py
+  h_54e5c83907823d 1070-1084
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eeed8dc9d87c32a566b066c2b06acd34ecd108ac",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
