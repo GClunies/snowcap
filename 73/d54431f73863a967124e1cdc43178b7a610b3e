@@ -1,0 +1,16 @@
+snowcap/lifecycle.py
+  h_54e5c83907823d 2,438-459,461-470,517-522,529-530,532-545,548-562,566-568,620
+tests/test_lifecycle.py
+  h_54e5c83907823d 35,845-870,906-914,944-945,947-949,971-989,1012-1027,1097-1105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "73d54431f73863a967124e1cdc43178b7a610b3e",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
