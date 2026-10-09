@@ -1,0 +1,4758 @@
+meta:
+  docs_read_on: '2026-10-09'
+  scope: GA and public preview. Deprecated, private preview, and classes are excluded.
+account:
+  edition: ENTERPRISE
+  cloud: AWS
+  cloud_region: US_WEST_2
+  snowflake_version: 10.36.101
+  test_role: ACCOUNTADMIN
+  checked_on: '2026-10-09'
+objects:
+- object: SCHEMA
+  variant: null
+  scope_level: database
+  status: ga
+  edition: standard
+  docs:
+    create: https://docs.snowflake.com/en/sql-reference/sql/create-schema
+    alter: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    show: https://docs.snowflake.com/en/sql-reference/sql/show-schemas
+    describe: https://docs.snowflake.com/en/sql-reference/sql/desc-schema
+  docs_read_on: 2026-10-09
+  creation_forms:
+  - CREATE [ OR REPLACE ] [ TRANSIENT ] SCHEMA [ IF NOT EXISTS] <name>; OR REPLACE and IF NOT EXISTS are mutually exclusive.
+  - CREATE OR ALTER [ TRANSIENT ] SCHEMA <name>; cannot rename, swap, clone, change tags/policies, or change transience.
+  - 'DEFINE SCHEMA: DCM-project definition-file-only equivalent of CREATE OR ALTER.'
+  - CREATE SCHEMA ... CLONE <source_schema> [ AT | BEFORE (...) ] [ IGNORE TABLES WITH INSUFFICIENT DATA RETENTION ] [ IGNORE
+    HYBRID TABLES ].
+  - CREATE SCHEMA <name> FROM BACKUP SET <backup_set> IDENTIFIER '<backup_id>'; restore preserves backed-up properties.
+  properties:
+  - name: name
+    sql: <name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER SCHEMA <name> RENAME TO <new_schema_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS column name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: RENAME may move the schema by qualifying the new name with an existing database.
+    snowcap:
+      field: name
+      n_a: Identity. A different value declares a different object.
+  - name: database
+    sql: <database>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER SCHEMA <name> RENAME TO <database>.<new_schema_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS column database_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: CREATE uses the current database unless the schema name is qualified.
+    snowcap:
+      field: null
+      n_a: Identity. snowcap sets it from the container.
+  - name: transient
+    sql: TRANSIENT
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS column options
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-schema
+    notes: Default is permanent; CREATE OR ALTER cannot convert between transient and non-transient.
+    snowcap:
+      field: transient
+      sample:
+      - true
+      - false
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_69B0469B.R00_TRANSIENT
+        L4: 'snowcap refuses: Exception: Cannot change transient property of schema'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
+  - name: swap_with
+    sql: SWAP_WITH
+    kind: identity
+    in_create: false
+    alter: action
+    alter_syntax: ALTER SCHEMA <name> SWAP WITH <target_schema_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS columns name, database_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: Swaps objects, metadata, identifiers, and access-control privileges.
+    snowcap:
+      field: null
+      n_a: One-time operation, not a declared state.
+  - name: managed_access
+    sql: MANAGED_ACCESS
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER SCHEMA <name> { ENABLE | DISABLE } MANAGED ACCESS
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS column options
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: CREATE syntax is WITH MANAGED ACCESS.
+    snowcap:
+      field: managed_access
+      sample:
+      - true
+      - false
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R01_MANAGED_ACCESS WITH MANAGED ACCESS
+        L4_sql:
+        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
+  - name: owner
+    sql: OWNERSHIP
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: GRANT OWNERSHIP ON SCHEMA <name> TO ROLE <role>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS column owner
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: ALTER SCHEMA does not provide an ownership clause; ownership transfer is GRANT OWNERSHIP.
+    snowcap:
+      field: owner
+      sample:
+      - ACCOUNTADMIN
+      - SYSADMIN
+      truth: owner
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R02_OWNER
+        L4_sql:
+        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_69B0469B.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
+  - name: tags
+    sql: WITH TAG / SET TAG
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER SCHEMA <name> { SET | UNSET } TAG <tag_name> [= <tag_value>]
+    unset: true
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: Not reported by SHOW SCHEMAS or DESCRIBE SCHEMA in these docs.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: Tag values are strings with a 256-character maximum. ALTER SET TAG is a separate statement.
+    snowcap:
+      field: tags
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: contacts
+    sql: WITH CONTACT / CONTACT
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER SCHEMA <name> { SET | UNSET } CONTACT <purpose> [= <contact_name>]
+    unset: true
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: Not reported by SHOW SCHEMAS or DESCRIBE SCHEMA in these docs.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: CONTACT cannot be set with other properties in the same ALTER statement.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: data_retention_time_in_days
+    sql: DATA_RETENTION_TIME_IN_DAYS
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET DATA_RETENTION_TIME_IN_DAYS = <integer>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS column retention_time; SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: 'Standard: 0 or 1 (default 1); Enterprise+ permits 0-90 for permanent schemas.'
+    snowcap:
+      field: data_retention_time_in_days
+      sample:
+      - 3
+      - 5
+      truth: retention_time
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
+        L4_sql:
+        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
+  - name: max_data_extension_time_in_days
+    sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-max-data-extension-time-in-days
+    notes: Maximum extension to keep streams on tables from becoming stale.
+    snowcap:
+      field: max_data_extension_time_in_days
+      sample:
+      - 10
+      - 12
+      truth: max_data_extension_time_in_days
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
+        L4_sql:
+        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
+          12
+  - name: external_volume
+    sql: EXTERNAL_VOLUME
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET EXTERNAL_VOLUME = <external_volume_name>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-external-volume
+    notes: Default external volume for Iceberg tables.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: catalog
+    sql: CATALOG
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET CATALOG = <catalog_integration_name>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-catalog
+    notes: Default catalog integration for Iceberg tables.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: iceberg_default_ddl_collation
+    sql: ICEBERG_DEFAULT_DDL_COLLATION
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET ICEBERG_DEFAULT_DDL_COLLATION = '<collation_specification>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-iceberg-default-ddl-collation
+    notes: Default is empty string; applies to new Snowflake-managed Iceberg string columns.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: iceberg_version_default
+    sql: ICEBERG_VERSION_DEFAULT
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET ICEBERG_VERSION_DEFAULT = <2|3>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-iceberg-version-default
+    notes: Default 2; format-version downgrades are unsupported.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: iceberg_merge_on_read_behavior
+    sql: ICEBERG_MERGE_ON_READ_BEHAVIOR
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET ICEBERG_MERGE_ON_READ_BEHAVIOR = '<AUTO|ENABLED|DISABLED>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: Default 'AUTO'.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: replace_invalid_characters
+    sql: REPLACE_INVALID_CHARACTERS
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET REPLACE_INVALID_CHARACTERS = <TRUE|FALSE>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Only for Iceberg tables that use an external Iceberg catalog; default FALSE.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: default_ddl_collation
+    sql: DEFAULT_DDL_COLLATION
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET DEFAULT_DDL_COLLATION = '<collation_specification>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-default-ddl-collation
+    notes: Default empty string; does not alter existing columns.
+    snowcap:
+      field: default_ddl_collation
+      sample:
+      - en-ci
+      - en-cs
+      truth: default_ddl_collation
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
+        L4_sql:
+        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
+  - name: storage_serialization_policy
+    sql: STORAGE_SERIALIZATION_POLICY
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET STORAGE_SERIALIZATION_POLICY = <COMPATIBLE|OPTIMIZED>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Only for Iceberg tables using Snowflake as catalog; default OPTIMIZED.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: classification_profile
+    sql: CLASSIFICATION_PROFILE
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET CLASSIFICATION_PROFILE = '<profile_name>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: Associates automatic sensitive-data classification profile.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: comment
+    sql: COMMENT
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET COMMENT = '<string_literal>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW SCHEMAS column comment
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: Default has no value.
+    snowcap:
+      field: comment
+      sample:
+      - a
+      - b
+      truth: comment
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R06_COMMENT COMMENT = $$a$$
+        L4_sql:
+        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R06_COMMENT SET comment = 'b'
+  - name: catalog_sync
+    sql: CATALOG_SYNC
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET CATALOG_SYNC = '<snowflake_open_catalog_integration_name>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Only for Snowflake-managed Iceberg tables synchronized with Open Catalog.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: object_visibility
+    sql: OBJECT_VISIBILITY
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET OBJECT_VISIBILITY = PRIVILEGED
+    unset: true
+    combinable: true
+    edition: standard
+    status: preview
+    read_back: SHOW SCHEMAS column object_visibility
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: Open preview, available to all accounts; only PRIVILEGED is documented.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: enable_data_compaction
+    sql: ENABLE_DATA_COMPACTION
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET ENABLE_DATA_COMPACTION = <TRUE|FALSE>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Snowflake-managed Iceberg tables only; default TRUE.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: oauth_authorization_server
+    sql: OAUTH_AUTHORIZATION_SERVER
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET OAUTH_AUTHORIZATION_SERVER = <integration_name>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: External OAuth authorization server for MCP servers; schema setting overrides database/account.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: oauth_scopes_supported
+    sql: OAUTH_SCOPES_SUPPORTED
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET OAUTH_SCOPES_SUPPORTED = '<comma_separated_scopes>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Schema setting overrides database/account.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: default_notebook_compute_pool_cpu
+    sql: DEFAULT_NOTEBOOK_COMPUTE_POOL_CPU
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET DEFAULT_NOTEBOOK_COMPUTE_POOL_CPU = '<compute_pool_name>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: ALTER syntax documents SET but not UNSET; default SYSTEM_COMPUTE_POOL_CPU.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: default_notebook_compute_pool_gpu
+    sql: DEFAULT_NOTEBOOK_COMPUTE_POOL_GPU
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET DEFAULT_NOTEBOOK_COMPUTE_POOL_GPU = '<compute_pool_name>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists schema applicability; ALTER syntax documents SET but not UNSET.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: log_level
+    sql: LOG_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET LOG_LEVEL = '<log_level>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-log-level
+    notes: CREATE OR ALTER syntax supports it; ordinary CREATE syntax does not.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: trace_level
+    sql: TRACE_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET TRACE_LEVEL = '<trace_level>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-trace-level
+    notes: CREATE OR ALTER syntax supports it; ordinary CREATE syntax does not.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: replicable_with_failover_groups
+    sql: REPLICABLE_WITH_FAILOVER_GROUPS
+    kind: property
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET REPLICABLE_WITH_FAILOVER_GROUPS = '<YES|NO>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: Not specified by SHOW SCHEMAS or DESCRIBE SCHEMA in these docs.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-schema
+    notes: Default 'YES'.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: base_location_prefix
+    sql: BASE_LOCATION_PREFIX
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET BASE_LOCATION_PREFIX = '<string>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Prefix for Snowflake-managed Iceberg-table write path; default no value.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: default_streamlit_notebook_warehouse
+    sql: DEFAULT_STREAMLIT_NOTEBOOK_WAREHOUSE
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET DEFAULT_STREAMLIT_NOTEBOOK_WAREHOUSE = '<warehouse_name>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Default warehouse when creating a notebook with SQL.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: default_metadata_write_format
+    sql: DEFAULT_METADATA_WRITE_FORMAT
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET DEFAULT_METADATA_WRITE_FORMAT = <SNOWFLAKE|ICEBERG>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page says schemas are settable with CREATE or ALTER, but the CREATE SCHEMA and ALTER SCHEMA syntaxes
+      omit this parameter. ICEBERG requires CATALOG = SNOWFLAKE at database level.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: log_event_level
+    sql: LOG_EVENT_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET LOG_EVENT_LEVEL = '<log_level>'
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: metric_level
+    sql: METRIC_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET METRIC_LEVEL = '<metric_level>'
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: purge_on_drop_table
+    sql: PURGE_ON_DROP_TABLE
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET PURGE_ON_DROP_TABLE = <TRUE|FALSE>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; applies to externally managed Iceberg tables in
+      catalog-linked databases.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: pipe_execution_paused
+    sql: PIPE_EXECUTION_PAUSED
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET PIPE_EXECUTION_PAUSED = <TRUE|FALSE>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: row_timestamp
+    sql: ROW_TIMESTAMP
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET ROW_TIMESTAMP = <TRUE|FALSE>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; enables row timestamps on tables.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: row_timestamp_default
+    sql: ROW_TIMESTAMP_DEFAULT
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET ROW_TIMESTAMP_DEFAULT = <TRUE|FALSE>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; sets default row timestamps for new tables.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: serverless_task_max_statement_size
+    sql: SERVERLESS_TASK_MAX_STATEMENT_SIZE
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET SERVERLESS_TASK_MAX_STATEMENT_SIZE = '<size>'
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; applies to serverless tasks.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: serverless_task_min_statement_size
+    sql: SERVERLESS_TASK_MIN_STATEMENT_SIZE
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET SERVERLESS_TASK_MIN_STATEMENT_SIZE = '<size>'
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; applies to serverless tasks.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: service_caller_token_validity_secs
+    sql: SERVICE_CALLER_TOKEN_VALIDITY_SECS
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET SERVICE_CALLER_TOKEN_VALIDITY_SECS = <integer>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; controls caller-rights service login-token lifetime.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: suspend_alert_after_num_failures
+    sql: SUSPEND_ALERT_AFTER_NUM_FAILURES
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET SUSPEND_ALERT_AFTER_NUM_FAILURES = <integer>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; default 0.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: suspend_task_after_num_failures
+    sql: SUSPEND_TASK_AFTER_NUM_FAILURES
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET SUSPEND_TASK_AFTER_NUM_FAILURES = <integer>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; default 10.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: task_auto_retry_attempts
+    sql: TASK_AUTO_RETRY_ATTEMPTS
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET TASK_AUTO_RETRY_ATTEMPTS = <integer>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; default 0.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: user_task_managed_initial_warehouse_size
+    sql: USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = '<size>'
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; serverless-task default MEDIUM.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: user_task_minimum_trigger_interval_in_seconds
+    sql: USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS = <number>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; range 10-604800, default 30.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: user_task_timeout_ms
+    sql: USER_TASK_TIMEOUT_MS
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER SCHEMA <name> SET USER_TASK_TIMEOUT_MS = <number>
+    unset: unknown
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN SCHEMA <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists Schema but ALTER SCHEMA syntax omits it; range 0-604800000, default 3600000.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  excluded:
+  - name: enable_iceberg_merge_on_read
+    reason: deprecated
+  - name: from_snapshot_set
+    reason: deprecated
+  snowcap:
+    class: Schema
+    test: live
+    create_args: {}
+    truth:
+    - SHOW SCHEMAS LIKE '{name}' IN DATABASE {database}
+    - SHOW PARAMETERS IN SCHEMA {fqn}
+    unmapped_fields: []
+    combined:
+      fields:
+      - comment
+      - data_retention_time_in_days
+      - default_ddl_collation
+      - max_data_extension_time_in_days
+      sql:
+      - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.COMBINED SET comment = 'b'
+      result: fail
+      missed:
+      - data_retention_time_in_days
+      - max_data_extension_time_in_days
+      - default_ddl_collation
+    tested_inputs: ef3f09a76f71
+- object: TABLE
+  variant: null
+  scope_level: schema
+  status: ga
+  edition: standard
+  docs:
+    create: https://docs.snowflake.com/en/sql-reference/sql/create-table
+    alter: https://docs.snowflake.com/en/sql-reference/sql/alter-table
+    show: https://docs.snowflake.com/en/sql-reference/sql/show-tables
+    describe: https://docs.snowflake.com/en/sql-reference/sql/desc-table
+  docs_read_on: 2026-10-09
+  creation_forms:
+  - 'CREATE TABLE: explicit column definitions.'
+  - 'CREATE OR ALTER TABLE: declaratively creates or modifies a table.'
+  - 'CTAS: CREATE TABLE ... AS SELECT.'
+  - 'USING TEMPLATE: derives columns from INFER_SCHEMA output.'
+  - 'LIKE: empty copy of a source table definition.'
+  - 'CLONE: zero-copy clone, optionally at a Time Travel point.'
+  - 'FROM ARCHIVE OF: creates from archived rows selected by WHERE.'
+  - 'FROM BACKUP SET: restores a backed-up table under a name.'
+  properties:
+  - name: name
+    sql: TABLE <table_name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> RENAME TO <new_table_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES columns name, database_name, schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#parameters
+    notes: A qualified new name can move the table to another existing schema or database.
+    snowcap:
+      field: name
+      n_a: Identity. A different value declares a different object.
+  - name: database
+    sql: <database_name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> RENAME TO <database_name>.<schema_name>.<new_table_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column database_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#parameters
+    notes: The database is supplied by qualification or current database.
+    snowcap:
+      field: null
+      n_a: Identity. snowcap sets it from the container.
+  - name: schema
+    sql: <schema_name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> RENAME TO <schema_name>.<new_table_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#parameters
+    notes: The schema is supplied by qualification or current schema.
+    snowcap:
+      field: null
+      n_a: Identity. snowcap sets it from the container.
+  - name: table_type
+    sql: TEMPORARY | TRANSIENT
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: null
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column kind
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: Absence creates a permanent table. TEMP, VOLATILE, LOCAL TEMP, and GLOBAL TEMP are TEMPORARY synonyms.
+    snowcap:
+      field: transient
+      sample:
+      - true
+      - false
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - CREATE TRANSIENT TABLE COVERAGE_TABLE_41402367.PUBLIC.R00_TABLE_TYPE (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R00_TABLE_TYPE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          61 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R00_TABLE_TYPE SET'
+        L5: fails because L4 fails
+  - name: read_only
+    sql: READ ONLY
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: null
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: Only valid for a temporary CREATE TABLE ... CLONE; permits only a restricted subset of DDL.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].name
+    sql: <col_name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> RENAME COLUMN <col_name> TO <new_col_name>
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE column name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#syntax
+    notes: ALTER syntax does not state whether RENAME COLUMN combines with other table actions.
+    snowcap:
+      field: columns[].name
+      n_a: Identity. A different value declares a different object.
+  - name: columns[].type
+    sql: <col_type>
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> SET DATA TYPE <new_type>
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE column type
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table-column
+    notes: ALTER COLUMN permits only supported conversions; for text types it can increase VARCHAR length, not decrease it.
+      Changes requiring an unsupported conversion require replacing the column/table.
+    snowcap:
+      field: columns[].data_type
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].generated_expression
+    sql: '[ GENERATED ALWAYS ] AS ( <expr> ) [ VIRTUAL ]'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: null
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE columns kind and expression
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#syntax
+    notes: Virtual columns cannot have NOT NULL, DEFAULT, or CHECK.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].not_null
+    sql: NOT NULL
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> { SET NOT NULL | DROP NOT NULL }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE column null?
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table-column
+    notes: Only NOT NULL and CHECK are enforced for standard tables; nullability defaults to allowing NULL.
+    snowcap:
+      field: columns[].not_null
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].collation
+    sql: COLLATE '<collation_specification>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: null
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE column type
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: Applies only to text columns. ALTER TABLE can specify it while adding a column, but ALTER COLUMN syntax does not
+      provide a collation change.
+    snowcap:
+      field: columns[].collate
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].default
+    sql: DEFAULT <expr>
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> { SET DEFAULT <seq_name>.NEXTVAL | DROP DEFAULT }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE column default
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table-column
+    notes: ALTER COLUMN SET DEFAULT accepts a sequence NEXTVAL; altering a general expression requires replacement.
+    snowcap:
+      field: columns[].default
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].autoincrement
+    sql: AUTOINCREMENT | IDENTITY [ ( <start>, <step> ) | START <n> INCREMENT <n> ] [ ORDER | NOORDER ]
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> SET AUTOINCREMENT ...
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#syntax
+    notes: Only numeric columns. For a non-empty table, ADD COLUMN supports only DEFAULT; docs do not state action-combination
+      rules for autoincrement.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].comment
+    sql: COMMENT '<string_literal>'
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> { SET COMMENT = '<string>' | UNSET COMMENT }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE column comment
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table-column
+    notes: ''
+    snowcap:
+      field: columns[].comment
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].masking_policy
+    sql: '[ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name>, <condition_col> ... ) ]'
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> { SET MASKING POLICY <policy_name> [ USING (...) ] [ FORCE ]
+      | UNSET MASKING POLICY }
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE column policy name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-governance-policy-and-tag-actions-datagovnpolicytagaction
+    notes: FORCE replaces an existing masking policy atomically; documentation does not state whether this action combines
+      with non-policy table actions.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].projection_policy
+    sql: '[ WITH ] PROJECTION POLICY <policy_name>'
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> { SET PROJECTION POLICY <policy_name> [ FORCE ] | UNSET PROJECTION
+      POLICY }
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-governance-policy-and-tag-actions-datagovnpolicytagaction
+    notes: Documentation does not state whether this action combines with non-policy table actions.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].tags
+    sql: WITH TAG ( <tag_name> = '<tag_value>' [ , ... ] )
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER COLUMN <col_name> { SET TAG <tag_name> = '<tag_value>' [ , ... ] | UNSET TAG <tag_name>
+      [ , ... ] }
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-governance-policy-and-tag-actions-datagovnpolicytagaction
+    notes: Tag values are strings with a maximum length of 256 characters.
+    snowcap:
+      field: columns[].tags
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].add
+    sql: ADD COLUMN
+    kind: property
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type> [ generated/default/autoincrement/inline-constraint/collation
+      ]
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#syntax
+    notes: ADD supports column default, autoincrement, generated virtual expression, inline constraint, and collation. Documentation
+      does not state general combination rules.
+    snowcap:
+      field: columns
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: columns[].drop
+    sql: DROP COLUMN
+    kind: property
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> DROP [ COLUMN ] [ IF EXISTS ] <col_name> [ , <col_name> ... ]
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE TABLE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#syntax
+    notes: Can name multiple columns; dropped columns are recoverable through Time Travel where retained.
+    snowcap:
+      field: columns
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].name
+    sql: CONSTRAINT <constraint_name>
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> RENAME CONSTRAINT <constraint_name> TO <new_constraint_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#constraint-actions-constraintaction
+    notes: CHECK constraints require a name for ALTER and DROP.
+    snowcap:
+      field: constraints
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L2: Table.props has no ''constraints'' prop, so CREATE does not render it'
+      - 'L3: the fetch function does not return ''constraints'''
+  - name: constraints[].type
+    sql: PRIMARY KEY | UNIQUE | FOREIGN KEY ... REFERENCES ... | CHECK ( <expr> )
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> { ADD <outoflineConstraint> | DROP { CONSTRAINT <name> | PRIMARY KEY | UNIQUE | FOREIGN
+      KEY } (...) }
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint
+    notes: Single-column constraints can be inline; multi-column constraints must be out-of-line. Standard-table PRIMARY KEY,
+      UNIQUE, and FOREIGN KEY constraints are not enforced.
+    snowcap:
+      field: constraints
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L2: Table.props has no ''constraints'' prop, so CREATE does not render it'
+      - 'L3: the fetch function does not return ''constraints'''
+  - name: constraints[].columns
+    sql: ( <col_name> [ , ... ] )
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ADD <outoflineConstraint>
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint
+    notes: Composite UNIQUE and PRIMARY KEY constraints must be out-of-line.
+    snowcap:
+      field: constraints
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L2: Table.props has no ''constraints'' prop, so CREATE does not render it'
+      - 'L3: the fetch function does not return ''constraints'''
+  - name: constraints[].referenced_table
+    sql: REFERENCES <ref_table_name>
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ADD FOREIGN KEY (...) REFERENCES <ref_table_name> (...)
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint
+    notes: Creating a foreign key requires REFERENCES privilege on the referenced primary/unique-key table.
+    snowcap:
+      field: constraints
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L2: Table.props has no ''constraints'' prop, so CREATE does not render it'
+      - 'L3: the fetch function does not return ''constraints'''
+  - name: constraints[].referenced_columns
+    sql: REFERENCES <ref_table_name> ( <ref_col_name> [ , ... ] )
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ADD FOREIGN KEY (...) REFERENCES <ref_table_name> ( <ref_col_name> [ , ... ] )
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint
+    notes: May be omitted when foreign-key and referenced primary-key signatures exactly match.
+    snowcap:
+      field: constraints
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L2: Table.props has no ''constraints'' prop, so CREATE does not render it'
+      - 'L3: the fetch function does not return ''constraints'''
+  - name: constraints[].expression
+    sql: CHECK ( <expr> )
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ADD CONSTRAINT <name> CHECK ( <expr> )
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-check-constraints-only
+    notes: CHECK is enforced for standard tables. Inline CHECK references only its own column; an out-of-line CHECK can span
+      columns.
+    snowcap:
+      field: constraints
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L2: Table.props has no ''constraints'' prop, so CREATE does not render it'
+      - 'L3: the fetch function does not return ''constraints'''
+  - name: constraints[].enforced
+    sql: '[ NOT ] ENFORCED '
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> { ENFORCED | NOT ENFORCED }
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-all-constraints
+    notes: Default is NOT ENFORCED. Standard tables enforce only NOT NULL and CHECK.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].deferrable
+    sql: '{ DEFERRABLE | NOT DEFERRABLE }'
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> { DEFERRABLE | NOT DEFERRABLE }
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-all-constraints
+    notes: Default is NOT DEFERRABLE.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].initially
+    sql: INITIALLY { DEFERRED | IMMEDIATE }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> INITIALLY { DEFERRED | IMMEDIATE }
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-all-constraints
+    notes: Default is INITIALLY DEFERRED.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].enabled
+    sql: '{ ENABLE | DISABLE }'
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> { ENABLE | DISABLE }
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-all-constraints
+    notes: Compatibility syntax; default is DISABLE. Non-default ENABLE on PRIMARY KEY, UNIQUE, or FOREIGN KEY prevents creation.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].validate
+    sql: '{ VALIDATE | NOVALIDATE }'
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> { VALIDATE | NOVALIDATE }
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-all-constraints
+    notes: PRIMARY KEY and FOREIGN KEY default to NOVALIDATE; CHECK defaults to VALIDATE. VALIDATE is not supported for CHECK
+      on an existing table.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].rely
+    sql: '{ RELY | NORELY }'
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> { RELY | NORELY }
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-all-constraints
+    notes: Default is NORELY. RELY allows optimizer query rewrite and is the user's responsibility for standard-table constraints.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].match
+    sql: MATCH { FULL | SIMPLE | PARTIAL }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> MATCH { FULL | SIMPLE | PARTIAL }
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-foreign-key-constraints-only
+    notes: FOREIGN KEY only; default is MATCH FULL.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].on_update
+    sql: ON UPDATE { CASCADE | SET NULL | SET DEFAULT | RESTRICT | NO ACTION }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> ON UPDATE <action>
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-foreign-key-constraints-only
+    notes: FOREIGN KEY only; default is NO ACTION.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].on_delete
+    sql: ON DELETE { CASCADE | SET NULL | SET DEFAULT | RESTRICT | NO ACTION }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> ALTER CONSTRAINT <constraint_name> ON DELETE <action>
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#properties-for-foreign-key-constraints-only
+    notes: FOREIGN KEY only; default is NO ACTION.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: constraints[].comment
+    sql: COMMENT '<string_literal>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: null
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint#comments-on-constraints
+    notes: Only out-of-line constraints support this clause. DESCRIBE TABLE does not show constraint comments.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: cluster_by
+    sql: CLUSTER BY ( <expr> [ , ... ] )
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> CLUSTER BY ( <expr> [ , ... ] )
+    unset: true
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column cluster_by
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#clustering-actions-clusteringaction
+    notes: No clustering key is the default. DROP CLUSTERING KEY removes it.
+    snowcap:
+      field: cluster_by
+      sample:
+      - - ID
+      - - NAME
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET CLUSTER BY (NAME)''], docs syntax is ''ALTER TABLE
+        <name> CLUSTER BY ( <expr> [ , ... ] )'''
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R01_CLUSTER_BY (ID NUMBER(38,0), NAME VARCHAR(16777216)) CLUSTER BY
+          (ID) ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R01_CLUSTER_BY SET CLUSTER BY (NAME)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          70 unexpected ''BY''. syntax error line 1 at position 78 unexpected '')''. on: ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R01_CLUSTER_BY
+          SET CLUSTER BY (NAME)'
+        L5: fails because L4 fails
+  - name: clustering_key_drop
+    sql: DROP CLUSTERING KEY
+    kind: property
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> DROP CLUSTERING KEY
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column cluster_by
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#clustering-actions-clusteringaction
+    notes: Separate clustering action.
+    snowcap:
+      field: cluster_by
+      n_a: Covered by the cluster_by row (an unset value).
+  - name: reclustering
+    sql: '{ SUSPEND | RESUME } RECLUSTER'
+    kind: property
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> { SUSPEND | RESUME } RECLUSTER
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column auto_clustering_on
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#clustering-actions-clusteringaction
+    notes: RECLUSTER itself is deprecated and excluded; SUSPEND/RESUME RECLUSTER remains valid.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: search_optimization
+    sql: ADD SEARCH OPTIMIZATION [ ON <search_method_with_target> [ , ... ] ]
+    kind: property
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> { ADD | DROP } SEARCH OPTIMIZATION [ ON ... ]
+    unset: true
+    combinable: false
+    edition: enterprise
+    status: ga
+    read_back: SHOW TABLES column search_optimization
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#search-optimization-actions-searchoptimizationaction
+    notes: ADD/DROP SEARCH OPTIMIZATION are separate ALTER actions.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: data_retention_time_in_days
+    sql: DATA_RETENTION_TIME_IN_DAYS
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET DATA_RETENTION_TIME_IN_DAYS = <n>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column retention_time
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-data-retention-time-in-days
+    notes: Standard Edition permits 0 or 1; Enterprise permits 0-90 for permanent tables and 0-1 for temporary/transient tables.
+    snowcap:
+      field: data_retention_time_in_days
+      sample:
+      - 3
+      - 5
+      truth: retention_time
+      levels:
+        L1: pass
+        L2: pass
+        L3: fail
+        L4: pass
+        L5: fail
+      candidates:
+      - 'L3: the fetch function does not return ''data_retention_time_in_days'''
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R02_DATA_RETENTION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE DATA_RETENTION_TIME_IN_DAYS = 3 CHANGE_TRACKING = FALSE
+        L3: Snowflake reports retention_time='3', snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R02_DATA_RETENTION_TIME_IN_DAYS SET DATA_RETENTION_TIME_IN_DAYS = 5
+        L5: 'plan after create: ["update [''data_retention_time_in_days'']"]; plan after change: ["update [''data_retention_time_in_days'']"]'
+  - name: max_data_extension_time_in_days
+    sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET MAX_DATA_EXTENSION_TIME_IN_DAYS = <n>
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN TABLE <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-max-data-extension-time-in-days
+    notes: Range is 0-90; default is 14. Limits automatic retention extension for unconsumed streams.
+    snowcap:
+      field: max_data_extension_time_in_days
+      sample:
+      - 10
+      - 12
+      truth: max_data_extension_time_in_days
+      levels:
+        L1: pass
+        L2: pass
+        L3: fail
+        L4: pass
+        L5: fail
+      candidates:
+      - 'L3: the fetch function does not return ''max_data_extension_time_in_days'''
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R03_MAX_DATA_EXTENSION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE MAX_DATA_EXTENSION_TIME_IN_DAYS = 10 CHANGE_TRACKING = FALSE
+        L3: Snowflake reports max_data_extension_time_in_days='10', snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R03_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
+          = 12
+        L5: 'plan after create: ["update [''max_data_extension_time_in_days'']"]; plan after change: ["update [''max_data_extension_time_in_days'']"]'
+  - name: change_tracking
+    sql: CHANGE_TRACKING
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET CHANGE_TRACKING = { TRUE | FALSE }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column change_tracking
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#parameters
+    notes: Default is FALSE. TRUE adds hidden metadata columns.
+    snowcap:
+      field: change_tracking
+      sample:
+      - true
+      - false
+      truth: change_tracking
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R04_CHANGE_TRACKING (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = TRUE
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R04_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
+  - name: default_ddl_collation
+    sql: DEFAULT_DDL_COLLATION
+    kind: parameter
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET DEFAULT_DDL_COLLATION = '<collation_specification>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN TABLE <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-default-ddl-collation
+    notes: Default is empty string. Sets the default collation for subsequently created text columns.
+    snowcap:
+      field: default_ddl_collation
+      sample:
+      - en-ci
+      - en-cs
+      truth: default_ddl_collation
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R05_DEFAULT_DDL_COLLATION (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE DEFAULT_DDL_COLLATION = $$en-ci$$
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R05_DEFAULT_DDL_COLLATION SET DEFAULT_DDL_COLLATION = $$en-cs$$
+  - name: enable_schema_evolution
+    sql: ENABLE_SCHEMA_EVOLUTION
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column enable_schema_evolution
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: Default is FALSE. Evolution can add columns and drop NOT NULL when COPY INTO prerequisites are met.
+    snowcap:
+      field: enable_schema_evolution
+      sample:
+      - true
+      - false
+      truth: enable_schema_evolution
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R06_ENABLE_SCHEMA_EVOLUTION (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = TRUE CHANGE_TRACKING = FALSE
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R06_ENABLE_SCHEMA_EVOLUTION SET ENABLE_SCHEMA_EVOLUTION = FALSE
+  - name: error_logging
+    sql: ERROR_LOGGING
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET ERROR_LOGGING = { TRUE | FALSE }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: A session OPT_OUT_ERROR_LOGGING value of TRUE prevents DML error logging regardless of the table setting.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: row_timestamp
+    sql: ROW_TIMESTAMP
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET ROW_TIMESTAMP = { TRUE | FALSE }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: Requires OWNERSHIP.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: data_metric_schedule
+    sql: DATA_METRIC_SCHEDULE
+    kind: parameter
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> { SET DATA_METRIC_SCHEDULE = '<n> MINUTE' | 'USING CRON ...' | 'TRIGGER_ON_CHANGES' |
+      UNSET DATA_METRIC_SCHEDULE }
+    unset: true
+    combinable: false
+    edition: enterprise
+    status: ga
+    read_back: SHOW PARAMETERS IN TABLE <name>
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-data-metric-schedule
+    notes: Data Quality Monitoring requires Enterprise Edition; default is 60 MINUTE.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: data_metric_functions
+    sql: ADD | DROP | MODIFY DATA METRIC FUNCTION
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> { ADD | DROP | MODIFY } DATA METRIC FUNCTION <metric_name> ON (...) ...
+    unset: true
+    combinable: unknown
+    edition: enterprise
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-metric-function-actions-datametricfunctionaction
+    notes: Supports association columns, optional grouping/filter/expectations/execution role, and suspend/resume. General
+      combination with other ALTER action families is not stated.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: data_metric_functions[].anomaly_detection
+    sql: ANOMALY_DETECTION
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> { ADD | MODIFY } DATA METRIC FUNCTION <metric_name> ON (...) SET ANOMALY_DETECTION =
+      { TRUE | FALSE }
+    unset: false
+    combinable: true
+    edition: enterprise
+    status: preview
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-metric-function-actions-datametricfunctionaction
+    notes: Open preview; available to Enterprise Edition or higher.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: data_metric_functions[].sensitivity
+    sql: SENSITIVITY
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> { ADD | MODIFY } DATA METRIC FUNCTION <metric_name> ON (...) SET SENSITIVITY = { LOW
+      | MEDIUM | HIGH }
+    unset: false
+    combinable: true
+    edition: enterprise
+    status: preview
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-metric-function-actions-datametricfunctionaction
+    notes: Open preview; default is MEDIUM.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: data_metric_functions[].data_quality_notification
+    sql: DATA_QUALITY_NOTIFICATION
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> MODIFY DATA METRIC FUNCTION <metric_name> ON (...) SET DATA_QUALITY_NOTIFICATION = {
+      TRUE | FALSE }
+    unset: false
+    combinable: true
+    edition: enterprise
+    status: preview
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-metric-function-actions-datametricfunctionaction
+    notes: Open preview; default is TRUE.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: comment
+    sql: COMMENT
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET COMMENT = '<string_literal>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column comment
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#syntax
+    notes: ''
+    snowcap:
+      field: comment
+      sample:
+      - a
+      - b
+      truth: comment
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R07_COMMENT (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R07_COMMENT SET COMMENT = $$b$$
+  - name: tags
+    sql: WITH TAG ( <tag_name> = '<tag_value>' [ , ... ] )
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> { SET TAG <tag_name> = '<tag_value>' [ , ... ] | UNSET TAG <tag_name> [ , ... ] }
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-governance-policy-and-tag-actions-datagovnpolicytagaction
+    notes: Tag values are strings with a maximum length of 256 characters.
+    snowcap:
+      field: tags
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: contacts
+    sql: WITH CONTACT ( <purpose> = <contact_name> [ , ... ] )
+    kind: relationship
+    in_create: true
+    alter: set
+    alter_syntax: ALTER TABLE <name> SET CONTACT <purpose> = <contact_name> [ , ... ]
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#syntax
+    notes: CREATE requires WITH CONTACT; ALTER SET uses CONTACT.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: row_access_policy
+    sql: WITH ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] )
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> { ADD ROW ACCESS POLICY <policy_name> ON (...) | DROP ROW ACCESS POLICY <policy_name>
+      | DROP ALL ROW ACCESS POLICIES }
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-governance-policy-and-tag-actions-datagovnpolicytagaction
+    notes: ALTER explicitly permits dropping one policy and adding another in one statement.
+    snowcap:
+      field: row_access_policy
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L2: Table.props has no ''row_access_policy'' prop, so CREATE does not render it'
+      - 'L3: the fetch function does not return ''row_access_policy'''
+  - name: aggregation_policy
+    sql: WITH AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , ... ] ) ]
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> { SET AGGREGATION POLICY <policy_name> [ ENTITY KEY (...) ] [ FORCE ] | UNSET AGGREGATION
+      POLICY }
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-governance-policy-and-tag-actions-datagovnpolicytagaction
+    notes: FORCE atomically replaces an existing aggregation policy.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: join_policy
+    sql: WITH JOIN POLICY <policy_name> [ ALLOWED JOIN KEYS ( <col_name> [ , ... ] ) ]
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> { SET JOIN POLICY <policy_name> [ FORCE ] | UNSET JOIN POLICY }
+    unset: true
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#data-governance-policy-and-tag-actions-datagovnpolicytagaction
+    notes: CREATE supports ALLOWED JOIN KEYS; ALTER syntax shown for SET JOIN POLICY does not include it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: storage_lifecycle_policy
+    sql: WITH STORAGE LIFECYCLE POLICY <policy_name> ON ( <col_name> [ , ... ] )
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: ALTER TABLE <name> { ADD STORAGE LIFECYCLE POLICY <policy_name> ON (...) | DROP STORAGE LIFECYCLE POLICY
+      }
+    unset: true
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#parameters
+    notes: An archival policy permanently assigns an archive tier for the table lifetime; a different tier cannot subsequently
+      be applied.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: grants
+    sql: COPY GRANTS
+    kind: relationship
+    in_create: true
+    alter: none
+    alter_syntax: null
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: Available for CREATE OR REPLACE, LIKE, and CLONE; copies all privileges except OWNERSHIP.
+    snowcap:
+      field: null
+      n_a: 'Separate snowcap resource: Grant.'
+  - name: tags_copy
+    sql: COPY TAGS
+    kind: relationship
+    in_create: true
+    alter: none
+    alter_syntax: null
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: GET_DDL
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-table#optional-parameters
+    notes: Available for CREATE OR REPLACE forms; combines tags from applicable sources, with retained replacement-table values
+      taking precedence.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: ownership
+    sql: OWNERSHIP
+    kind: relationship
+    in_create: true
+    alter: action
+    alter_syntax: GRANT OWNERSHIP ON TABLE <name> TO ROLE <role>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES column owner
+    docs: https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+    notes: The role executing CREATE owns the new table unless ownership is subsequently transferred by GRANT OWNERSHIP.
+    snowcap:
+      field: owner
+      sample:
+      - ACCOUNTADMIN
+      - SYSADMIN
+      truth: owner
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R08_OWNERSHIP (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L4_sql:
+        - GRANT OWNERSHIP ON TABLE COVERAGE_TABLE_41402367.PUBLIC.R08_OWNERSHIP TO ROLE SYSADMIN COPY CURRENT GRANTS
+  - name: swap_with
+    sql: SWAP WITH <target_table_name>
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER TABLE <name> SWAP WITH <target_table_name>
+    unset: false
+    combinable: false
+    edition: standard
+    status: ga
+    read_back: SHOW TABLES columns name, database_name, schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-table#parameters
+    notes: A permanent/transient table cannot swap with a temporary table.
+    snowcap:
+      field: null
+      n_a: One-time operation, not a declared state.
+  excluded:
+  - name: RECLUSTER
+    reason: deprecated
+  - name: FROM SNAPSHOT SET
+    reason: deprecated
+  - name: ICEBERG_DEFAULT_DDL_COLLATION
+    reason: private preview
+  snowcap:
+    class: Table
+    test: live
+    create_args:
+      columns:
+      - name: ID
+        data_type: NUMBER(38,0)
+      - name: NAME
+        data_type: VARCHAR(16777216)
+    truth:
+    - SHOW TABLES LIKE '{name}' IN SCHEMA {container}
+    - SHOW PARAMETERS IN TABLE {fqn}
+    creation_options:
+    - copy_grants
+    unmapped_fields: []
+    combined:
+      fields:
+      - change_tracking
+      - comment
+      - data_retention_time_in_days
+      - default_ddl_collation
+      - enable_schema_evolution
+      - max_data_extension_time_in_days
+      sql:
+      - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.COMBINED SET COMMENT = $$b$$
+      result: fail
+      missed:
+      - data_retention_time_in_days
+      - max_data_extension_time_in_days
+      - change_tracking
+      - default_ddl_collation
+      - enable_schema_evolution
+    tested_inputs: 57341f3bf8fe
+- object: PROCEDURE
+  variant: python
+  scope_level: schema
+  status: ga
+  edition: standard
+  docs:
+    create: https://docs.snowflake.com/en/sql-reference/sql/create-procedure#python-handler
+    alter: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    show: https://docs.snowflake.com/en/sql-reference/sql/show-procedures
+    describe: https://docs.snowflake.com/en/sql-reference/sql/desc-procedure
+  docs_read_on: '2026-10-09'
+  creation_forms:
+  - CREATE [ OR REPLACE ] PROCEDURE; COPY GRANTS keeps all grants except OWNERSHIP on replace.
+  - 'CREATE OR ALTER PROCEDURE: changes only the properties the CREATE page lists for it.'
+  - 'DEFINE PROCEDURE: DCM project definition files only.'
+  properties:
+  - name: name
+    sql: <name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) RENAME TO <new_name>
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: name
+      n_a: Identity. A different value declares a different object.
+  - name: database
+    sql: <database>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column catalog_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+      n_a: Identity. snowcap sets it from the container.
+  - name: schema
+    sql: <schema>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+      n_a: Identity. snowcap sets it from the container.
+  - name: argument_signature
+    sql: ( <arg_name> <arg_data_type> [ DEFAULT <expr> ] , ... )
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row signature
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Name plus argument types identify the overload. ALTER PROCEDURE: ''If you need to make any changes not supported
+      here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: args
+      n_a: Identity. A different value declares a different object.
+  - name: returns
+    sql: RETURNS { <result_data_type> | TABLE ( ... ) }
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row returns
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: returns
+      sample:
+      - VARCHAR
+      - NUMBER
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R00_RETURNS () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
+          \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4_sql:
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R00_RETURNS() SET returns NUMBER
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          84 unexpected ''NUMBER''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R00_RETURNS() SET returns
+          NUMBER'
+        L5: fails because L4 fails
+  - name: language
+    sql: LANGUAGE <language>
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row language
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: language
+      n_a: Identity. The language selects the variant.
+  - name: null_handling
+    sql: '{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } }'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row null handling
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Default CALLED ON NULL INPUT. CREATE OR ALTER does not list it. ALTER PROCEDURE: ''If you need to make any changes
+      not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null_handling
+      sample:
+      - RETURNS NULL ON NULL INPUT
+      - CALLED ON NULL INPUT
+      truth: null handling
+      levels:
+        L1: pass
+        L2: fail
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L2: PythonStoredProcedure.props has no ''null_handling'' prop, so CREATE does not render it'
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R01_NULL_HANDLING () returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined\
+          \ procedure$$ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n\
+          $$"
+        L2: declared 'RETURNS NULL ON NULL INPUT', Snowflake reports null handling='CALLED ON NULL INPUT'
+        L4_sql:
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R01_NULL_HANDLING() SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          81 unexpected ''<EOF>''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R01_NULL_HANDLING() SET'
+        L5: 'plan after create: ["update [''null_handling'']"]; plan after change: []'
+  - name: comment
+    sql: COMMENT
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET COMMENT = '<string_literal>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column description
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: comment
+      sample:
+      - a
+      - b
+      truth: description
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R02_COMMENT () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$a$$ execute as CALLER AS\
+          \ $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4_sql:
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R02_COMMENT() SET COMMENT = $$b$$
+  - name: execute_as
+    sql: EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row execute as
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: RESTRICTED CALLER is open preview. Default OWNER.
+    snowcap:
+      field: execute_as
+      sample:
+      - CALLER
+      - OWNER
+      truth: execute as
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R03_EXECUTE_AS () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
+          \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4_sql:
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R03_EXECUTE_AS() EXECUTE AS OWNER
+  - name: body
+    sql: AS '<procedure_definition>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row body
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: as_
+      sample:
+      - "def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n"
+      - "def main(session):\n    return 'c'\n\ndef main2(session):\n    return 'd'\n"
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R04_BODY () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
+          \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4_sql:
+        - "ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R04_BODY() SET AS $$def main(session):\n    return 'c'\n\
+          \ndef main2(session):\n    return 'd'\n$$"
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          73 unexpected ''AS''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R04_BODY() SET AS $$def main(session):
+          return ''c'' def main2(session): return ''d'' $ ...'
+        L5: fails because L4 fails
+  - name: tags
+    sql: TAG ( <tag_name> = '<tag_value>' , ... )
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) { SET | UNSET } TAG <tag_name> [ = '<tag_value>' ]
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: TAG_REFERENCES table function
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE.
+    snowcap:
+      field: tags
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: owner
+    sql: OWNERSHIP
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: GRANT OWNERSHIP ON PROCEDURE <name> ( <arg_types> ) TO ROLE <role>
+    unset: false
+    combinable: 'false'
+    edition: standard
+    status: ga
+    read_back: SHOW GRANTS ON PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+    notes: ''
+    snowcap:
+      field: owner
+      sample:
+      - ACCOUNTADMIN
+      - SYSADMIN
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates: []
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R05_OWNER () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
+          \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4_sql:
+        - GRANT OWNERSHIP ON PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R05_OWNER() TO ROLE SYSADMIN COPY CURRENT
+          GRANTS
+  - name: log_level
+    sql: LOG_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET LOG_LEVEL = '<log_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: trace_level
+    sql: TRACE_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET TRACE_LEVEL = '<trace_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: log_event_level
+    sql: LOG_EVENT_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: metric_level
+    sql: METRIC_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: secure
+    sql: SECURE
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column is_secure
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: secure
+      sample:
+      - true
+      - false
+      truth: is_secure
+      levels:
+        L1: pass
+        L2: fail
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 70 unexpected
+          ''SECURE''. on: CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R06_SECURE SECURE () returns VARCHAR
+          language PYTHON RUNTIME_VERSION = $$3.11$$ P ...'
+  - name: temporary
+    sql: TEMPORARY
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: Not documented by SHOW or DESCRIBE.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: runtime_version
+    sql: RUNTIME_VERSION = '<version>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row runtime_version
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: runtime_version
+      sample:
+      - '3.11'
+      - '3.12'
+      truth: runtime_version
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R07_RUNTIME_VERSION () returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined\
+          \ procedure$$ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n\
+          $$"
+        L4_sql:
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 000002 (0A000): Unsupported feature ''ALTER PROCEDURE SET RUNTIME_VERSION''.
+          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$'
+        L5: fails because L4 fails
+  - name: artifact_repository
+    sql: ARTIFACT_REPOSITORY = <repository>
+    kind: relationship
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: Not documented by SHOW or DESCRIBE.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: packages
+    sql: PACKAGES = ( '<package>' , ... )
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row packages
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. Python version ranges are open preview. ALTER PROCEDURE: ''If you need to make
+      any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: packages
+      sample:
+      - - snowflake-snowpark-python
+      - - snowflake-snowpark-python
+        - pyyaml
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R08_PACKAGES () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
+          \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4_sql:
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
+          $$pyyaml$$)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 000002 (0A000): Unsupported feature ''ALTER PROCEDURE SET PACKAGES''.
+          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
+          $$pyyaml$$)'
+        L5: fails because L4 fails
+  - name: imports
+    sql: IMPORTS = ( '<stage_path>' , ... )
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row imports
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: imports
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: handler
+    sql: HANDLER = '<handler>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row handler
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: handler
+      sample:
+      - main
+      - main2
+      truth: handler
+      levels:
+        L1: pass
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER'
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R09_HANDLER () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
+          \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4_sql:
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''HANDLER''
+          for ''PROCEDURE'' on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$'
+        L5: fails because L4 fails
+  - name: external_access_integrations
+    sql: EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
+    kind: relationship
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW USER PROCEDURES column external_access_integrations
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: external_access_integrations
+      levels:
+        L1: pass
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  - name: secrets
+    sql: SECRETS = ( '<secret_variable_name>' = <secret_name> , ... )
+    kind: relationship
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET SECRETS = ( ... )
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW USER PROCEDURES column secrets
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+      levels:
+        L1: fail
+        L2: untested
+        L3: untested
+        L4: untested
+        L5: untested
+      candidates: []
+  excluded:
+  - name: volatile
+    reason: deprecated
+  - name: immutable
+    reason: deprecated
+  snowcap:
+    class: PythonStoredProcedure
+    test: live
+    create_args:
+      args: []
+      returns: VARCHAR
+      runtime_version: '3.11'
+      packages:
+      - snowflake-snowpark-python
+      handler: main
+      as_: "def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n"
+    truth:
+    - SHOW PROCEDURES LIKE '{name}' IN SCHEMA {container}
+    - DESCRIBE PROCEDURE {fqn}
+    - SHOW PARAMETERS IN PROCEDURE {fqn}
+    creation_options:
+    - copy_grants
+    unmapped_fields: []
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: c060e90dca29
+- object: PROCEDURE
+  variant: java
+  scope_level: schema
+  status: ga
+  edition: standard
+  docs:
+    create: https://docs.snowflake.com/en/sql-reference/sql/create-procedure#java-handler
+    alter: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    show: https://docs.snowflake.com/en/sql-reference/sql/show-procedures
+    describe: https://docs.snowflake.com/en/sql-reference/sql/desc-procedure
+  docs_read_on: '2026-10-09'
+  creation_forms:
+  - CREATE [ OR REPLACE ] PROCEDURE; COPY GRANTS keeps all grants except OWNERSHIP on replace.
+  - 'CREATE OR ALTER PROCEDURE: changes only the properties the CREATE page lists for it.'
+  - 'DEFINE PROCEDURE: DCM project definition files only.'
+  properties:
+  - name: name
+    sql: <name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) RENAME TO <new_name>
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: database
+    sql: <database>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column catalog_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: schema
+    sql: <schema>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: argument_signature
+    sql: ( <arg_name> <arg_data_type> [ DEFAULT <expr> ] , ... )
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row signature
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Name plus argument types identify the overload. ALTER PROCEDURE: ''If you need to make any changes not supported
+      here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: returns
+    sql: RETURNS { <result_data_type> | TABLE ( ... ) }
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row returns
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: language
+    sql: LANGUAGE <language>
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row language
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: null_handling
+    sql: '{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } }'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row null handling
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Default CALLED ON NULL INPUT. CREATE OR ALTER does not list it. ALTER PROCEDURE: ''If you need to make any changes
+      not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: comment
+    sql: COMMENT
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET COMMENT = '<string_literal>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column description
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: execute_as
+    sql: EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row execute as
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: RESTRICTED CALLER is open preview. Default OWNER.
+    snowcap:
+      field: null
+  - name: body
+    sql: AS '<procedure_definition>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row body
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: tags
+    sql: TAG ( <tag_name> = '<tag_value>' , ... )
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) { SET | UNSET } TAG <tag_name> [ = '<tag_value>' ]
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: TAG_REFERENCES table function
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE.
+    snowcap:
+      field: null
+  - name: owner
+    sql: OWNERSHIP
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: GRANT OWNERSHIP ON PROCEDURE <name> ( <arg_types> ) TO ROLE <role>
+    unset: false
+    combinable: 'false'
+    edition: standard
+    status: ga
+    read_back: SHOW GRANTS ON PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+    notes: ''
+    snowcap:
+      field: null
+  - name: log_level
+    sql: LOG_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET LOG_LEVEL = '<log_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: trace_level
+    sql: TRACE_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET TRACE_LEVEL = '<trace_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: log_event_level
+    sql: LOG_EVENT_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: metric_level
+    sql: METRIC_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: secure
+    sql: SECURE
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column is_secure
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: temporary
+    sql: TEMPORARY
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: Not documented by SHOW or DESCRIBE.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: runtime_version
+    sql: RUNTIME_VERSION = '<version>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row runtime_version
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: packages
+    sql: PACKAGES = ( '<package>' , ... )
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row packages
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. Python version ranges are open preview. ALTER PROCEDURE: ''If you need to make
+      any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: imports
+    sql: IMPORTS = ( '<stage_path>' , ... )
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row imports
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: handler
+    sql: HANDLER = '<handler>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row handler
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: target_path
+    sql: TARGET_PATH = '<stage_path>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: Not documented by SHOW or DESCRIBE.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Inline handler only. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE
+      instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: external_access_integrations
+    sql: EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
+    kind: relationship
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW USER PROCEDURES column external_access_integrations
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: secrets
+    sql: SECRETS = ( '<secret_variable_name>' = <secret_name> , ... )
+    kind: relationship
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET SECRETS = ( ... )
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW USER PROCEDURES column secrets
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  excluded:
+  - name: volatile
+    reason: deprecated
+  - name: immutable
+    reason: deprecated
+  snowcap:
+    class: null
+    test: untested
+- object: PROCEDURE
+  variant: scala
+  scope_level: schema
+  status: ga
+  edition: standard
+  docs:
+    create: https://docs.snowflake.com/en/sql-reference/sql/create-procedure#scala-handler
+    alter: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    show: https://docs.snowflake.com/en/sql-reference/sql/show-procedures
+    describe: https://docs.snowflake.com/en/sql-reference/sql/desc-procedure
+  docs_read_on: '2026-10-09'
+  creation_forms:
+  - CREATE [ OR REPLACE ] PROCEDURE; COPY GRANTS keeps all grants except OWNERSHIP on replace.
+  - 'CREATE OR ALTER PROCEDURE: changes only the properties the CREATE page lists for it.'
+  - 'DEFINE PROCEDURE: DCM project definition files only.'
+  properties:
+  - name: name
+    sql: <name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) RENAME TO <new_name>
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: database
+    sql: <database>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column catalog_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: schema
+    sql: <schema>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: argument_signature
+    sql: ( <arg_name> <arg_data_type> [ DEFAULT <expr> ] , ... )
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row signature
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Name plus argument types identify the overload. ALTER PROCEDURE: ''If you need to make any changes not supported
+      here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: returns
+    sql: RETURNS { <result_data_type> | TABLE ( ... ) }
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row returns
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: language
+    sql: LANGUAGE <language>
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row language
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: null_handling
+    sql: '{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } }'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row null handling
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Default CALLED ON NULL INPUT. CREATE OR ALTER does not list it. ALTER PROCEDURE: ''If you need to make any changes
+      not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: comment
+    sql: COMMENT
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET COMMENT = '<string_literal>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column description
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: execute_as
+    sql: EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row execute as
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: RESTRICTED CALLER is open preview. Default OWNER.
+    snowcap:
+      field: null
+  - name: body
+    sql: AS '<procedure_definition>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row body
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: tags
+    sql: TAG ( <tag_name> = '<tag_value>' , ... )
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) { SET | UNSET } TAG <tag_name> [ = '<tag_value>' ]
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: TAG_REFERENCES table function
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE.
+    snowcap:
+      field: null
+  - name: owner
+    sql: OWNERSHIP
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: GRANT OWNERSHIP ON PROCEDURE <name> ( <arg_types> ) TO ROLE <role>
+    unset: false
+    combinable: 'false'
+    edition: standard
+    status: ga
+    read_back: SHOW GRANTS ON PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+    notes: ''
+    snowcap:
+      field: null
+  - name: log_level
+    sql: LOG_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET LOG_LEVEL = '<log_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: trace_level
+    sql: TRACE_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET TRACE_LEVEL = '<trace_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: log_event_level
+    sql: LOG_EVENT_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: metric_level
+    sql: METRIC_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: secure
+    sql: SECURE
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column is_secure
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: runtime_version
+    sql: RUNTIME_VERSION = '<version>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row runtime_version
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: packages
+    sql: PACKAGES = ( '<package>' , ... )
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row packages
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. Python version ranges are open preview. ALTER PROCEDURE: ''If you need to make
+      any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: imports
+    sql: IMPORTS = ( '<stage_path>' , ... )
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row imports
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: handler
+    sql: HANDLER = '<handler>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row handler
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: target_path
+    sql: TARGET_PATH = '<stage_path>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: Not documented by SHOW or DESCRIBE.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Inline handler only. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE
+      instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: external_access_integrations
+    sql: EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
+    kind: relationship
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW USER PROCEDURES column external_access_integrations
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: secrets
+    sql: SECRETS = ( '<secret_variable_name>' = <secret_name> , ... )
+    kind: relationship
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET SECRETS = ( ... )
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW USER PROCEDURES column secrets
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  excluded:
+  - name: volatile
+    reason: deprecated
+  - name: immutable
+    reason: deprecated
+  snowcap:
+    class: null
+    test: untested
+- object: PROCEDURE
+  variant: javascript
+  scope_level: schema
+  status: ga
+  edition: standard
+  docs:
+    create: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    alter: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    show: https://docs.snowflake.com/en/sql-reference/sql/show-procedures
+    describe: https://docs.snowflake.com/en/sql-reference/sql/desc-procedure
+  docs_read_on: '2026-10-09'
+  creation_forms:
+  - CREATE [ OR REPLACE ] PROCEDURE; COPY GRANTS keeps all grants except OWNERSHIP on replace.
+  - 'CREATE OR ALTER PROCEDURE: changes only the properties the CREATE page lists for it.'
+  - 'DEFINE PROCEDURE: DCM project definition files only.'
+  properties:
+  - name: name
+    sql: <name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) RENAME TO <new_name>
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: database
+    sql: <database>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column catalog_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: schema
+    sql: <schema>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: argument_signature
+    sql: ( <arg_name> <arg_data_type> [ DEFAULT <expr> ] , ... )
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row signature
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Name plus argument types identify the overload. ALTER PROCEDURE: ''If you need to make any changes not supported
+      here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: returns
+    sql: RETURNS { <result_data_type> | TABLE ( ... ) }
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row returns
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: language
+    sql: LANGUAGE <language>
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row language
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: null_handling
+    sql: '{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } }'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row null handling
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Default CALLED ON NULL INPUT. CREATE OR ALTER does not list it. ALTER PROCEDURE: ''If you need to make any changes
+      not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: comment
+    sql: COMMENT
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET COMMENT = '<string_literal>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column description
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: execute_as
+    sql: EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row execute as
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: RESTRICTED CALLER is open preview. Default OWNER.
+    snowcap:
+      field: null
+  - name: body
+    sql: AS '<procedure_definition>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row body
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: tags
+    sql: TAG ( <tag_name> = '<tag_value>' , ... )
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) { SET | UNSET } TAG <tag_name> [ = '<tag_value>' ]
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: TAG_REFERENCES table function
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE.
+    snowcap:
+      field: null
+  - name: owner
+    sql: OWNERSHIP
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: GRANT OWNERSHIP ON PROCEDURE <name> ( <arg_types> ) TO ROLE <role>
+    unset: false
+    combinable: 'false'
+    edition: standard
+    status: ga
+    read_back: SHOW GRANTS ON PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+    notes: ''
+    snowcap:
+      field: null
+  - name: log_level
+    sql: LOG_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET LOG_LEVEL = '<log_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: trace_level
+    sql: TRACE_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET TRACE_LEVEL = '<trace_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: log_event_level
+    sql: LOG_EVENT_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: metric_level
+    sql: METRIC_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: secure
+    sql: SECURE
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column is_secure
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: temporary
+    sql: TEMPORARY
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: Not documented by SHOW or DESCRIBE.
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  excluded:
+  - name: volatile
+    reason: deprecated
+  - name: immutable
+    reason: deprecated
+  snowcap:
+    class: null
+    test: untested
+- object: PROCEDURE
+  variant: sql
+  scope_level: schema
+  status: ga
+  edition: standard
+  docs:
+    create: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    alter: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    show: https://docs.snowflake.com/en/sql-reference/sql/show-procedures
+    describe: https://docs.snowflake.com/en/sql-reference/sql/desc-procedure
+  docs_read_on: '2026-10-09'
+  creation_forms:
+  - CREATE [ OR REPLACE ] PROCEDURE; COPY GRANTS keeps all grants except OWNERSHIP on replace.
+  - 'CREATE OR ALTER PROCEDURE: changes only the properties the CREATE page lists for it.'
+  - 'DEFINE PROCEDURE: DCM project definition files only.'
+  properties:
+  - name: name
+    sql: <name>
+    kind: identity
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) RENAME TO <new_name>
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: database
+    sql: <database>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column catalog_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: schema
+    sql: <schema>
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column schema_name
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: argument_signature
+    sql: ( <arg_name> <arg_data_type> [ DEFAULT <expr> ] , ... )
+    kind: identity
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row signature
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Name plus argument types identify the overload. ALTER PROCEDURE: ''If you need to make any changes not supported
+      here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: returns
+    sql: RETURNS { <result_data_type> | TABLE ( ... ) }
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row returns
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: language
+    sql: LANGUAGE <language>
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row language
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: null_handling
+    sql: '{ CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } }'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row null handling
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'Default CALLED ON NULL INPUT. CREATE OR ALTER does not list it. ALTER PROCEDURE: ''If you need to make any changes
+      not supported here, use DROP PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: comment
+    sql: COMMENT
+    kind: property
+    in_create: true
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET COMMENT = '<string_literal>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PROCEDURES column description
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: ''
+    snowcap:
+      field: null
+  - name: execute_as
+    sql: EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    kind: property
+    in_create: true
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row execute as
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: RESTRICTED CALLER is open preview. Default OWNER.
+    snowcap:
+      field: null
+  - name: body
+    sql: AS '<procedure_definition>'
+    kind: property
+    in_create: true
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: n/a
+    edition: standard
+    status: ga
+    read_back: DESCRIBE PROCEDURE row body
+    docs: https://docs.snowflake.com/en/sql-reference/sql/create-procedure
+    notes: 'CREATE OR ALTER can change it. ALTER PROCEDURE: ''If you need to make any changes not supported here, use DROP
+      PROCEDURE instead and then recreate.'''
+    snowcap:
+      field: null
+  - name: tags
+    sql: TAG ( <tag_name> = '<tag_value>' , ... )
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) { SET | UNSET } TAG <tag_name> [ = '<tag_value>' ]
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: TAG_REFERENCES table function
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE.
+    snowcap:
+      field: null
+  - name: owner
+    sql: OWNERSHIP
+    kind: relationship
+    in_create: false
+    alter: action
+    alter_syntax: GRANT OWNERSHIP ON PROCEDURE <name> ( <arg_types> ) TO ROLE <role>
+    unset: false
+    combinable: 'false'
+    edition: standard
+    status: ga
+    read_back: SHOW GRANTS ON PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/grant-ownership
+    notes: ''
+    snowcap:
+      field: null
+  - name: log_level
+    sql: LOG_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET LOG_LEVEL = '<log_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: trace_level
+    sql: TRACE_LEVEL
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET TRACE_LEVEL = '<trace_level>'
+    unset: false
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/sql/alter-procedure
+    notes: Not in CREATE. CREATE OR ALTER supports it.
+    snowcap:
+      field: null
+  - name: log_event_level
+    sql: LOG_EVENT_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: metric_level
+    sql: METRIC_LEVEL
+    kind: parameter
+    in_create: false
+    alter: none
+    alter_syntax: ''
+    unset: false
+    combinable: unknown
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters
+    notes: Parameters page lists procedures, but ALTER PROCEDURE has no syntax for it.
+    snowcap:
+      field: null
+  - name: auto_event_logging
+    sql: AUTO_EVENT_LOGGING
+    kind: parameter
+    in_create: false
+    alter: set
+    alter_syntax: ALTER PROCEDURE <name> ( <arg_types> ) SET AUTO_EVENT_LOGGING = '<option>'
+    unset: true
+    combinable: true
+    edition: standard
+    status: ga
+    read_back: SHOW PARAMETERS IN PROCEDURE
+    docs: https://docs.snowflake.com/en/sql-reference/parameters#label-auto-event-logging
+    notes: ''
+    snowcap:
+      field: null
+  excluded:
+  - name: volatile
+    reason: deprecated
+  - name: immutable
+    reason: deprecated
+  snowcap:
+    class: null
+    test: untested
