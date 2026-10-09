@@ -1037,6 +1037,14 @@ class TestUpdateTask:
         urn = make_urn(ResourceType.TASK, "MY_TASK", database="MY_DB", schema="MY_SCHEMA")
         assert update_task(urn, delta, res.Task.props) == expected
 
+    @pytest.mark.parametrize("other_field", [{"state": "STARTED"}, {"as_": "SELECT 2"}, {"when": None}])
+    def test_rename_combined_with_other_fields_raises(self, other_field):
+        """Every other ALTER targets the task's current name, so any of them ordered after a
+        RENAME TO would fail. A rename must arrive on its own."""
+        urn = make_urn(ResourceType.TASK, "MY_TASK", database="MY_DB", schema="MY_SCHEMA")
+        with pytest.raises(NotImplementedError, match="cannot combine 'name'"):
+            update_task(urn, {"name": "NEW_TASK", **other_field}, res.Task.props)
+
 
 class TestUpdateIcebergTable:
     """Tests for update_iceberg_table function."""

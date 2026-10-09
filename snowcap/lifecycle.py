@@ -558,7 +558,10 @@ def update_task(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
     # bespoke ALTER syntax that Snowflake rejects in the same statement as any other clause,
     # so each gets its own ALTER. Everything else flows through update__default, which
     # renders multi-field deltas without dropping any. State changes last, so a resumed task
-    # starts with its new definition.
+    # starts with its new definition. A rename goes to update__default whole, which refuses
+    # to combine it with other fields: any ALTER after the RENAME TO would target the old name.
+    if "name" in data:
+        return update__default(urn, data, props)
     commands = []
     if "as_" in data:
         commands.append(tidy_sql("ALTER TASK", urn.fqn, "MODIFY", "AS", data["as_"]))
