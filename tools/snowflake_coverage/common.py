@@ -82,9 +82,12 @@ def object_label(obj: dict) -> str:
 
 
 def select_objects(inventory: dict, labels: Optional[list[str]]) -> Iterator[dict]:
-    """Yield the modeled objects whose label (OBJECT or OBJECT:variant) is in labels, or all when labels is empty."""
+    """Yield the modeled objects whose label (OBJECT or OBJECT:variant) is in labels, or all when labels is empty.
+
+    Objects without a snowcap block have docs rows only and are not mapped to snowcap yet.
+    """
     for obj in inventory["objects"]:
-        if obj["snowcap"]["class"] and (not labels or object_label(obj) in labels):
+        if obj.get("snowcap", {}).get("class") and (not labels or object_label(obj) in labels):
             yield obj
 
 
