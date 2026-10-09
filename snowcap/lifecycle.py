@@ -1,5 +1,5 @@
 import sys
-from typing import Optional, Union
+from typing import Any, Callable, Optional, Union
 
 from inflection import pluralize
 
@@ -435,13 +435,39 @@ def update__default(urn: URN, data: dict, props: Props) -> Union[str, list[str]]
     return commands[0] if len(commands) == 1 else commands
 
 
+def _update_with_separate_clauses(
+    urn: URN, data: dict, props: Props, clauses: dict[str, Callable[[Any], str]]
+) -> Union[str, list[str]]:
+    """
+    The SQL for a delta where some fields have their own ALTER syntax that Snowflake won't
+    combine with a SET. `clauses` maps each such field to a function that renders its ALTER
+    from the new value. Each of those fields gets its own statement, and the rest of the delta
+    goes to update__default, so every field in the delta is applied.
+
+    A rename goes to update__default whole, which refuses to combine it with other fields:
+    any ALTER ordered after the RENAME TO would target the old name.
+    """
+    if "name" in data:
+        return update__default(urn, data, props)
+    commands = [render(data[attr]) for attr, render in clauses.items() if attr in data]
+    other_fields = {attr: value for attr, value in data.items() if attr not in clauses}
+    if other_fields:
+        default_commands = update__default(urn, other_fields, props)
+        commands.extend(default_commands if isinstance(default_commands, list) else [default_commands])
+    return commands[0] if len(commands) == 1 else commands
+
+
 def update_masking_policy(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
-    attr, new_value = data.popitem()
-    attr = attr.lower()
-    if attr == "body":
-        return tidy_sql("ALTER", urn.resource_type, fqn_to_sql(urn.fqn), "SET BODY", props.render({"body": new_value}))
-    else:
-        return update__default(urn, {attr: new_value}, props)
+    return _update_with_separate_clauses(
+        urn,
+        data,
+        props,
+        {
+            "body": lambda body: tidy_sql(
+                "ALTER", urn.resource_type, fqn_to_sql(urn.fqn), "SET BODY", props.render({"body": body})
+            )
+        },
+    )
 
 
 def update_mcp_server(urn: URN, data: dict, props: Props) -> str:
@@ -488,64 +514,58 @@ def update_event_table(urn: URN, data: dict, props: Props) -> Union[str, list[st
 
 
 def update_procedure(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
-    if "execute_as" in data:
-        return tidy_sql(
-            "ALTER",
-            urn.resource_type,
-            urn.fqn,
-            "EXECUTE AS",
-            data["execute_as"],
-        )
-    else:
-        return update__default(urn, data, props)
+    return _update_with_separate_clauses(
+        urn,
+        data,
+        props,
+        {"execute_as": lambda execute_as: tidy_sql("ALTER", urn.resource_type, urn.fqn, "EXECUTE AS", execute_as)},
+    )
 
 
 def update_role_grant(urn: URN, data: dict, props: Props) -> str:
     raise NotImplementedError
 
 
-def update_scanner_package(urn: URN, data: dict, props: Props) -> str:
+def update_scanner_package(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
+    # SET_CONFIGURATION sets one value per call, so each field gets its own call.
     package_name = f"'{urn.fqn.name}'"
-    attr, new_value = data.popitem()
-    if attr == "schedule":
-        new_value = f"'USING CRON {new_value}'"
-    else:
-        new_value = f"'{new_value}'"
-    return tidy_sql(
-        "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION(",
-        f"'{attr}',",
-        new_value,
-        ",",
-        package_name,
-        ")",
+    commands = []
+    for attr, new_value in data.items():
+        new_value = f"'USING CRON {new_value}'" if attr == "schedule" else f"'{new_value}'"
+        commands.append(
+            tidy_sql(
+                "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION(",
+                f"'{attr}',",
+                new_value,
+                ",",
+                package_name,
+                ")",
+            )
+        )
+    return commands[0] if len(commands) == 1 else commands
+
+
+def update_schema(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
+    if "transient" in data:
+        raise NotImplementedError(
+            f"Cannot change transient property of schema {urn}; got delta keys {sorted(data.keys())!r}"
+        )
+    return _update_with_separate_clauses(
+        urn,
+        data,
+        props,
+        {
+            "managed_access": lambda managed_access: tidy_sql(
+                "ALTER SCHEMA", urn.fqn, "ENABLE" if managed_access else "DISABLE", "MANAGED ACCESS"
+            )
+        },
     )
 
 
-def update_schema(urn: URN, data: dict, props: Props) -> str:
-    attr, new_value = data.popitem()
-    attr = attr.lower()
-    if new_value is None:
-        return tidy_sql("ALTER SCHEMA", urn.fqn, "UNSET", attr)
-    elif attr == "name":
-        return tidy_sql("ALTER SCHEMA", urn.fqn, "RENAME TO", new_value)
-    elif attr == "owner":
-        raise NotImplementedError
-    elif attr == "transient":
-        raise Exception("Cannot change transient property of schema")
-    elif attr == "managed_access":
-        return tidy_sql("ALTER SCHEMA", urn.fqn, "ENABLE" if new_value else "DISABLE", "MANAGED ACCESS")
-    else:
-        new_value = f"'{new_value}'" if isinstance(new_value, str) else new_value
-        return tidy_sql("ALTER SCHEMA", urn.fqn, "SET", attr, "=", new_value)
-
-
 def update_table(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
-    attr, new_value = data.popitem()
-    attr = attr.lower()
-    if attr == "columns":
-        raise NotImplementedError(data)
-    else:
-        return update__default(urn, {attr: new_value}, props)
+    if "columns" in data:
+        raise NotImplementedError(f"Cannot update columns of {urn}; got delta keys {sorted(data.keys())!r}")
+    return update__default(urn, data, props)
 
 
 # FIXME
@@ -597,13 +617,7 @@ def update_alert(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
     return tidy_sql("ALTER ALERT", urn.fqn, change_verb)
 
 
-def update_iceberg_table(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
-    attr, new_value = data.popitem()
-    attr = attr.lower()
-    if attr == "columns":
-        raise NotImplementedError(data)
-    else:
-        return update__default(urn, {attr: new_value}, props)
+update_iceberg_table = update_table
 
 
 def update_user_key_pair(urn: URN, data: dict, props: Props, after: dict) -> list[str]:
