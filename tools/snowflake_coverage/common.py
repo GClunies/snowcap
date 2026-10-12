@@ -9,12 +9,15 @@ inventory.yaml is the coverage source of truth. Each object entry holds the Snow
       test: live              # live | docs_only | untested
       create_args: {...}      # the minimum arguments to create a test object
       truth: [SQL, ...]       # queries that report Snowflake's own values; {name} {database} {container} {fqn}
-      creation_options: [...] # spec fields that are CREATE options, not state (for example copy_grants)
+      field_notes: {copy_grants: reason}  # why a spec field has no docs row (for example a CREATE option)
 
 Each property row has its own `snowcap` block:
 
     snowcap:
-      field: data_retention_time_in_days  # spec field, or null when snowcap does not model the property
+      field: data_retention_time_in_days  # spec field path, or null when snowcap does not model the property:
+                                          # `credentials.aws_key_id` is a key in a field, `columns[].comment`
+                                          # a column field
+      note: reason                        # why the row maps to a differently named field, or what snowcap lacks
       n_a: reason                         # set when the row is not a manageable state of this object
       sample: [3, 5]                      # create value, changed value (rows without it stay untested)
       truth: retention_time               # key in the truth query output

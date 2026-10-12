@@ -4,9 +4,10 @@ Join inventory.yaml to snowcap's code without a Snowflake connection.
 For each modeled object, write L1 (does the spec have the field?) and a list of candidate gaps
 for each row. Candidates are leads for live_test.py, not results:
 
-- L2: the field has no prop, so CREATE does not render it.
+- L2: neither the props nor the resource's own create handler render the field.
 - L3: the fetch function does not return the field.
-- L4: ALTER cannot change the property but snowcap does not refuse the change, or the
+- L4: ALTER cannot change the property but neither triggers_replacement nor the resource's
+  own update handler covers the change, or the
   ALTER that snowcap renders does not match the docs syntax.
 
 Also report spec fields that no inventory row maps, so the inventory stays complete.
@@ -19,6 +20,7 @@ import inspect
 import re
 import sys
 from dataclasses import fields
+from typing import Optional
 
 from common import LEVELS, build_resource, load_inventory, object_label, resource_class, save_inventory, select_objects
 
@@ -32,15 +34,64 @@ from snowcap.resources.tag import TaggableResource
 HEADER_FIELDS = {"name", "owner"}
 
 
-def fetched_keys(cls) -> set[str]:
-    """String keys of the dict literals that fetch_<label> returns."""
-    fetch = getattr(data_provider, f"fetch_{resource_label_for_type(cls.resource_type)}")
-    tree = ast.parse(inspect.getsource(fetch).lstrip())
+def fetched_keys(cls) -> Optional[set[str]]:
+    """String keys of the dict literals that fetch_<label> returns, or None when the function does not exist."""
+    fetch = getattr(data_provider, f"fetch_{resource_label_for_type(cls.resource_type)}", None)
+    if fetch is None:
+        return None
+    nodes = list(ast.walk(ast.parse(inspect.getsource(fetch).lstrip())))
+    returns = [n.value for n in nodes if isinstance(n, ast.Return) and n.value is not None]
+    returned_names = {r.id for r in returns if isinstance(r, ast.Name)}
+    # A fetch returns a dict literal, or a named dict that it builds with a literal and item assignments.
+    dicts = [r for r in returns if isinstance(r, ast.Dict)]
     keys = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Return) and isinstance(node.value, ast.Dict):
-            keys |= {k.value for k in node.value.keys if isinstance(k, ast.Constant)}
+    for node in nodes:
+        if isinstance(node, ast.Assign) and any(
+            isinstance(t, ast.Name) and t.id in returned_names for t in node.targets
+        ):
+            if isinstance(node.value, ast.Dict):
+                dicts.append(node.value)
+        elif (
+            isinstance(node, ast.Subscript)
+            and isinstance(node.ctx, ast.Store)
+            and isinstance(node.value, ast.Name)
+            and node.value.id in returned_names
+            and isinstance(node.slice, ast.Constant)
+        ):
+            keys.add(node.slice.value)
+    for d in dicts:
+        keys |= {k.value for k in d.keys if isinstance(k, ast.Constant)}
     return keys
+
+
+def handler_keys(cls, action: str) -> set[str]:
+    """Field names that a resource-specific lifecycle handler (create_<label>, update_<label>) handles by name.
+
+    The handler reads them from data directly or compares the changed attribute to them, outside props.
+    """
+    handler = getattr(lifecycle, f"{action}_{resource_label_for_type(cls.resource_type)}", None)
+    if handler is None:
+        return set()
+    keys = set()
+    for node in ast.walk(ast.parse(inspect.getsource(handler))):
+        if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant):
+            keys.add(node.slice.value)
+        elif isinstance(node, ast.Compare):
+            keys |= {c.value for c in node.comparators if isinstance(c, ast.Constant)}
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in ("get", "pop")
+            and node.args
+            and isinstance(node.args[0], ast.Constant)
+        ):
+            keys.add(node.args[0].value)
+    return keys
+
+
+def top_field(field: str) -> str:
+    """The spec field that a row path names: `credentials.aws_key_id` and `columns[].comment` both name their head."""
+    return re.split(r"[.\[]", field, maxsplit=1)[0]
 
 
 def head_pattern(alter_syntax: str):
@@ -66,15 +117,16 @@ def l1(cls, field: str) -> bool:
     if field == "tags":
         # Tags are a relationship: snowcap models them on the resource class (snowcap/resources/tag.py), not in the spec.
         return issubclass(cls, TaggableResource)
-    return field in {f.name for f in fields(cls.spec)}
+    return top_field(field) in {f.name for f in fields(cls.spec)}
 
 
 def l4_candidates(obj: dict, row: dict, cls) -> list[str]:
     field = row["snowcap"]["field"]
     if row["alter"] == "none":
-        if not cls.spec.get_metadata(field).triggers_replacement:
+        if not cls.spec.get_metadata(field).triggers_replacement and field not in handler_keys(cls, "update"):
             return [
-                "L4: ALTER cannot change it, but the spec does not set triggers_replacement, so snowcap plans an ALTER"
+                "L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it,"
+                " so snowcap plans an ALTER"
             ]
         return []
     sample = row["snowcap"].get("sample")
@@ -98,12 +150,14 @@ def l4_candidates(obj: dict, row: dict, cls) -> list[str]:
 def map_object(obj: dict) -> None:
     cls = resource_class(obj)
     keys = fetched_keys(cls)
+    rendered = set(cls.props.props) | HEADER_FIELDS | handler_keys(cls, "create")
+    spec_fields = {f.name for f in fields(cls.spec)}
     mapped = set()
     for row in obj["properties"]:
         meta = row["snowcap"]
         field = meta["field"]
         if field:
-            mapped.add(field.split("[]")[0])
+            mapped.add(top_field(field))
         if meta.get("n_a"):
             meta.pop("levels", None)
             continue
@@ -113,18 +167,23 @@ def map_object(obj: dict) -> None:
             levels.update(L1="fail")
         else:
             levels["L1"] = "pass" if l1(cls, field) else "fail"
-            top = field.split("[]")[0]
-            if levels["L1"] == "pass" and top in {f.name for f in fields(cls.spec)}:
-                if top not in cls.props.props and top not in HEADER_FIELDS:
-                    candidates.append(f"L2: {cls.__name__}.props has no '{top}' prop, so CREATE does not render it")
-                if cls.spec.get_metadata(top).fetchable and top not in keys:
-                    candidates.append(f"L3: the fetch function does not return '{top}'")
-                if "[]" not in field:
+            top = top_field(field)
+            if levels["L1"] == "pass" and top in spec_fields:
+                if top not in rendered:
+                    candidates.append(
+                        f"L2: neither {cls.__name__}.props nor the create handler renders '{top}', so CREATE omits it"
+                    )
+                if cls.spec.get_metadata(top).fetchable:
+                    if keys is None:
+                        label = resource_label_for_type(cls.resource_type)
+                        candidates.append(f"L3: data_provider has no fetch_{label}, so fetch_resource raises")
+                    elif top not in keys:
+                        candidates.append(f"L3: the fetch function does not return '{top}'")
+                if field == top:
                     candidates += l4_candidates(obj, row, cls)
         meta["levels"] = levels
         meta["candidates"] = candidates
-    spec_fields = {f.name for f in fields(cls.spec)}
-    unmapped = sorted(spec_fields - mapped - set(obj["snowcap"].get("creation_options", [])))
+    unmapped = sorted(spec_fields - mapped - set(obj["snowcap"].get("field_notes", {})))
     obj["snowcap"]["unmapped_fields"] = unmapped
 
 
