@@ -6,7 +6,7 @@ from inflection import pluralize
 from .builder import tidy_sql
 from .enums import GrantType, ResourceType
 from .identifiers import FQN, URN
-from .props import BoolProp, IntProp, Props, StringProp
+from .props import BoolProp, IntProp, Props, StringProp, quote_value
 from .resource_name import ResourceName
 
 __this__ = sys.modules[__name__]
@@ -50,7 +50,7 @@ def create__default(urn: URN, data: dict, props: Props, if_not_exists: bool = Fa
 def create_account_parameter(urn: URN, data: dict, props: Props, if_not_exists: bool = False) -> str:
     value = data["value"]
     if isinstance(value, str):
-        value = f"'{value}'"
+        value = quote_value(value)
     return tidy_sql(
         "ALTER",
         "ACCOUNT",
@@ -291,15 +291,8 @@ def create_role_grant(urn: URN, data: dict, props: Props, if_not_exists: bool = 
     )
 
 
-def create_scanner_package(urn: URN, data: dict, props: Props, if_not_exists: bool = False) -> str:
-    package_name = f"'{urn.fqn.name}'"
-    return tidy_sql(
-        "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION(",
-        "'ENABLED',",
-        "'TRUE',",
-        package_name,
-        ")",
-    )
+def create_scanner_package(urn: URN, data: dict, props: Props, if_not_exists: bool = False) -> Union[str, list[str]]:
+    return update_scanner_package(urn, {"ENABLED": "TRUE"}, props)
 
 
 def create_schema(urn: URN, data: dict, props: Props, if_not_exists: bool = False) -> str:
@@ -528,14 +521,16 @@ def update_role_grant(urn: URN, data: dict, props: Props) -> str:
 
 def update_scanner_package(urn: URN, data: dict, props: Props) -> Union[str, list[str]]:
     # SET_CONFIGURATION sets one value per call, so each field gets its own call.
-    package_name = f"'{urn.fqn.name}'"
+    package_name = quote_value(urn.fqn.name.unquoted)
     commands = []
     for attr, new_value in data.items():
-        new_value = f"'USING CRON {new_value}'" if attr == "schedule" else f"'{new_value}'"
+        if isinstance(new_value, bool):
+            new_value = "TRUE" if new_value else "FALSE"
+        new_value = quote_value(f"USING CRON {new_value}") if attr == "schedule" else quote_value(new_value)
         commands.append(
             tidy_sql(
                 "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION(",
-                f"'{attr}',",
+                f"{quote_value(attr)},",
                 new_value,
                 ",",
                 package_name,
@@ -831,15 +826,8 @@ def drop_role_grant(urn: URN, data: dict, **kwargs):
     )
 
 
-def drop_scanner_package(urn: URN, data: dict, **kwargs) -> str:
-    package_name = f"'{urn.fqn.name}'"
-    return tidy_sql(
-        "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION(",
-        "'ENABLED',",
-        "'FALSE',",
-        package_name,
-        ")",
-    )
+def drop_scanner_package(urn: URN, data: dict, **kwargs) -> Union[str, list[str]]:
+    return update_scanner_package(urn, {"ENABLED": "FALSE"}, Props())
 
 
 def drop_tag_masking_policy_reference(urn: URN, data: dict, **kwargs) -> str:
