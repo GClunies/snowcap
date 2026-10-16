@@ -3033,11 +3033,20 @@ objects:
       field: value
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 200000
+      - 300000
+      truth: statement_timeout_in_seconds
+      evidence:
+        create_sql:
+        - ALTER ACCOUNT SET STATEMENT_TIMEOUT_IN_SECONDS = 200000
+        L4_sql:
+        - ALTER ACCOUNT SET STATEMENT_TIMEOUT_IN_SECONDS = 300000
   - name: abort_detached_query
     sql: ABORT_DETACHED_QUERY
     kind: parameter
@@ -3363,11 +3372,20 @@ objects:
       field: value
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - TIMESTAMP_NTZ
+      - TIMESTAMP_LTZ
+      truth: client_timestamp_type_mapping
+      evidence:
+        create_sql:
+        - ALTER ACCOUNT SET CLIENT_TIMESTAMP_TYPE_MAPPING = 'TIMESTAMP_NTZ'
+        L4_sql:
+        - ALTER ACCOUNT SET CLIENT_TIMESTAMP_TYPE_MAPPING = 'TIMESTAMP_LTZ'
   - name: csv_timestamp_format
     sql: CSV_TIMESTAMP_FORMAT
     kind: parameter
@@ -3583,11 +3601,20 @@ objects:
       field: value
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - WKT
+      - EWKT
+      truth: geography_output_format
+      evidence:
+        create_sql:
+        - ALTER ACCOUNT SET GEOGRAPHY_OUTPUT_FORMAT = 'WKT'
+        L4_sql:
+        - ALTER ACCOUNT SET GEOGRAPHY_OUTPUT_FORMAT = 'EWKT'
   - name: geometry_output_format
     sql: GEOMETRY_OUTPUT_FORMAT
     kind: parameter
@@ -3759,11 +3786,20 @@ objects:
       field: value
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 3
+      - 4
+      truth: json_indent
+      evidence:
+        create_sql:
+        - ALTER ACCOUNT SET JSON_INDENT = 3
+        L4_sql:
+        - ALTER ACCOUNT SET JSON_INDENT = 4
   - name: js_treat_integer_as_bigint
     sql: JS_TREAT_INTEGER_AS_BIGINT
     kind: parameter
@@ -3869,11 +3905,20 @@ objects:
       field: value
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: odbc_treat_decimal_as_int
+      evidence:
+        create_sql:
+        - ALTER ACCOUNT SET ODBC_TREAT_DECIMAL_AS_INT = True
+        L4_sql:
+        - ALTER ACCOUNT SET ODBC_TREAT_DECIMAL_AS_INT = False
   - name: opt_out_error_logging
     sql: OPT_OUT_ERROR_LOGGING
     kind: parameter
@@ -4459,8 +4504,16 @@ objects:
     reason: view-only parameter; set through the LOGIN_IDP_REDIRECT account property row
   snowcap:
     class: AccountParameter
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - SHOW PARAMETERS LIKE '{name}' IN ACCOUNT
+    combined:
+      fields:
+      - value
+      result: untested (needs two or more fields)
+    tested_inputs: 95687aea44ec
 - object: AGENT
   variant: null
   scope_level: schema
@@ -35249,11 +35302,24 @@ objects:
       field: allowed_network_rule_list
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}.PUBLIC.RULE_A'
+      - - '{database}.PUBLIC.RULE_B'
+      truth: allowed_network_rule_list_text
+      evidence:
+        create_sql:
+        - CREATE NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R00_ALLOWED_NETWORK_RULE_LIST__ ALLOWED_NETWORK_RULE_LIST
+          = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_A)
+        - GRANT OWNERSHIP ON NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R00_ALLOWED_NETWORK_RULE_LIST__ TO ROLE ACCOUNTADMIN
+          COPY CURRENT GRANTS
+        L4_sql:
+        - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R00_ALLOWED_NETWORK_RULE_LIST__ SET ALLOWED_NETWORK_RULE_LIST
+          = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_B)
   - name: blocked_network_rule_list[]
     sql: BLOCKED_NETWORK_RULE_LIST
     kind: relationship
@@ -35273,11 +35339,24 @@ objects:
       field: blocked_network_rule_list
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}.PUBLIC.RULE_A'
+      - - '{database}.PUBLIC.RULE_B'
+      truth: blocked_network_rule_list_text
+      evidence:
+        create_sql:
+        - CREATE NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R01_BLOCKED_NETWORK_RULE_LIST__ BLOCKED_NETWORK_RULE_LIST
+          = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_A)
+        - GRANT OWNERSHIP ON NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R01_BLOCKED_NETWORK_RULE_LIST__ TO ROLE ACCOUNTADMIN
+          COPY CURRENT GRANTS
+        L4_sql:
+        - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R01_BLOCKED_NETWORK_RULE_LIST__ SET BLOCKED_NETWORK_RULE_LIST
+          = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_B)
   - name: add_network_rule_list
     sql: ADD { ALLOWED_NETWORK_RULE_LIST | BLOCKED_NETWORK_RULE_LIST }
     kind: relationship
@@ -35298,11 +35377,24 @@ objects:
         with SET.
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}.PUBLIC.RULE_A'
+      - - '{database}.PUBLIC.RULE_A'
+        - '{database}.PUBLIC.RULE_B'
+      truth: allowed_network_rule_list_text
+      evidence:
+        create_sql:
+        - CREATE NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R02_ADD_NETWORK_RULE_LIST ALLOWED_NETWORK_RULE_LIST = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_A)
+        - GRANT OWNERSHIP ON NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R02_ADD_NETWORK_RULE_LIST TO ROLE ACCOUNTADMIN
+          COPY CURRENT GRANTS
+        L4_sql:
+        - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R02_ADD_NETWORK_RULE_LIST SET ALLOWED_NETWORK_RULE_LIST =
+          (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_A, COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_B)
   - name: remove_network_rule_list
     sql: REMOVE { ALLOWED_NETWORK_RULE_LIST | BLOCKED_NETWORK_RULE_LIST }
     kind: relationship
@@ -35323,11 +35415,25 @@ objects:
         it with SET.
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}.PUBLIC.RULE_A'
+        - '{database}.PUBLIC.RULE_B'
+      - - '{database}.PUBLIC.RULE_A'
+      truth: allowed_network_rule_list_text
+      evidence:
+        create_sql:
+        - CREATE NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R03_REMOVE_NETWORK_RULE_LIST ALLOWED_NETWORK_RULE_LIST =
+          (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_A, COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_B)
+        - GRANT OWNERSHIP ON NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R03_REMOVE_NETWORK_RULE_LIST TO ROLE ACCOUNTADMIN
+          COPY CURRENT GRANTS
+        L4_sql:
+        - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R03_REMOVE_NETWORK_RULE_LIST SET ALLOWED_NETWORK_RULE_LIST
+          = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_A)
   - name: allowed_ip_list[]
     sql: ALLOWED_IP_LIST
     kind: property
@@ -35347,11 +35453,24 @@ objects:
       field: allowed_ip_list
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - 10.0.0.1
+      - - 10.0.0.1
+        - 10.0.0.2
+      truth: allowed_ip_list_text
+      evidence:
+        create_sql:
+        - CREATE NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R04_ALLOWED_IP_LIST__ ALLOWED_IP_LIST = ($$10.0.0.1$$)
+        - GRANT OWNERSHIP ON NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R04_ALLOWED_IP_LIST__ TO ROLE ACCOUNTADMIN COPY
+          CURRENT GRANTS
+        L4_sql:
+        - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R04_ALLOWED_IP_LIST__ SET ALLOWED_IP_LIST = ($$10.0.0.1$$,
+          $$10.0.0.2$$)
   - name: blocked_ip_list[]
     sql: BLOCKED_IP_LIST
     kind: property
@@ -35371,11 +35490,24 @@ objects:
       field: blocked_ip_list
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - 10.0.0.3
+      - - 10.0.0.3
+        - 10.0.0.4
+      truth: blocked_ip_list_text
+      evidence:
+        create_sql:
+        - CREATE NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R05_BLOCKED_IP_LIST__ BLOCKED_IP_LIST = ($$10.0.0.3$$)
+        - GRANT OWNERSHIP ON NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R05_BLOCKED_IP_LIST__ TO ROLE ACCOUNTADMIN COPY
+          CURRENT GRANTS
+        L4_sql:
+        - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R05_BLOCKED_IP_LIST__ SET BLOCKED_IP_LIST = ($$10.0.0.3$$,
+          $$10.0.0.4$$)
   - name: comment
     sql: COMMENT
     kind: property
@@ -35393,11 +35525,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R06_COMMENT COMMENT = $$a$$
+        - GRANT OWNERSHIP ON NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R06_COMMENT TO ROLE ACCOUNTADMIN COPY CURRENT
+          GRANTS
+        L4_sql:
+        - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_R06_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -35463,8 +35606,31 @@ objects:
   excluded: []
   snowcap:
     class: NetworkPolicy
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE NETWORK RULE {database}.PUBLIC.RULE_A MODE = INGRESS TYPE = IPV4 VALUE_LIST = ('10.1.0.0/16')
+    - CREATE NETWORK RULE {database}.PUBLIC.RULE_B MODE = INGRESS TYPE = IPV4 VALUE_LIST = ('10.2.0.0/16')
+    create_args: {}
+    truth:
+    - SHOW NETWORK POLICIES LIKE '{name}'
+    - DESC NETWORK POLICY {fqn}
+    - SELECT LOWER(r."name") || '_text' AS key, CASE WHEN r."name" LIKE '%NETWORK_RULE_LIST' THEN '[' || ARRAY_TO_STRING(TRANSFORM(PARSE_JSON(r."value"),
+      x -> '''' || x:fullyQualifiedRuleName::STRING || ''''), ', ') || ']' ELSE '[''' || REPLACE(r."value", ',', ''', ''')
+      || ''']' END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r
+    combined:
+      fields:
+      - allowed_ip_list
+      - allowed_network_rule_list
+      - blocked_ip_list
+      - blocked_network_rule_list
+      - comment
+      sql:
+      - ALTER NETWORK POLICY COVERAGE_NETWORK_POLICY_784DE9E1_COMBINED SET ALLOWED_NETWORK_RULE_LIST = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_B)
+        BLOCKED_NETWORK_RULE_LIST = (COVERAGE_NETWORK_POLICY_784DE9E1.PUBLIC.RULE_B) ALLOWED_IP_LIST = ($$10.0.0.1$$, $$10.0.0.2$$)
+        BLOCKED_IP_LIST = ($$10.0.0.3$$, $$10.0.0.4$$) COMMENT = $$b$$
+      result: pass
+    tested_inputs: cad100c7972a
 - object: NETWORK RULE
   variant: null
   scope_level: schema
@@ -43498,11 +43664,24 @@ objects:
       field: credit_quota
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 5
+      - 10
+      truth: credit_quota
+      expect:
+      - '5.00'
+      - '10.00'
+      evidence:
+        create_sql:
+        - CREATE RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R00_CREDIT_QUOTA CREDIT_QUOTA = 5 frequency = MONTHLY
+          START_TIMESTAMP = $$2049-01-01 00:00$$
+        L4_sql:
+        - ALTER RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R00_CREDIT_QUOTA SET CREDIT_QUOTA = 10
   - name: frequency
     sql: FREQUENCY
     kind: property
@@ -43521,11 +43700,24 @@ objects:
       field: frequency
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - DAILY
+      - WEEKLY
+      truth: frequency
+      evidence:
+        create_sql:
+        - CREATE RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R01_FREQUENCY CREDIT_QUOTA = 1 frequency = DAILY START_TIMESTAMP
+          = $$2049-01-01 00:00$$
+        L4_sql:
+        - ALTER RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R01_FREQUENCY SET frequency = WEEKLY
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 090259 (42601): Must specify frequency and start time together.
+          on: ALTER RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R01_FREQUENCY SET frequency = WEEKLY'
+        L5: fails because L4 fails
   - name: start_timestamp
     sql: START_TIMESTAMP
     kind: property
@@ -43544,11 +43736,26 @@ objects:
       field: start_timestamp
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - 2049-01-01 00:00
+      - 2049-02-01 00:00
+      truth: start_utc
+      evidence:
+        create_sql:
+        - CREATE RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R02_START_TIMESTAMP CREDIT_QUOTA = 1 frequency = MONTHLY
+          START_TIMESTAMP = $$2049-01-01 00:00$$
+        L4_sql:
+        - ALTER RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R02_START_TIMESTAMP SET START_TIMESTAMP = $$2049-02-01
+          00:00$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 090259 (42601): Must specify frequency and start time together.
+          on: ALTER RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R02_START_TIMESTAMP SET START_TIMESTAMP = $$2049-02-01
+          00:00$$'
+        L5: fails because L4 fails
   - name: end_timestamp
     sql: END_TIMESTAMP
     kind: property
@@ -43566,11 +43773,21 @@ objects:
       field: end_timestamp
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 2049-12-31 23:59
+      - 2049-11-30 23:59
+      truth: end_utc
+      evidence:
+        create_sql:
+        - CREATE RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R03_END_TIMESTAMP CREDIT_QUOTA = 1 frequency = MONTHLY
+          START_TIMESTAMP = $$2049-01-01 00:00$$ END_TIMESTAMP = $$2049-12-31 23:59$$
+        L4_sql:
+        - ALTER RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_R03_END_TIMESTAMP SET END_TIMESTAMP = $$2049-11-30 23:59$$
   - name: notify_users[]
     sql: NOTIFY_USERS
     kind: relationship
@@ -43698,8 +43915,27 @@ objects:
   excluded: []
   snowcap:
     class: ResourceMonitor
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      credit_quota: 1
+      start_timestamp: 2049-01-01 00:00
+    truth:
+    - SHOW RESOURCE MONITORS LIKE '{name}'
+    - SELECT f.key, f.value::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL FLATTEN(OBJECT_CONSTRUCT(
+      'start_utc', TO_CHAR(CONVERT_TIMEZONE('UTC', r."start_time"), 'YYYY-MM-DD HH24:MI'), 'end_utc', TO_CHAR(CONVERT_TIMEZONE('UTC',
+      r."end_time"), 'YYYY-MM-DD HH24:MI'))) f
+    combined:
+      fields:
+      - credit_quota
+      - end_timestamp
+      - frequency
+      - start_timestamp
+      sql:
+      - ALTER RESOURCE MONITOR COVERAGE_RESOURCE_MONITOR_D79BFD6B_COMBINED SET CREDIT_QUOTA = 10 frequency = WEEKLY START_TIMESTAMP
+        = $$2049-02-01 00:00$$ END_TIMESTAMP = $$2049-11-30 23:59$$
+      result: pass
+    tested_inputs: dbc5b2cdd359
 - object: RESTRICTED SESSION SCOPE
   variant: null
   scope_level: schema
@@ -52984,11 +53220,20 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SHARE COVERAGE_SHARE_62F94AFF_R00_COMMENT COMMENT = $$a$$
+        L4_sql:
+        - ALTER SHARE COVERAGE_SHARE_62F94AFF_R00_COMMENT SET COMMENT = $$b$$
   - name: accounts
     sql: ACCOUNTS
     kind: relationship
@@ -53170,8 +53415,16 @@ objects:
   excluded: []
   snowcap:
     class: Share
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - SHOW SHARES LIKE '{name}'
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: f31e0bac3cb2
 - object: SNAPSHOT
   variant: null
   scope_level: schema
