@@ -14551,11 +14551,20 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE DATABASE ROLE COVERAGE_DATABASE_ROLE_1422ABE9.R00_COMMENT COMMENT = $$a$$
+        L4_sql:
+        - ALTER DATABASE ROLE COVERAGE_DATABASE_ROLE_1422ABE9.R00_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -14632,11 +14641,22 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 2 at position 86 unexpected
+          ''.''. syntax error line 4 at position 18 unexpected ''<EOF>''. on: SELECT * FROM table(COVERAGE_DATABASE_ROLE_1422ABE9.R01_TAGS.information_schema.tag_references(
+          ''COVERAGE_DATABASE_ROLE_1422ABE9.R01_TAGS'', ...'
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -14663,8 +14683,18 @@ objects:
   excluded: []
   snowcap:
     class: DatabaseRole
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    create_args: {}
+    truth:
+    - SHOW DATABASE ROLES LIKE '{name}' IN DATABASE {database}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'database role') AS value
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: cf22e40404b3
 - object: DATASET
   variant: null
   scope_level: schema
@@ -15403,7 +15433,7 @@ objects:
     snowcap:
       field: columns[].data_type
       levels:
-        L1: pass
+        L1: fail
         L2: untested
         L3: untested
         L4: untested
@@ -15450,7 +15480,7 @@ objects:
     snowcap:
       field: columns[].collate
       levels:
-        L1: pass
+        L1: fail
         L2: untested
         L3: untested
         L4: untested
@@ -15523,7 +15553,7 @@ objects:
     snowcap:
       field: columns[].tags
       levels:
-        L1: pass
+        L1: fail
         L2: untested
         L3: untested
         L4: untested
@@ -17348,11 +17378,26 @@ objects:
       field: cluster_by
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
-      candidates: []
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET CLUSTER BY (OBSERVED_TIMESTAMP)''], docs syntax is
+        ''ALTER TABLE <name> { CLUSTER BY ( <expr> [ , <expr> , ... ] ) | DROP CLUSTERING KEY }'''
+      sample:
+      - - TIMESTAMP
+      - - OBSERVED_TIMESTAMP
+      evidence:
+        create_sql:
+        - CREATE EVENT TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R00_CLUSTER_BY CLUSTER BY (TIMESTAMP) CHANGE_TRACKING =
+          FALSE
+        L4_sql:
+        - ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R00_CLUSTER_BY SET CLUSTER BY (OBSERVED_TIMESTAMP)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          76 unexpected ''BY''. syntax error line 1 at position 98 unexpected '')''. on: ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R00_CLUSTER_BY
+          SET CLUSTER BY (OBSERVED_TIMESTAMP)'
+        L5: fails because L4 fails
   - name: automatic_clustering
     sql: SUSPEND | RESUME RECLUSTER
     kind: property
@@ -17393,11 +17438,22 @@ objects:
       field: data_retention_time_in_days
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 3
+      - 5
+      truth: data_retention_time_in_days
+      evidence:
+        create_sql:
+        - CREATE EVENT TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R01_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS
+          = 3 CHANGE_TRACKING = FALSE
+        L4_sql:
+        - ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R01_DATA_RETENTION_TIME_IN_DAYS SET DATA_RETENTION_TIME_IN_DAYS
+          = 5
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
     kind: parameter
@@ -17415,12 +17471,25 @@ objects:
       field: max_data_extension_time_in_days
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: pass
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''max_data_extension_time_in_days'''
+      sample:
+      - 10
+      - 12
+      truth: max_data_extension_time_in_days
+      evidence:
+        create_sql:
+        - CREATE EVENT TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R02_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS
+          = 10 CHANGE_TRACKING = FALSE
+        L3: Snowflake reports max_data_extension_time_in_days='10', snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R02_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
+          = 12
+        L5: 'plan after create: ["update [''max_data_extension_time_in_days'']"]; plan after change: ["update [''max_data_extension_time_in_days'']"]'
   - name: change_tracking
     sql: CHANGE_TRACKING
     kind: property
@@ -17439,11 +17508,20 @@ objects:
       field: change_tracking
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: change_tracking
+      evidence:
+        create_sql:
+        - CREATE EVENT TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R03_CHANGE_TRACKING CHANGE_TRACKING = TRUE
+        L4_sql:
+        - ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R03_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
   - name: default_ddl_collation
     sql: DEFAULT_DDL_COLLATION
     kind: parameter
@@ -17461,14 +17539,29 @@ objects:
       field: default_ddl_collation
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''default_ddl_collation'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - en-ci
+      - en-cs
+      truth: default_ddl_collation
+      evidence:
+        create_sql:
+        - CREATE EVENT TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R04_DEFAULT_DDL_COLLATION CHANGE_TRACKING = FALSE DEFAULT_DDL_COLLATION
+          = $$en-ci$$
+        L3: Snowflake reports default_ddl_collation='en-ci', snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R04_DEFAULT_DDL_COLLATION SET DEFAULT_DDL_COLLATION = $$en-cs$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 000002 (0A000): Unsupported feature ''INVALID OPERATION FOR EVENT
+          TABLES''. on: ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R04_DEFAULT_DDL_COLLATION SET DEFAULT_DDL_COLLATION
+          = $$en-cs$$'
+        L5: 'plan after create: ["update [''default_ddl_collation'']"]; plan after change: []'
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -17510,11 +17603,20 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE EVENT TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R05_COMMENT CHANGE_TRACKING = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
   - name: row_access_policy
     sql: ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] )
     kind: relationship
@@ -17603,11 +17705,21 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 12 unexpected
+          ''TABLE''. on: ALTER EVENT TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.R06_TAGS SET TAG COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.COVERAGE_TAG=''a'''
   - name: contacts
     sql: WITH CONTACT / SET CONTACT
     kind: relationship
@@ -17746,8 +17858,26 @@ objects:
     reason: deprecated
   snowcap:
     class: EventTable
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    create_args: {}
+    truth:
+    - SHOW EVENT TABLES LIKE '{name}' IN SCHEMA {container}
+    - SHOW PARAMETERS IN TABLE {fqn}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
+    combined:
+      fields:
+      - change_tracking
+      - comment
+      - data_retention_time_in_days
+      - max_data_extension_time_in_days
+      sql:
+      - ALTER TABLE COVERAGE_EVENT_TABLE_CD106FE3.PUBLIC.COMBINED SET DATA_RETENTION_TIME_IN_DAYS = 5 MAX_DATA_EXTENSION_TIME_IN_DAYS
+        = 12 CHANGE_TRACKING = FALSE COMMENT = $$b$$
+      result: pass
+    tested_inputs: a957bc5cdf61
 - object: EXPERIMENT
   variant: null
   scope_level: schema
@@ -21159,7 +21289,7 @@ objects:
       truth: compression
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R00_COMPRESSION type = CSV compression = GZIP RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R00_COMPRESSION type = CSV compression = GZIP RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21169,7 +21299,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R00_COMPRESSION SET compression = BZ2
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R00_COMPRESSION SET compression = BZ2
   - name: record_delimiter
     sql: RECORD_DELIMITER = '<string>' | NONE
     kind: property
@@ -21198,7 +21328,7 @@ objects:
       truth: record_delimiter
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R01_RECORD_DELIMITER type = CSV compression = AUTO
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R01_RECORD_DELIMITER type = CSV compression = AUTO
           RECORD_DELIMITER = $$|$$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$
           TRIM_SPACE = FALSE NULL_IF = ($$
@@ -21206,7 +21336,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R01_RECORD_DELIMITER SET RECORD_DELIMITER = $$#$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R01_RECORD_DELIMITER SET RECORD_DELIMITER = $$#$$
   - name: field_delimiter
     sql: FIELD_DELIMITER = '<string>' | NONE
     kind: property
@@ -21235,7 +21365,7 @@ objects:
       truth: field_delimiter
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R02_FIELD_DELIMITER type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R02_FIELD_DELIMITER type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$;$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21245,7 +21375,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R02_FIELD_DELIMITER SET FIELD_DELIMITER = $$:$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R02_FIELD_DELIMITER SET FIELD_DELIMITER = $$:$$
   - name: multi_line
     sql: MULTI_LINE = TRUE | FALSE
     kind: property
@@ -21297,7 +21427,7 @@ objects:
       truth: file_extension
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R03_FILE_EXTENSION type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R03_FILE_EXTENSION type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ FILE_EXTENSION = $$.txt$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE
@@ -21307,7 +21437,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R03_FILE_EXTENSION SET FILE_EXTENSION = $$.dat$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R03_FILE_EXTENSION SET FILE_EXTENSION = $$.dat$$
   - name: parse_header
     sql: PARSE_HEADER = TRUE | FALSE
     kind: property
@@ -21336,7 +21466,7 @@ objects:
       truth: parse_header
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R04_PARSE_HEADER type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R04_PARSE_HEADER type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = TRUE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$ TIME_FORMAT
@@ -21346,7 +21476,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R04_PARSE_HEADER SET PARSE_HEADER = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R04_PARSE_HEADER SET PARSE_HEADER = FALSE
   - name: skip_header
     sql: SKIP_HEADER = <integer>
     kind: property
@@ -21375,7 +21505,7 @@ objects:
       truth: skip_header
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R05_SKIP_HEADER type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R05_SKIP_HEADER type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21385,7 +21515,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R05_SKIP_HEADER SET SKIP_HEADER = 1
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R05_SKIP_HEADER SET SKIP_HEADER = 1
   - name: skip_blank_lines
     sql: SKIP_BLANK_LINES = TRUE | FALSE
     kind: property
@@ -21414,7 +21544,7 @@ objects:
       truth: skip_blank_lines
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R06_SKIP_BLANK_LINES type = CSV compression = AUTO
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R06_SKIP_BLANK_LINES type = CSV compression = AUTO
           RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = TRUE DATE_FORMAT = $$AUTO$$ TIME_FORMAT
@@ -21424,7 +21554,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R06_SKIP_BLANK_LINES SET SKIP_BLANK_LINES = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R06_SKIP_BLANK_LINES SET SKIP_BLANK_LINES = FALSE
   - name: date_format
     sql: DATE_FORMAT = '<string>' | AUTO
     kind: property
@@ -21453,7 +21583,7 @@ objects:
       truth: date_format
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R07_DATE_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R07_DATE_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$YYYY-MM-DD$$
@@ -21463,7 +21593,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R07_DATE_FORMAT SET DATE_FORMAT = $$DD/MM/YYYY$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R07_DATE_FORMAT SET DATE_FORMAT = $$DD/MM/YYYY$$
   - name: time_format
     sql: TIME_FORMAT = '<string>' | AUTO
     kind: property
@@ -21492,7 +21622,7 @@ objects:
       truth: time_format
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R08_TIME_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R08_TIME_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21502,7 +21632,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R08_TIME_FORMAT SET TIME_FORMAT = $$HH24:MI:SS$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R08_TIME_FORMAT SET TIME_FORMAT = $$HH24:MI:SS$$
   - name: timestamp_format
     sql: TIMESTAMP_FORMAT = '<string>' | AUTO
     kind: property
@@ -21531,7 +21661,7 @@ objects:
       truth: timestamp_format
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R09_TIMESTAMP_FORMAT type = CSV compression = AUTO
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R09_TIMESTAMP_FORMAT type = CSV compression = AUTO
           RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21541,7 +21671,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R09_TIMESTAMP_FORMAT SET TIMESTAMP_FORMAT = $$YYYY-MM-DD
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R09_TIMESTAMP_FORMAT SET TIMESTAMP_FORMAT = $$YYYY-MM-DD
           HH24:MI:SS$$
   - name: binary_format
     sql: BINARY_FORMAT = HEX | BASE64 | UTF8
@@ -21571,7 +21701,7 @@ objects:
       truth: binary_format
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R10_BINARY_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R10_BINARY_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21581,7 +21711,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R10_BINARY_FORMAT SET binary_format = UTF8
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R10_BINARY_FORMAT SET binary_format = UTF8
   - name: escape
     sql: ESCAPE = '<character>' | NONE
     kind: property
@@ -21610,7 +21740,7 @@ objects:
       truth: escape
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R11_ESCAPE type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R11_ESCAPE type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21620,7 +21750,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R11_ESCAPE SET ESCAPE = $$~$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R11_ESCAPE SET ESCAPE = $$~$$
   - name: escape_unenclosed_field
     sql: ESCAPE_UNENCLOSED_FIELD = '<character>' | NONE
     kind: property
@@ -21649,7 +21779,7 @@ objects:
       truth: escape_unenclosed_field
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R12_ESCAPE_UNENCLOSED_FIELD type = CSV compression
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R12_ESCAPE_UNENCLOSED_FIELD type = CSV compression
           = AUTO RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21659,7 +21789,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R12_ESCAPE_UNENCLOSED_FIELD SET ESCAPE_UNENCLOSED_FIELD
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R12_ESCAPE_UNENCLOSED_FIELD SET ESCAPE_UNENCLOSED_FIELD
           = $$%$$
   - name: trim_space
     sql: TRIM_SPACE = TRUE | FALSE
@@ -21689,7 +21819,7 @@ objects:
       truth: trim_space
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R13_TRIM_SPACE type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R13_TRIM_SPACE type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21699,7 +21829,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R13_TRIM_SPACE SET TRIM_SPACE = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R13_TRIM_SPACE SET TRIM_SPACE = FALSE
   - name: field_optionally_enclosed_by
     sql: FIELD_OPTIONALLY_ENCLOSED_BY = '<character>' | NONE
     kind: property
@@ -21731,7 +21861,7 @@ objects:
       - \"
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R14_FIELD_OPTIONALLY_ENCLOSED_BY type = CSV compression
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R14_FIELD_OPTIONALLY_ENCLOSED_BY type = CSV compression
           = AUTO RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21741,7 +21871,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R14_FIELD_OPTIONALLY_ENCLOSED_BY SET FIELD_OPTIONALLY_ENCLOSED_BY
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R14_FIELD_OPTIONALLY_ENCLOSED_BY SET FIELD_OPTIONALLY_ENCLOSED_BY
           = $$"$$
   - name: null_if[]
     sql: NULL_IF = ( '<string>' [ , '<string>' ... ] )
@@ -21775,7 +21905,7 @@ objects:
       - '[''c'']'
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R15_NULL_IF__ type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R15_NULL_IF__ type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21783,7 +21913,7 @@ objects:
           = FALSE NULL_IF = ($$a$$, $$b$$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL
           = TRUE SKIP_BYTE_ORDER_MARK = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R15_NULL_IF__ SET NULL_IF = ($$c$$)
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R15_NULL_IF__ SET NULL_IF = ($$c$$)
   - name: error_on_column_count_mismatch
     sql: ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE | FALSE
     kind: property
@@ -21812,7 +21942,7 @@ objects:
       truth: error_on_column_count_mismatch
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R16_ERROR_ON_COLUMN_COUNT_MISMATCH type = CSV compression
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R16_ERROR_ON_COLUMN_COUNT_MISMATCH type = CSV compression
           = AUTO RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21822,7 +21952,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R16_ERROR_ON_COLUMN_COUNT_MISMATCH SET ERROR_ON_COLUMN_COUNT_MISMATCH
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R16_ERROR_ON_COLUMN_COUNT_MISMATCH SET ERROR_ON_COLUMN_COUNT_MISMATCH
           = TRUE
   - name: replace_invalid_characters
     sql: REPLACE_INVALID_CHARACTERS = TRUE | FALSE
@@ -21852,7 +21982,7 @@ objects:
       truth: replace_invalid_characters
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R17_REPLACE_INVALID_CHARACTERS type = CSV compression
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R17_REPLACE_INVALID_CHARACTERS type = CSV compression
           = AUTO RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21862,7 +21992,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = TRUE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R17_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R17_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
           = FALSE
   - name: empty_field_as_null
     sql: EMPTY_FIELD_AS_NULL = TRUE | FALSE
@@ -21892,7 +22022,7 @@ objects:
       truth: empty_field_as_null
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R18_EMPTY_FIELD_AS_NULL type = CSV compression = AUTO
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R18_EMPTY_FIELD_AS_NULL type = CSV compression = AUTO
           RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21902,7 +22032,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = FALSE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R18_EMPTY_FIELD_AS_NULL SET EMPTY_FIELD_AS_NULL = TRUE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R18_EMPTY_FIELD_AS_NULL SET EMPTY_FIELD_AS_NULL = TRUE
   - name: skip_byte_order_mark
     sql: SKIP_BYTE_ORDER_MARK = TRUE | FALSE
     kind: property
@@ -21931,7 +22061,7 @@ objects:
       truth: skip_byte_order_mark
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R19_SKIP_BYTE_ORDER_MARK type = CSV compression = AUTO
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R19_SKIP_BYTE_ORDER_MARK type = CSV compression = AUTO
           RECORD_DELIMITER = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21941,7 +22071,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = FALSE ENCODING = $$UTF8$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R19_SKIP_BYTE_ORDER_MARK SET SKIP_BYTE_ORDER_MARK = TRUE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R19_SKIP_BYTE_ORDER_MARK SET SKIP_BYTE_ORDER_MARK = TRUE
   - name: encoding
     sql: ENCODING = '<string>' | UTF8
     kind: property
@@ -21970,7 +22100,7 @@ objects:
       truth: encoding
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R20_ENCODING type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R20_ENCODING type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -21980,7 +22110,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF16$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R20_ENCODING SET ENCODING = $$UTF32$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R20_ENCODING SET ENCODING = $$UTF32$$
   - name: comment
     sql: COMMENT
     kind: property
@@ -22009,7 +22139,7 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R21_COMMENT type = CSV compression = AUTO RECORD_DELIMITER
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R21_COMMENT type = CSV compression = AUTO RECORD_DELIMITER
           = $$
 
           $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
@@ -22019,7 +22149,7 @@ objects:
           $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
           = TRUE ENCODING = $$UTF8$$ COMMENT = $$a$$'
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R21_COMMENT SET COMMENT = $$b$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.R21_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -22095,7 +22225,7 @@ objects:
       - timestamp_format
       - trim_space
       sql:
-      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.COMBINED SET compression = BZ2 RECORD_DELIMITER = $$#$$
+      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_07B96A81.PUBLIC.COMBINED SET compression = BZ2 RECORD_DELIMITER = $$#$$
         FIELD_DELIMITER = $$:$$ FILE_EXTENSION = $$.dat$$ PARSE_HEADER = FALSE SKIP_HEADER = 1 SKIP_BLANK_LINES = FALSE DATE_FORMAT
         = $$DD/MM/YYYY$$ TIME_FORMAT = $$HH24:MI:SS$$ TIMESTAMP_FORMAT = $$YYYY-MM-DD HH24:MI:SS$$ binary_format = UTF8 ESCAPE
         = $$~$$ ESCAPE_UNENCLOSED_FIELD = $$%$$ TRIM_SPACE = FALSE FIELD_OPTIONALLY_ENCLOSED_BY = $$"$$ NULL_IF = ($$c$$)
@@ -22248,12 +22378,12 @@ objects:
       truth: compression
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R00_COMPRESSION type = JSON compression = GZIP DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R00_COMPRESSION type = JSON compression = GZIP DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
           = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R00_COMPRESSION SET compression = BZ2
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R00_COMPRESSION SET compression = BZ2
   - name: date_format
     sql: DATE_FORMAT = '<string>' | AUTO
     kind: property
@@ -22282,12 +22412,12 @@ objects:
       truth: date_format
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R01_DATE_FORMAT type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R01_DATE_FORMAT type = JSON compression = AUTO DATE_FORMAT
           = $$YYYY-MM-DD$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
           = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R01_DATE_FORMAT SET DATE_FORMAT = $$DD/MM/YYYY$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R01_DATE_FORMAT SET DATE_FORMAT = $$DD/MM/YYYY$$
   - name: time_format
     sql: TIME_FORMAT = '<string>' | AUTO
     kind: property
@@ -22316,12 +22446,12 @@ objects:
       truth: time_format
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R02_TIME_FORMAT type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R02_TIME_FORMAT type = JSON compression = AUTO DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$HH24:MI$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
           = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R02_TIME_FORMAT SET TIME_FORMAT = $$HH24:MI:SS$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R02_TIME_FORMAT SET TIME_FORMAT = $$HH24:MI:SS$$
   - name: timestamp_format
     sql: TIMESTAMP_FORMAT = '<string>' | AUTO
     kind: property
@@ -22350,12 +22480,12 @@ objects:
       truth: timestamp_format
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R03_TIMESTAMP_FORMAT type = JSON compression = AUTO
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R03_TIMESTAMP_FORMAT type = JSON compression = AUTO
           DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$YYYY-MM-DD HH24:MI$$ binary_format = HEX TRIM_SPACE
           = FALSE FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
           = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R03_TIMESTAMP_FORMAT SET TIMESTAMP_FORMAT = $$YYYY-MM-DD
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R03_TIMESTAMP_FORMAT SET TIMESTAMP_FORMAT = $$YYYY-MM-DD
           HH24:MI:SS$$
   - name: binary_format
     sql: BINARY_FORMAT = HEX | BASE64 | UTF8
@@ -22385,12 +22515,12 @@ objects:
       truth: binary_format
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R04_BINARY_FORMAT type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R04_BINARY_FORMAT type = JSON compression = AUTO DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = BASE64 TRIM_SPACE = FALSE FILE_EXTENSION
           = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R04_BINARY_FORMAT SET binary_format = UTF8
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R04_BINARY_FORMAT SET binary_format = UTF8
   - name: trim_space
     sql: TRIM_SPACE = TRUE | FALSE
     kind: property
@@ -22419,12 +22549,12 @@ objects:
       truth: trim_space
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R05_TRIM_SPACE type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R05_TRIM_SPACE type = JSON compression = AUTO DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = TRUE FILE_EXTENSION
           = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R05_TRIM_SPACE SET TRIM_SPACE = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R05_TRIM_SPACE SET TRIM_SPACE = FALSE
   - name: multi_line
     sql: MULTI_LINE = TRUE | FALSE
     kind: property
@@ -22480,12 +22610,12 @@ objects:
       - '[''c'']'
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R06_NULL_IF__ type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R06_NULL_IF__ type = JSON compression = AUTO DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE NULL_IF = ($$a$$,
           $$b$$) FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
           = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R06_NULL_IF__ SET NULL_IF = ($$c$$)
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R06_NULL_IF__ SET NULL_IF = ($$c$$)
   - name: file_extension
     sql: FILE_EXTENSION = '<string>' | NONE
     kind: property
@@ -22514,12 +22644,12 @@ objects:
       truth: file_extension
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R07_FILE_EXTENSION type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R07_FILE_EXTENSION type = JSON compression = AUTO DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
           = $$.txt$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R07_FILE_EXTENSION SET FILE_EXTENSION = $$.dat$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R07_FILE_EXTENSION SET FILE_EXTENSION = $$.dat$$
   - name: enable_octal
     sql: ENABLE_OCTAL = TRUE | FALSE
     kind: property
@@ -22548,12 +22678,12 @@ objects:
       truth: enable_octal
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R08_ENABLE_OCTAL type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R08_ENABLE_OCTAL type = JSON compression = AUTO DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
           = $$json$$ ENABLE_OCTAL = TRUE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R08_ENABLE_OCTAL SET ENABLE_OCTAL = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R08_ENABLE_OCTAL SET ENABLE_OCTAL = FALSE
   - name: allow_duplicate
     sql: ALLOW_DUPLICATE = TRUE | FALSE
     kind: property
@@ -22582,12 +22712,12 @@ objects:
       truth: allow_duplicate
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R09_ALLOW_DUPLICATE type = JSON compression = AUTO
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R09_ALLOW_DUPLICATE type = JSON compression = AUTO
           DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
           FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = TRUE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
           = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R09_ALLOW_DUPLICATE SET ALLOW_DUPLICATE = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R09_ALLOW_DUPLICATE SET ALLOW_DUPLICATE = FALSE
   - name: strip_outer_array
     sql: STRIP_OUTER_ARRAY = TRUE | FALSE
     kind: property
@@ -22616,12 +22746,12 @@ objects:
       truth: strip_outer_array
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R10_STRIP_OUTER_ARRAY type = JSON compression = AUTO
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R10_STRIP_OUTER_ARRAY type = JSON compression = AUTO
           DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
           FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = TRUE STRIP_NULL_VALUES
           = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R10_STRIP_OUTER_ARRAY SET STRIP_OUTER_ARRAY = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R10_STRIP_OUTER_ARRAY SET STRIP_OUTER_ARRAY = FALSE
   - name: strip_null_values
     sql: STRIP_NULL_VALUES = TRUE | FALSE
     kind: property
@@ -22650,12 +22780,12 @@ objects:
       truth: strip_null_values
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R11_STRIP_NULL_VALUES type = JSON compression = AUTO
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R11_STRIP_NULL_VALUES type = JSON compression = AUTO
           DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
           FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
           = TRUE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R11_STRIP_NULL_VALUES SET STRIP_NULL_VALUES = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R11_STRIP_NULL_VALUES SET STRIP_NULL_VALUES = FALSE
   - name: replace_invalid_characters
     sql: REPLACE_INVALID_CHARACTERS = TRUE | FALSE
     kind: parameter
@@ -22684,12 +22814,12 @@ objects:
       truth: replace_invalid_characters
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R12_REPLACE_INVALID_CHARACTERS type = JSON compression
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R12_REPLACE_INVALID_CHARACTERS type = JSON compression
           = AUTO DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE
           = FALSE FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
           = FALSE REPLACE_INVALID_CHARACTERS = TRUE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R12_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R12_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
           = FALSE
   - name: ignore_utf8_errors
     sql: IGNORE_UTF8_ERRORS = TRUE | FALSE
@@ -22719,12 +22849,12 @@ objects:
       truth: ignore_utf8_errors
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R13_IGNORE_UTF8_ERRORS type = JSON compression = AUTO
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R13_IGNORE_UTF8_ERRORS type = JSON compression = AUTO
           DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
           FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
           = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R13_IGNORE_UTF8_ERRORS SET IGNORE_UTF8_ERRORS = TRUE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R13_IGNORE_UTF8_ERRORS SET IGNORE_UTF8_ERRORS = TRUE
   - name: skip_byte_order_mark
     sql: SKIP_BYTE_ORDER_MARK = TRUE | FALSE
     kind: property
@@ -22753,12 +22883,12 @@ objects:
       truth: skip_byte_order_mark
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R14_SKIP_BYTE_ORDER_MARK type = JSON compression =
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R14_SKIP_BYTE_ORDER_MARK type = JSON compression =
           AUTO DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE =
           FALSE FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
           = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = FALSE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R14_SKIP_BYTE_ORDER_MARK SET SKIP_BYTE_ORDER_MARK =
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R14_SKIP_BYTE_ORDER_MARK SET SKIP_BYTE_ORDER_MARK =
           TRUE
   - name: comment
     sql: COMMENT
@@ -22788,12 +22918,12 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R15_COMMENT type = JSON compression = AUTO DATE_FORMAT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R15_COMMENT type = JSON compression = AUTO DATE_FORMAT
           = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
           = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
           = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE COMMENT = $$a$$
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R15_COMMENT SET COMMENT = $$b$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.R15_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -22863,7 +22993,7 @@ objects:
       - timestamp_format
       - trim_space
       sql:
-      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.COMBINED SET compression = BZ2 DATE_FORMAT = $$DD/MM/YYYY$$
+      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_F9B1304E.PUBLIC.COMBINED SET compression = BZ2 DATE_FORMAT = $$DD/MM/YYYY$$
         TIME_FORMAT = $$HH24:MI:SS$$ TIMESTAMP_FORMAT = $$YYYY-MM-DD HH24:MI:SS$$ binary_format = UTF8 TRIM_SPACE = FALSE
         NULL_IF = ($$c$$) FILE_EXTENSION = $$.dat$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE
         STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = TRUE SKIP_BYTE_ORDER_MARK = TRUE
@@ -23205,10 +23335,10 @@ objects:
       truth: compression
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R00_COMPRESSION type = PARQUET compression = SNAPPY
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R00_COMPRESSION type = PARQUET compression = SNAPPY
           BINARY_AS_TEXT = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R00_COMPRESSION SET compression = LZO
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R00_COMPRESSION SET compression = LZO
   - name: binary_as_text
     sql: BINARY_AS_TEXT = TRUE | FALSE
     kind: property
@@ -23237,10 +23367,10 @@ objects:
       truth: binary_as_text
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R01_BINARY_AS_TEXT type = PARQUET compression =
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R01_BINARY_AS_TEXT type = PARQUET compression =
           AUTO BINARY_AS_TEXT = FALSE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R01_BINARY_AS_TEXT SET BINARY_AS_TEXT = TRUE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R01_BINARY_AS_TEXT SET BINARY_AS_TEXT = TRUE
   - name: use_logical_type
     sql: USE_LOGICAL_TYPE = TRUE | FALSE
     kind: property
@@ -23292,10 +23422,10 @@ objects:
       truth: trim_space
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R02_TRIM_SPACE type = PARQUET compression = AUTO
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R02_TRIM_SPACE type = PARQUET compression = AUTO
           BINARY_AS_TEXT = TRUE TRIM_SPACE = TRUE REPLACE_INVALID_CHARACTERS = FALSE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R02_TRIM_SPACE SET TRIM_SPACE = FALSE
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R02_TRIM_SPACE SET TRIM_SPACE = FALSE
   - name: use_vectorized_scanner
     sql: USE_VECTORIZED_SCANNER = TRUE | FALSE
     kind: property
@@ -23347,10 +23477,10 @@ objects:
       truth: replace_invalid_characters
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R03_REPLACE_INVALID_CHARACTERS type = PARQUET compression
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R03_REPLACE_INVALID_CHARACTERS type = PARQUET compression
           = AUTO BINARY_AS_TEXT = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = TRUE
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R03_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R03_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
           = FALSE
   - name: null_if[]
     sql: NULL_IF = ( '<string>' [ , '<string>' ... ] )
@@ -23384,10 +23514,10 @@ objects:
       - '[''c'']'
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R04_NULL_IF__ type = PARQUET compression = AUTO
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R04_NULL_IF__ type = PARQUET compression = AUTO
           BINARY_AS_TEXT = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE NULL_IF = ($$a$$, $$b$$)
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R04_NULL_IF__ SET NULL_IF = ($$c$$)
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R04_NULL_IF__ SET NULL_IF = ($$c$$)
   - name: comment
     sql: COMMENT
     kind: property
@@ -23416,10 +23546,10 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R05_COMMENT type = PARQUET compression = AUTO BINARY_AS_TEXT
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R05_COMMENT type = PARQUET compression = AUTO BINARY_AS_TEXT
           = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE COMMENT = $$a$$
         L4_sql:
-        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -23481,7 +23611,7 @@ objects:
       - replace_invalid_characters
       - trim_space
       sql:
-      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.COMBINED SET compression = LZO BINARY_AS_TEXT = TRUE
+      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_A81112E2.PUBLIC.COMBINED SET compression = LZO BINARY_AS_TEXT = TRUE
         TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE NULL_IF = ($$c$$) COMMENT = $$b$$
       result: pass
     tested_inputs: 8541a4f06220
@@ -35311,13 +35441,26 @@ objects:
       field: type
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - AWSVPCEID
+      - AZURELINKID
+      truth: type
+      evidence:
+        create_sql:
+        - CREATE NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R00_TYPE type = AWSVPCEID VALUE_LIST = ($$vpce-0123456789abcdef0$$)
+          mode = INGRESS
+        L4_sql:
+        - ALTER NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R00_TYPE SET type = AZURELINKID
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''type''
+          for ''NETWORK_RULE'' on: ALTER NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R00_TYPE SET type = AZURELINKID'
+        L5: fails because L4 fails
   - name: mode
     sql: MODE
     kind: identity
@@ -35336,13 +35479,26 @@ objects:
       field: mode
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - INGRESS
+      - INTERNAL_STAGE
+      truth: mode
+      evidence:
+        create_sql:
+        - CREATE NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R01_MODE type = AWSVPCEID VALUE_LIST = ($$vpce-0123456789abcdef0$$)
+          mode = INGRESS
+        L4_sql:
+        - ALTER NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R01_MODE SET mode = INTERNAL_STAGE
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''mode''
+          for ''NETWORK_RULE'' on: ALTER NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R01_MODE SET mode = INTERNAL_STAGE'
+        L5: fails because L4 fails
   - name: value_list[]
     sql: VALUE_LIST
     kind: property
@@ -35361,11 +35517,26 @@ objects:
       field: value_list
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - vpce-0123456789abcdef0
+      - - vpce-0123456789abcdef0
+        - vpce-0123456789abcdef1
+      truth: value_list_py
+      expect:
+      - '[''vpce-0123456789abcdef0'']'
+      - '[''vpce-0123456789abcdef0'', ''vpce-0123456789abcdef1'']'
+      evidence:
+        create_sql:
+        - CREATE NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R02_VALUE_LIST__ type = AWSVPCEID VALUE_LIST = ($$vpce-0123456789abcdef0$$)
+          mode = INGRESS
+        L4_sql:
+        - ALTER NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R02_VALUE_LIST__ SET VALUE_LIST = ($$vpce-0123456789abcdef0$$,
+          $$vpce-0123456789abcdef1$$)
   - name: comment
     sql: COMMENT
     kind: property
@@ -35383,11 +35554,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
-      candidates: []
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
+      candidates:
+      - 'L4: snowcap renders [''ALTER NETWORK RULE COVERAGE_STATIC.PUBLIC.P SET COMMENT = $$b$$''], docs syntax is "ALTER
+        NETWORK RULE <name> SET VALUE_LIST = ( ''<value>'' [ , ... ] ) COMMENT = ''<string_literal>''"'
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R03_COMMENT type = AWSVPCEID VALUE_LIST = ($$vpce-0123456789abcdef0$$)
+          mode = INGRESS COMMENT = $$a$$
+        L4_sql:
+        - ALTER NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.R03_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -35429,8 +35612,26 @@ objects:
   excluded: []
   snowcap:
     class: NetworkRule
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      type: AWSVPCEID
+      mode: INGRESS
+      value_list:
+      - vpce-0123456789abcdef0
+    truth:
+    - SHOW NETWORK RULES LIKE '{name}' IN SCHEMA {container}
+    - DESCRIBE NETWORK RULE {fqn}
+    - SELECT 'value_list_py' AS key, '[''' || REPLACE("value_list", ',', ''', ''') || ''']' AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - value_list
+      sql:
+      - ALTER NETWORK RULE COVERAGE_NETWORK_RULE_82D4FF8A.PUBLIC.COMBINED SET VALUE_LIST = ($$vpce-0123456789abcdef0$$, $$vpce-0123456789abcdef1$$)
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: 7567187f4425
 - object: NOTEBOOK
   variant: null
   scope_level: schema
@@ -40972,13 +41173,13 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R00_RETURNS () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R00_RETURNS () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R00_RETURNS() SET returns NUMBER
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R00_RETURNS() SET returns NUMBER
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          84 unexpected ''NUMBER''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R00_RETURNS() SET returns
+          84 unexpected ''NUMBER''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R00_RETURNS() SET returns
           NUMBER'
         L5: fails because L4 fails
   - name: language
@@ -41029,15 +41230,15 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R01_NULL_HANDLING () returns VARCHAR language PYTHON\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R01_NULL_HANDLING () returns VARCHAR language PYTHON\
           \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined\
           \ procedure$$ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n\
           $$"
         L2: declared 'RETURNS NULL ON NULL INPUT', Snowflake reports null handling='CALLED ON NULL INPUT'
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R01_NULL_HANDLING() SET
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R01_NULL_HANDLING() SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          81 unexpected ''<EOF>''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R01_NULL_HANDLING() SET'
+          81 unexpected ''<EOF>''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R01_NULL_HANDLING() SET'
         L5: 'plan after create: ["update [''null_handling'']"]; plan after change: []'
   - name: comment
     sql: COMMENT
@@ -41067,11 +41268,11 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R02_COMMENT () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R02_COMMENT () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$a$$ execute as CALLER AS\
           \ $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R02_COMMENT() SET COMMENT = $$b$$
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R02_COMMENT() SET COMMENT = $$b$$
   - name: execute_as
     sql: EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
     kind: property
@@ -41100,11 +41301,11 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R03_EXECUTE_AS () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R03_EXECUTE_AS () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R03_EXECUTE_AS() EXECUTE AS OWNER
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R03_EXECUTE_AS() EXECUTE AS OWNER
   - name: body
     sql: AS '<procedure_definition>'
     kind: property
@@ -41135,14 +41336,14 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R04_BODY () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R04_BODY () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - "ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R04_BODY() SET AS $$def main(session):\n    return 'c'\n\
+        - "ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R04_BODY() SET AS $$def main(session):\n    return 'c'\n\
           \ndef main2(session):\n    return 'd'\n$$"
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          73 unexpected ''AS''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R04_BODY() SET AS $$def main(session):
+          73 unexpected ''AS''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R04_BODY() SET AS $$def main(session):
           return ''c'' def main2(session): return ''d'' $ ...'
         L5: fails because L4 fails
   - name: tags
@@ -41194,11 +41395,11 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R05_OWNER () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R05_OWNER () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - GRANT OWNERSHIP ON PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R05_OWNER() TO ROLE SYSADMIN COPY CURRENT
+        - GRANT OWNERSHIP ON PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R05_OWNER() TO ROLE SYSADMIN COPY CURRENT
           GRANTS
   - name: log_level
     sql: LOG_LEVEL
@@ -41319,7 +41520,7 @@ objects:
         ALTER'
       evidence:
         L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 70 unexpected
-          ''SECURE''. on: CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R06_SECURE SECURE () returns VARCHAR
+          ''SECURE''. on: CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R06_SECURE SECURE () returns VARCHAR
           language PYTHON RUNTIME_VERSION = $$3.11$$ P ...'
   - name: temporary
     sql: TEMPORARY
@@ -41374,14 +41575,14 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R07_RUNTIME_VERSION () returns VARCHAR language PYTHON\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R07_RUNTIME_VERSION () returns VARCHAR language PYTHON\
           \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined\
           \ procedure$$ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n\
           $$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$
         L4: 'Snowflake rejects the SQL: ProgrammingError: 000002 (0A000): Unsupported feature ''ALTER PROCEDURE SET RUNTIME_VERSION''.
-          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$'
+          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$'
         L5: fails because L4 fails
   - name: artifact_repository
     sql: ARTIFACT_REPOSITORY = <repository>
@@ -41437,14 +41638,14 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R08_PACKAGES () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R08_PACKAGES () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
           $$pyyaml$$)
         L4: 'Snowflake rejects the SQL: ProgrammingError: 000002 (0A000): Unsupported feature ''ALTER PROCEDURE SET PACKAGES''.
-          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
+          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
           $$pyyaml$$)'
         L5: fails because L4 fails
   - name: imports
@@ -41465,11 +41666,27 @@ objects:
       field: imports
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - - '@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py'
+      - - '@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_b.py'
+      truth: imports_list
+      expect:
+      - '[''@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py'']'
+      - '[''@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_b.py'']'
+      evidence:
+        create_sql:
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R09_IMPORTS () returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) IMPORTS = ($$@COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py$$)\
+          \ HANDLER = $$main$$ COMMENT = $$user-defined procedure$$ execute as CALLER AS $$def main(session):\n    return\
+          \ 'a'\n\ndef main2(session):\n    return 'b'\n$$"
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:procedure/COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R09_IMPORTS():
+          changing ''imports'' requires replacing the resource, which snowcap does not do.'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: handler
     sql: HANDLER = '<handler>'
     kind: property
@@ -41500,13 +41717,13 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R09_HANDLER () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R10_HANDLER () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R10_HANDLER() SET HANDLER = $$main2$$
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''HANDLER''
-          for ''PROCEDURE'' on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$'
+          for ''PROCEDURE'' on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_57753438.PUBLIC.R10_HANDLER() SET HANDLER = $$main2$$'
         L5: fails because L4 fails
   - name: external_access_integrations
     sql: EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
@@ -41571,15 +41788,23 @@ objects:
     truth:
     - SHOW PROCEDURES LIKE '{name}' IN SCHEMA {container}
     - DESCRIBE PROCEDURE {fqn}
+    - SELECT 'imports_list' AS key, '[''' || REPLACE(TRIM("value", '[]'), ', ', ''', ''') || ''']' AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+      WHERE "property" = 'imports'
     - SHOW PARAMETERS IN PROCEDURE {fqn}
     unmapped_fields: []
     field_notes:
       copy_grants: 'CREATE option, not state: COPY GRANTS on replace.'
+    setup:
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STAGE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_mod_a.py'
+      @{database}.PUBLIC.COVERAGE_STAGE AUTO_COMPRESS = FALSE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_mod_b.py'
+      @{database}.PUBLIC.COVERAGE_STAGE AUTO_COMPRESS = FALSE
     combined:
       fields:
       - comment
       result: untested (needs two or more fields)
-    tested_inputs: b84bf656a6b8
+    tested_inputs: 4c7820070fd4
 - object: PROCEDURE
   variant: scala
   scope_level: schema
@@ -44014,7 +44239,7 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_B652CFC6.R00_TRANSIENT
+        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_79D8817D.R00_TRANSIENT
         L4: 'snowcap refuses: Exception: Cannot change transient property of schema'
         L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: swap_with
@@ -44060,9 +44285,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R01_MANAGED_ACCESS WITH MANAGED ACCESS
+        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R01_MANAGED_ACCESS WITH MANAGED ACCESS
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
+        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -44091,9 +44316,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R02_OWNER
+        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R02_OWNER
         L4_sql:
-        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_B652CFC6.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_79D8817D.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
   - name: tags
     sql: WITH TAG / SET TAG
     kind: relationship
@@ -44166,9 +44391,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
+        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
+        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
     kind: parameter
@@ -44197,9 +44422,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
+        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
+        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
           12
   - name: external_volume
     sql: EXTERNAL_VOLUME
@@ -44361,9 +44586,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
+        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
   - name: storage_serialization_policy
     sql: STORAGE_SERIALIZATION_POLICY
     kind: parameter
@@ -44436,9 +44661,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R06_COMMENT COMMENT = $$a$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R06_COMMENT COMMENT = $$a$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R06_COMMENT SET comment = 'b'
+        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R06_COMMENT SET comment = 'b'
   - name: catalog_sync
     sql: CATALOG_SYNC
     kind: parameter
@@ -45077,7 +45302,7 @@ objects:
       - default_ddl_collation
       - max_data_extension_time_in_days
       sql:
-      - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.COMBINED SET comment = 'b'
+      - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.COMBINED SET comment = 'b'
       result: fail
       missed:
       - data_retention_time_in_days
@@ -45357,7 +45582,7 @@ objects:
       - coverage_s2
       evidence:
         create_sql:
-        - CREATE SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.R00_SECRET_STRING type = GENERIC_STRING SECRET_STRING
+        - CREATE SECRET COVERAGE_SECRET_GENERIC_STRING_DD02A454.PUBLIC.R00_SECRET_STRING type = GENERIC_STRING SECRET_STRING
           = $$coverage_s1$$
         L3: declared 'coverage_s1', snowcap fetches None
         L4: a change to 'coverage_s2' plans nothing
@@ -45390,10 +45615,10 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.R01_COMMENT type = GENERIC_STRING SECRET_STRING = $$coverage_s0$$
+        - CREATE SECRET COVERAGE_SECRET_GENERIC_STRING_DD02A454.PUBLIC.R01_COMMENT type = GENERIC_STRING SECRET_STRING = $$coverage_s0$$
           COMMENT = $$a$$
         L4_sql:
-        - ALTER SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.R01_COMMENT SET COMMENT = $$b$$
+        - ALTER SECRET COVERAGE_SECRET_GENERIC_STRING_DD02A454.PUBLIC.R01_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -45446,7 +45671,7 @@ objects:
       - comment
       - secret_string
       sql:
-      - ALTER SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.COMBINED SET COMMENT = $$b$$
+      - ALTER SECRET COVERAGE_SECRET_GENERIC_STRING_DD02A454.PUBLIC.COMBINED SET COMMENT = $$b$$
       result: fail
       missed:
       - secret_string
@@ -45996,10 +46221,10 @@ objects:
       truth: username
       evidence:
         create_sql:
-        - CREATE SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R00_USERNAME type = PASSWORD USERNAME = $$coverage_u1$$ PASSWORD
+        - CREATE SECRET COVERAGE_SECRET_PASSWORD_F618F796.PUBLIC.R00_USERNAME type = PASSWORD USERNAME = $$coverage_u1$$ PASSWORD
           = $$coverage_p0$$
         L4_sql:
-        - ALTER SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R00_USERNAME SET USERNAME = $$coverage_u2$$
+        - ALTER SECRET COVERAGE_SECRET_PASSWORD_F618F796.PUBLIC.R00_USERNAME SET USERNAME = $$coverage_u2$$
   - name: password
     sql: PASSWORD
     kind: property
@@ -46027,7 +46252,7 @@ objects:
       - coverage_p2
       evidence:
         create_sql:
-        - CREATE SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R01_PASSWORD type = PASSWORD USERNAME = $$coverage_u0$$ PASSWORD
+        - CREATE SECRET COVERAGE_SECRET_PASSWORD_F618F796.PUBLIC.R01_PASSWORD type = PASSWORD USERNAME = $$coverage_u0$$ PASSWORD
           = $$coverage_p1$$
         L3: declared 'coverage_p1', snowcap fetches None
         L4: a change to 'coverage_p2' plans nothing
@@ -46060,10 +46285,10 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R02_COMMENT type = PASSWORD USERNAME = $$coverage_u0$$ PASSWORD
+        - CREATE SECRET COVERAGE_SECRET_PASSWORD_F618F796.PUBLIC.R02_COMMENT type = PASSWORD USERNAME = $$coverage_u0$$ PASSWORD
           = $$coverage_p0$$ COMMENT = $$a$$
         L4_sql:
-        - ALTER SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
+        - ALTER SECRET COVERAGE_SECRET_PASSWORD_F618F796.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -46118,7 +46343,7 @@ objects:
       - password
       - username
       sql:
-      - ALTER SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.COMBINED SET USERNAME = $$coverage_u2$$ COMMENT = $$b$$
+      - ALTER SECRET COVERAGE_SECRET_PASSWORD_F618F796.PUBLIC.COMBINED SET USERNAME = $$coverage_u2$$ COMMENT = $$b$$
       result: fail
       missed:
       - password
@@ -51628,11 +51853,11 @@ objects:
       truth: next_value
       evidence:
         create_sql:
-        - CREATE SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R00_START START 5
+        - CREATE SEQUENCE COVERAGE_SEQUENCE_5534C8E4.PUBLIC.R00_START START 5
         L4_sql:
-        - ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R00_START SET START 10
+        - ALTER SEQUENCE COVERAGE_SEQUENCE_5534C8E4.PUBLIC.R00_START SET START 10
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''SEQUENCE_START''
-          for ''SEQUENCE'' on: ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R00_START SET START 10'
+          for ''SEQUENCE'' on: ALTER SEQUENCE COVERAGE_SEQUENCE_5534C8E4.PUBLIC.R00_START SET START 10'
         L5: fails because L4 fails
   - name: increment
     sql: INCREMENT [ BY ] [ = ] <sequence_interval>
@@ -51663,9 +51888,9 @@ objects:
       truth: interval
       evidence:
         create_sql:
-        - CREATE SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R01_INCREMENT INCREMENT 2
+        - CREATE SEQUENCE COVERAGE_SEQUENCE_5534C8E4.PUBLIC.R01_INCREMENT INCREMENT 2
         L4_sql:
-        - ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R01_INCREMENT SET INCREMENT 3
+        - ALTER SEQUENCE COVERAGE_SEQUENCE_5534C8E4.PUBLIC.R01_INCREMENT SET INCREMENT 3
   - name: order
     sql: '{ ORDER | NOORDER }'
     kind: property
@@ -51717,9 +51942,9 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R02_COMMENT COMMENT = $$a$$
+        - CREATE SEQUENCE COVERAGE_SEQUENCE_5534C8E4.PUBLIC.R02_COMMENT COMMENT = $$a$$
         L4_sql:
-        - ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
+        - ALTER SEQUENCE COVERAGE_SEQUENCE_5534C8E4.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -55758,9 +55983,9 @@ objects:
       - INTERNAL
       evidence:
         create_sql:
-        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R00_ENCRYPTION_TYPE encryption = (type = 'SNOWFLAKE_SSE') directory
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R00_ENCRYPTION_TYPE encryption = (type = 'SNOWFLAKE_SSE') directory
           = (ENABLE = FALSE)
-        L3: 'declared {''type'': ''SNOWFLAKE_SSE''}, snowcap fetches None'
+        L3: declared 'SNOWFLAKE_SSE', snowcap fetches None
         L4: 'a change to {''type'': ''SNOWFLAKE_FULL''} plans nothing'
         L5: fails because L4 fails
   - name: directory.enable
@@ -55795,9 +56020,9 @@ objects:
       - false
       evidence:
         create_sql:
-        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R01_DIRECTORY_ENABLE directory = (ENABLE = TRUE)
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R01_DIRECTORY_ENABLE directory = (ENABLE = TRUE)
         L4_sql:
-        - ALTER STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R01_DIRECTORY_ENABLE SET directory = (ENABLE = FALSE)
+        - ALTER STAGE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R01_DIRECTORY_ENABLE SET directory = (ENABLE = FALSE)
   - name: directory.auto_refresh
     sql: DIRECTORY = ( AUTO_REFRESH = { TRUE | FALSE } )
     kind: property
@@ -55960,9 +56185,9 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R02_COMMENT directory = (ENABLE = FALSE) COMMENT = $$a$$
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R02_COMMENT directory = (ENABLE = FALSE) COMMENT = $$a$$
         L4_sql:
-        - ALTER STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
+        - ALTER STAGE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -56055,12 +56280,12 @@ objects:
       - b
       evidence:
         create_sql:
-        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS directory = (ENABLE = FALSE)
-        - ALTER STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS SET TAG COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.COVERAGE_TAG='a'
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R03_TAGS directory = (ENABLE = FALSE)
+        - ALTER STAGE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R03_TAGS SET TAG COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.COVERAGE_TAG='a'
         L4_sql:
-        - ALTER TAG REFERENCE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS?domain=STAGE SET
+        - ALTER TAG REFERENCE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R03_TAGS?domain=STAGE SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          20 unexpected ''COVERAGE_STAGE_INTERNAL_076AC006''. on: ALTER TAG REFERENCE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS?domain=STAGE
+          20 unexpected ''COVERAGE_STAGE_INTERNAL_0431909C''. on: ALTER TAG REFERENCE COVERAGE_STAGE_INTERNAL_0431909C.PUBLIC.R03_TAGS?domain=STAGE
           SET'
         L5: fails because L4 fails
   excluded: []
@@ -58674,11 +58899,23 @@ objects:
       field: on_table
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_T1'
+      - '{database}.PUBLIC.COVERAGE_T2'
+      truth: table_name
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R00_ON_TABLE ON TABLE COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.COVERAGE_T1
+          APPEND_ONLY = FALSE
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:stream/COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R00_ON_TABLE:
+          changing ''on_table'' requires replacing the resource, which snowcap does not do. Snowflake''s ALTER STREAM cannot
+          change a stream''s source. Replacing the stream resets its offset, so any unread changes are lost. Rem'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: at_before
     sql: '{ AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => ''<name>''
       } )'
@@ -58701,12 +58938,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - offset: '-1'
+      - offset: '-2'
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R01_AT_BEFORE ON TABLE COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.COVERAGE_T1
+          at (offset => -1) APPEND_ONLY = FALSE
+        L3: 'declared {''offset'': ''-1''}, snowcap fetches None'
+        L4: 'a change to {''offset'': ''-2''} plans nothing'
+        L5: fails because L4 fails
   - name: append_only
     sql: APPEND_ONLY = TRUE | FALSE
     kind: property
@@ -58724,11 +58971,26 @@ objects:
       field: append_only
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - true
+      - false
+      truth: is_append_only
+      expect:
+      - true
+      - false
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R02_APPEND_ONLY ON TABLE COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.COVERAGE_T1
+          APPEND_ONLY = TRUE
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:stream/COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R02_APPEND_ONLY:
+          changing ''append_only'' requires replacing the resource, which snowcap does not do. Snowflake fixes a stream''s
+          append-only mode at creation; ALTER STREAM cannot change it. Remove the stream from config, apply, t'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: insert_only
     sql: INSERT_ONLY = TRUE
     kind: property
@@ -58772,12 +59034,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - true
+      - false
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R03_SHOW_INITIAL_ROWS ON TABLE COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.COVERAGE_T1
+          APPEND_ONLY = FALSE SHOW_INITIAL_ROWS = TRUE
+        L3: declared True, snowcap fetches None
+        L4: a change to False plans nothing
+        L5: fails because L4 fails
   - name: comment
     sql: COMMENT
     kind: property
@@ -58796,11 +59068,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R04_COMMENT ON TABLE COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.COVERAGE_T1
+          APPEND_ONLY = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER STREAM COVERAGE_STREAM_TABLE_CF1EDCE5.PUBLIC.R04_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -58892,10 +59174,22 @@ objects:
   excluded: []
   snowcap:
     class: TableStream
-    test: untested
+    test: live
     field_notes:
       before: 'No docs row: BEFORE shares the at_before docs row, which maps to at.'
     unmapped_fields: []
+    setup:
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T1 (ID NUMBER(38,0)) CHANGE_TRACKING = TRUE
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T2 (ID NUMBER(38,0)) CHANGE_TRACKING = TRUE
+    create_args:
+      on_table: '{database}.PUBLIC.COVERAGE_T1'
+    truth:
+    - SHOW STREAMS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'is_append_only' AS key, ("mode" = 'APPEND_ONLY')::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 627088e48612
 - object: STREAM
   variant: view
   scope_level: schema
@@ -58981,11 +59275,22 @@ objects:
       field: on_view
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_V1'
+      - '{database}.PUBLIC.COVERAGE_V2'
+      truth: table_name
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R00_ON_VIEW ON VIEW COVERAGE_STREAM_VIEW_AD261460.PUBLIC.COVERAGE_V1
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:stream/COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R00_ON_VIEW:
+          changing ''on_view'' requires replacing the resource, which snowcap does not do. Snowflake''s ALTER STREAM cannot
+          change a stream''s source. Replacing the stream resets its offset, so any unread changes are lost. Remove'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: at_before
     sql: '{ AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => ''<name>''
       } )'
@@ -59008,12 +59313,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - offset: '-1'
+      - offset: '-2'
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R01_AT_BEFORE ON VIEW COVERAGE_STREAM_VIEW_AD261460.PUBLIC.COVERAGE_V1
+          at (offset => -1)
+        L3: 'declared {''offset'': ''-1''}, snowcap fetches None'
+        L4: 'a change to {''offset'': ''-2''} plans nothing'
+        L5: fails because L4 fails
   - name: append_only
     sql: APPEND_ONLY = TRUE | FALSE
     kind: property
@@ -59031,11 +59346,26 @@ objects:
       field: append_only
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - true
+      - false
+      truth: is_append_only
+      expect:
+      - true
+      - false
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R02_APPEND_ONLY ON VIEW COVERAGE_STREAM_VIEW_AD261460.PUBLIC.COVERAGE_V1
+          APPEND_ONLY = TRUE
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:stream/COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R02_APPEND_ONLY:
+          changing ''append_only'' requires replacing the resource, which snowcap does not do. Snowflake fixes a stream''s
+          append-only mode at creation; ALTER STREAM cannot change it. Remove the stream from config, apply, th'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: show_initial_rows
     sql: SHOW_INITIAL_ROWS = TRUE | FALSE
     kind: property
@@ -59055,12 +59385,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - true
+      - false
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R03_SHOW_INITIAL_ROWS ON VIEW COVERAGE_STREAM_VIEW_AD261460.PUBLIC.COVERAGE_V1
+          SHOW_INITIAL_ROWS = TRUE
+        L3: declared True, snowcap fetches None
+        L4: a change to False plans nothing
+        L5: fails because L4 fails
   - name: comment
     sql: COMMENT
     kind: property
@@ -59079,11 +59419,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R04_COMMENT ON VIEW COVERAGE_STREAM_VIEW_AD261460.PUBLIC.COVERAGE_V1
+          COMMENT = $$a$$
+        L4_sql:
+        - ALTER STREAM COVERAGE_STREAM_VIEW_AD261460.PUBLIC.R04_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -59174,10 +59524,23 @@ objects:
   excluded: []
   snowcap:
     class: ViewStream
-    test: untested
+    test: live
     field_notes:
       before: 'No docs row: BEFORE shares the at_before docs row, which maps to at.'
     unmapped_fields: []
+    setup:
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T1 (ID NUMBER(38,0)) CHANGE_TRACKING = TRUE
+    - CREATE VIEW {database}.PUBLIC.COVERAGE_V1 CHANGE_TRACKING = TRUE AS SELECT ID FROM {database}.PUBLIC.COVERAGE_T1
+    - CREATE VIEW {database}.PUBLIC.COVERAGE_V2 CHANGE_TRACKING = TRUE AS SELECT ID FROM {database}.PUBLIC.COVERAGE_T1
+    create_args:
+      on_view: '{database}.PUBLIC.COVERAGE_V1'
+    truth:
+    - SHOW STREAMS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'is_append_only' AS key, ("mode" = 'APPEND_ONLY')::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: e3a23e27e182
 - object: STREAMLIT
   variant: null
   scope_level: schema
@@ -59745,12 +60108,12 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - CREATE TRANSIENT TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R00_TABLE_TYPE (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TRANSIENT TABLE COVERAGE_TABLE_487DE591.PUBLIC.R00_TABLE_TYPE (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = FALSE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R00_TABLE_TYPE SET
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R00_TABLE_TYPE SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          61 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R00_TABLE_TYPE SET'
+          61 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R00_TABLE_TYPE SET'
         L5: fails because L4 fails
   - name: read_only
     sql: READ ONLY
@@ -59808,11 +60171,31 @@ objects:
       field: columns[].data_type
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(10)
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(20)
+      truth: name_type
+      expect:
+      - VARCHAR(10)
+      - VARCHAR(20)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R01_COLUMNS___TYPE (ID NUMBER(38,0), NAME VARCHAR(10)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(20)''}]
+          plans nothing'
+        L5: fails because L4 fails
   - name: columns[].generated_expression
     sql: '[ GENERATED ALWAYS ] AS ( <expr> ) [ VIRTUAL ]'
     kind: property
@@ -59852,11 +60235,33 @@ objects:
       field: columns[].not_null
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          not_null: true
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          not_null: false
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      truth: id_null
+      expect:
+      - N
+      - Y
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R02_COLUMNS___NOT_NULL (ID NUMBER(38,0) NOT NULL, NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)'', ''not_null'': False}, {''name'': ''NAME'', ''data_type'':
+          ''VARCHAR(16777216)''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].collation
     sql: COLLATE '<collation_specification>'
     kind: property
@@ -59875,11 +60280,36 @@ objects:
       field: columns[].collate
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
-        L4: untested
-        L5: untested
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+          collate: en-ci
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+          collate: en-cs
+      truth: name_collation
+      expect:
+      - en-ci
+      - en-cs
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R03_COLUMNS___COLLATION (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L2: 'declared [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)'',
+          ''collate'': ''en-ci''}], Snowflake reports name_collation=None'
+        L3: CREATE did not write the value, so the read-back of the path has no reference
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)'',
+          ''collate'': ''en-ci''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].default
     sql: DEFAULT <expr>
     kind: property
@@ -59897,11 +60327,30 @@ objects:
       field: columns[].default
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          default: '{database}.PUBLIC.COVERAGE_SEQ1.NEXTVAL'
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          default: '{database}.PUBLIC.COVERAGE_SEQ2.NEXTVAL'
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      truth: id_default
+      expect:
+      - '{database}.PUBLIC.COVERAGE_SEQ1.NEXTVAL'
+      - '{database}.PUBLIC.COVERAGE_SEQ2.NEXTVAL'
+      evidence:
+        L2: 'create failed: ProgrammingError: 002262 (22000): SQL compilation error: Default value data type does not match
+          data type for column ID on: CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R04_COLUMNS___DEFAULT (ID NUMBER(38,0) DEFAULT
+          ''COVERAGE_TABLE_487DE591.PUBLIC.COVERAGE_SEQ1.NEX ...'
   - name: columns[].autoincrement
     sql: AUTOINCREMENT | IDENTITY [ ( <start>, <step> ) | START <n> INCREMENT <n> ] [ ORDER | NOORDER ]
     kind: property
@@ -59964,7 +60413,7 @@ objects:
       - b
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R01_COLUMNS___COMMENT (ID NUMBER(38,0) COMMENT 'a', NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R05_COLUMNS___COMMENT (ID NUMBER(38,0) COMMENT 'a', NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
         L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)'', ''comment'': ''b''}, {''name'': ''NAME'', ''data_type'':
           ''VARCHAR(16777216)''}] plans nothing'
@@ -60034,11 +60483,38 @@ objects:
       field: columns[].tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
-        L4: untested
-        L5: untested
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': a
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': b
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      truth: id_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R06_COLUMNS___TAGS (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L2: 'declared [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)'', ''tags'': {''COVERAGE_TABLE_487DE591.PUBLIC.COVERAGE_TAG'':
+          ''a''}}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)''}], Snowflake reports id_tag=None'
+        L3: CREATE did not write the value, so the read-back of the path has no reference
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)'', ''tags'': {''COVERAGE_TABLE_487DE591.PUBLIC.COVERAGE_TAG'':
+          ''a''}}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].add
     sql: ADD COLUMN
     kind: property
@@ -60058,11 +60534,41 @@ objects:
       field: columns
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
-      candidates: []
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: the update handler raises NotImplementedError: {}'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+        - name: EXTRA
+          data_type: NUMBER(38,0)
+      expect:
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+        - name: EXTRA
+          data_type: NUMBER(38,0)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R07_COLUMNS___ADD (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)''},
+          {''name'': ''EXTRA'', ''data_type'': ''NUMBER(38,0)''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].drop
     sql: DROP COLUMN
     kind: property
@@ -60080,11 +60586,41 @@ objects:
       field: columns
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
-      candidates: []
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: the update handler raises NotImplementedError: {}'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+        - name: EXTRA
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      expect:
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+        - name: EXTRA
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R08_COLUMNS___DROP (ID NUMBER(38,0), NAME VARCHAR(16777216), EXTRA NUMBER(38,0))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)''}]
+          plans nothing'
+        L5: fails because L4 fails
   - name: constraints[].name
     sql: CONSTRAINT <constraint_name>
     kind: property
@@ -60103,12 +60639,30 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither Table.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: the fetch function does not return ''constraints'''
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER TABLE <name> RENAME CONSTRAINT
+        <constraint_name> TO <new_constraint_name>'''
+      sample:
+      - - CONSTRAINT C1 PRIMARY KEY (ID)
+      - - CONSTRAINT C2 PRIMARY KEY (ID)
+      expect:
+      - - CONSTRAINT C1 PRIMARY KEY (ID)
+      - - CONSTRAINT C2 PRIMARY KEY (ID)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R09_CONSTRAINTS___NAME (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L3: declared ['CONSTRAINT C1 PRIMARY KEY (ID)'], snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R09_CONSTRAINTS___NAME SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          69 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R09_CONSTRAINTS___NAME SET'
+        L5: 'plan after create: ["update [''constraints'']"]; plan after change: []'
   - name: constraints[].type
     sql: PRIMARY KEY | UNIQUE | FOREIGN KEY ... REFERENCES ... | CHECK ( <expr> )
     kind: property
@@ -60129,12 +60683,30 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither Table.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: the fetch function does not return ''constraints'''
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER TABLE <name> { ADD <outoflineConstraint>
+        | DROP { CONSTRAINT <name> | PRIMARY KEY | UNIQUE | FOREIGN KEY } (...) }'''
+      sample:
+      - - CONSTRAINT C1 PRIMARY KEY (ID)
+      - - CONSTRAINT C1 UNIQUE (ID)
+      expect:
+      - - CONSTRAINT C1 PRIMARY KEY (ID)
+      - - CONSTRAINT C1 UNIQUE (ID)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R10_CONSTRAINTS___TYPE (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L3: declared ['CONSTRAINT C1 PRIMARY KEY (ID)'], snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R10_CONSTRAINTS___TYPE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          69 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R10_CONSTRAINTS___TYPE SET'
+        L5: 'plan after create: ["update [''constraints'']"]; plan after change: []'
   - name: constraints[].columns
     sql: ( <col_name> [ , ... ] )
     kind: property
@@ -60153,12 +60725,29 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither Table.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: the fetch function does not return ''constraints'''
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER TABLE <name> ADD <outoflineConstraint>'''
+      sample:
+      - - CONSTRAINT C1 UNIQUE (ID)
+      - - CONSTRAINT C1 UNIQUE (ID, NAME)
+      expect:
+      - - CONSTRAINT C1 UNIQUE (ID)
+      - - CONSTRAINT C1 UNIQUE (ID, NAME)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R11_CONSTRAINTS___COLUMNS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L3: declared ['CONSTRAINT C1 UNIQUE (ID)'], snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R11_CONSTRAINTS___COLUMNS SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          72 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R11_CONSTRAINTS___COLUMNS SET'
+        L5: 'plan after create: ["update [''constraints'']"]; plan after change: []'
   - name: constraints[].referenced_table
     sql: REFERENCES <ref_table_name>
     kind: relationship
@@ -60177,12 +60766,31 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither Table.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: the fetch function does not return ''constraints'''
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER TABLE <name> ADD FOREIGN
+        KEY (...) REFERENCES <ref_table_name> (...)'''
+      sample:
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF1 (ID)
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF2 (ID)
+      expect:
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF1 (ID)
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF2 (ID)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R12_CONSTRAINTS___REFERENCED_TABLE (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L3: declared ['CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES COVERAGE_TABLE_487DE591.PUBLIC.COVERAGE_REF1 (ID)'], snowcap
+          fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R12_CONSTRAINTS___REFERENCED_TABLE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          81 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R12_CONSTRAINTS___REFERENCED_TABLE SET'
+        L5: 'plan after create: ["update [''constraints'']"]; plan after change: []'
   - name: constraints[].referenced_columns
     sql: REFERENCES <ref_table_name> ( <ref_col_name> [ , ... ] )
     kind: relationship
@@ -60201,12 +60809,31 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither Table.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: the fetch function does not return ''constraints'''
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER TABLE <name> ADD FOREIGN
+        KEY (...) REFERENCES <ref_table_name> ( <ref_col_name> [ , ... ] )'''
+      sample:
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF1 (ID)
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF1 (K)
+      expect:
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF1 (ID)
+      - - CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES {database}.PUBLIC.COVERAGE_REF1 (K)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R13_CONSTRAINTS___REFERENCED_COLUMNS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L3: declared ['CONSTRAINT C1 FOREIGN KEY (ID) REFERENCES COVERAGE_TABLE_487DE591.PUBLIC.COVERAGE_REF1 (ID)'], snowcap
+          fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R13_CONSTRAINTS___REFERENCED_COLUMNS SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          83 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R13_CONSTRAINTS___REFERENCED_COLUMNS SET'
+        L5: 'plan after create: ["update [''constraints'']"]; plan after change: []'
   - name: constraints[].expression
     sql: CHECK ( <expr> )
     kind: property
@@ -60226,12 +60853,30 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither Table.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: the fetch function does not return ''constraints'''
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER TABLE <name> ADD CONSTRAINT
+        <name> CHECK ( <expr> )'''
+      sample:
+      - - CONSTRAINT C1 CHECK (ID > 0)
+      - - CONSTRAINT C1 CHECK (ID > 1)
+      expect:
+      - - CONSTRAINT C1 CHECK (ID > 0)
+      - - CONSTRAINT C1 CHECK (ID > 1)
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R14_CONSTRAINTS___EXPRESSION (ID NUMBER(38,0), NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L3: declared ['CONSTRAINT C1 CHECK (ID > 0)'], snowcap fetches None
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R14_CONSTRAINTS___EXPRESSION SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          75 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R14_CONSTRAINTS___EXPRESSION SET'
+        L5: 'plan after create: ["update [''constraints'']"]; plan after change: []'
   - name: constraints[].enforced
     sql: '[ NOT ] ENFORCED '
     kind: property
@@ -60482,12 +61127,12 @@ objects:
         <name> CLUSTER BY ( <expr> [ , ... ] )'''
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R02_CLUSTER_BY (ID NUMBER(38,0), NAME VARCHAR(16777216)) CLUSTER BY
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R15_CLUSTER_BY (ID NUMBER(38,0), NAME VARCHAR(16777216)) CLUSTER BY
           (ID) ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R02_CLUSTER_BY SET CLUSTER BY (NAME)
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R15_CLUSTER_BY SET CLUSTER BY (NAME)
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          70 unexpected ''BY''. syntax error line 1 at position 78 unexpected '')''. on: ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R02_CLUSTER_BY
+          70 unexpected ''BY''. syntax error line 1 at position 78 unexpected '')''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R15_CLUSTER_BY
           SET CLUSTER BY (NAME)'
         L5: fails because L4 fails
   - name: clustering_key_drop
@@ -60579,11 +61224,11 @@ objects:
       - 'L3: the fetch function does not return ''data_retention_time_in_days'''
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R03_DATA_RETENTION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R16_DATA_RETENTION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = FALSE DATA_RETENTION_TIME_IN_DAYS = 3 CHANGE_TRACKING = FALSE
         L3: Snowflake reports retention_time='3', snowcap fetches None
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R03_DATA_RETENTION_TIME_IN_DAYS SET DATA_RETENTION_TIME_IN_DAYS = 5
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R16_DATA_RETENTION_TIME_IN_DAYS SET DATA_RETENTION_TIME_IN_DAYS = 5
         L5: 'plan after create: ["update [''data_retention_time_in_days'']"]; plan after change: ["update [''data_retention_time_in_days'']"]'
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
@@ -60614,11 +61259,11 @@ objects:
       - 'L3: the fetch function does not return ''max_data_extension_time_in_days'''
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R17_MAX_DATA_EXTENSION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = FALSE MAX_DATA_EXTENSION_TIME_IN_DAYS = 10 CHANGE_TRACKING = FALSE
         L3: Snowflake reports max_data_extension_time_in_days='10', snowcap fetches None
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R17_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
           = 12
         L5: 'plan after create: ["update [''max_data_extension_time_in_days'']"]; plan after change: ["update [''max_data_extension_time_in_days'']"]'
   - name: change_tracking
@@ -60649,10 +61294,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R05_CHANGE_TRACKING (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R18_CHANGE_TRACKING (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = TRUE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R05_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R18_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
   - name: default_ddl_collation
     sql: DEFAULT_DDL_COLLATION
     kind: parameter
@@ -60681,10 +61326,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R06_DEFAULT_DDL_COLLATION (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R19_DEFAULT_DDL_COLLATION (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE DEFAULT_DDL_COLLATION = $$en-ci$$
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R06_DEFAULT_DDL_COLLATION SET DEFAULT_DDL_COLLATION = $$en-cs$$
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R19_DEFAULT_DDL_COLLATION SET DEFAULT_DDL_COLLATION = $$en-cs$$
   - name: enable_schema_evolution
     sql: ENABLE_SCHEMA_EVOLUTION
     kind: property
@@ -60713,10 +61358,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R07_ENABLE_SCHEMA_EVOLUTION (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R20_ENABLE_SCHEMA_EVOLUTION (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = TRUE CHANGE_TRACKING = FALSE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R07_ENABLE_SCHEMA_EVOLUTION SET ENABLE_SCHEMA_EVOLUTION = FALSE
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R20_ENABLE_SCHEMA_EVOLUTION SET ENABLE_SCHEMA_EVOLUTION = FALSE
   - name: error_logging
     sql: ERROR_LOGGING
     kind: property
@@ -60904,10 +61549,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R08_COMMENT (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R21_COMMENT (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = FALSE COMMENT = $$a$$
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R08_COMMENT SET COMMENT = $$b$$
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R21_COMMENT SET COMMENT = $$b$$
   - name: tags
     sql: WITH TAG ( <tag_name> = '<tag_value>' [ , ... ] )
     kind: relationship
@@ -60939,13 +61584,13 @@ objects:
       - b
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R22_TAGS (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = FALSE
-        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS SET TAG COVERAGE_TABLE_C02A2C5C.PUBLIC.COVERAGE_TAG='a'
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R22_TAGS SET TAG COVERAGE_TABLE_487DE591.PUBLIC.COVERAGE_TAG='a'
         L4_sql:
-        - ALTER TAG REFERENCE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS?domain=TABLE SET
+        - ALTER TAG REFERENCE COVERAGE_TABLE_487DE591.PUBLIC.R22_TAGS?domain=TABLE SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          20 unexpected ''COVERAGE_TABLE_C02A2C5C''. on: ALTER TAG REFERENCE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS?domain=TABLE
+          20 unexpected ''COVERAGE_TABLE_487DE591''. on: ALTER TAG REFERENCE COVERAGE_TABLE_487DE591.PUBLIC.R22_TAGS?domain=TABLE
           SET'
         L5: fails because L4 fails
   - name: contacts
@@ -60988,13 +61633,35 @@ objects:
       field: row_access_policy
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
-        L4: untested
-        L5: untested
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither Table.props nor the create handler renders ''row_access_policy'', so CREATE omits it'
       - 'L3: the fetch function does not return ''row_access_policy'''
+      - 'L4: snowcap renders [''ALTER TABLE COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER TABLE <name> { ADD ROW
+        ACCESS POLICY <policy_name> ON (...) | DROP ROW ACCESS POLICY <policy_name> | DROP ALL ROW ACCESS POLICIES }'''
+      sample:
+      - '{database}.PUBLIC.COVERAGE_RAP1':
+        - ID
+      - '{database}.PUBLIC.COVERAGE_RAP2':
+        - ID
+      truth: row_access_policy
+      expect:
+      - '{''{database}.PUBLIC.COVERAGE_RAP1'': [''ID'']}'
+      - '{''{database}.PUBLIC.COVERAGE_RAP2'': [''ID'']}'
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R23_ROW_ACCESS_POLICY (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        L2: 'declared {''COVERAGE_TABLE_487DE591.PUBLIC.COVERAGE_RAP1'': [''ID'']}, Snowflake reports row_access_policy=None'
+        L3: Snowflake reports no row_access_policy, so the read-back has no reference
+        L4_sql:
+        - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R23_ROW_ACCESS_POLICY SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          68 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.R23_ROW_ACCESS_POLICY SET'
+        L5: 'plan after create: ["update [''row_access_policy'']"]; plan after change: []'
   - name: aggregation_policy
     sql: WITH AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , ... ] ) ]
     kind: relationship
@@ -61131,10 +61798,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R10_OWNERSHIP (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TABLE COVERAGE_TABLE_487DE591.PUBLIC.R24_OWNERSHIP (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = FALSE
         L4_sql:
-        - GRANT OWNERSHIP ON TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R10_OWNERSHIP TO ROLE SYSADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON TABLE COVERAGE_TABLE_487DE591.PUBLIC.R24_OWNERSHIP TO ROLE SYSADMIN COPY CURRENT GRANTS
   - name: swap_with
     sql: SWAP WITH <target_table_name>
     kind: relationship
@@ -61173,11 +61840,27 @@ objects:
     - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
     - SELECT 'id_comment' AS key, comment AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'PUBLIC'
       AND table_name = '{name}' AND column_name = 'ID'
+    - DESCRIBE TABLE {fqn}
+    - SELECT LOWER(r."name") || '_' || f.key AS key, f.value::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r,
+      LATERAL FLATTEN(OBJECT_CONSTRUCT_KEEP_NULL('type', r."type", 'null', r."null?", 'default', r."default", 'check', r."check"))
+      f
+    - SELECT 'name_collation' AS key, collation_name AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema
+      = 'PUBLIC' AND table_name = '{name}' AND column_name = 'NAME'
+    - SELECT 'id_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}.ID', 'column') AS value
+    - 'SELECT ''row_access_policy'' AS key, ''{'''''' || policy_db || ''.'' || policy_schema || ''.'' || policy_name || '''''':
+      ['''''' || ARRAY_TO_STRING(PARSE_JSON(ref_arg_column_names)::ARRAY, '''''', '''''') || '''''']}'' AS value FROM TABLE({database}.INFORMATION_SCHEMA.POLICY_REFERENCES(REF_ENTITY_NAME
+      => ''{fqn}'', REF_ENTITY_DOMAIN => ''table'')) WHERE policy_kind = ''ROW_ACCESS_POLICY'''
     unmapped_fields: []
     field_notes:
       copy_grants: 'CREATE option, not state: COPY GRANTS on replace.'
     setup:
     - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE SEQUENCE {database}.PUBLIC.COVERAGE_SEQ1
+    - CREATE SEQUENCE {database}.PUBLIC.COVERAGE_SEQ2
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_REF1 (ID NUMBER(38,0) PRIMARY KEY, K NUMBER(38,0) UNIQUE)
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_REF2 (ID NUMBER(38,0) PRIMARY KEY, K NUMBER(38,0) UNIQUE)
+    - CREATE ROW ACCESS POLICY {database}.PUBLIC.COVERAGE_RAP1 AS (V NUMBER) RETURNS BOOLEAN -> TRUE
+    - CREATE ROW ACCESS POLICY {database}.PUBLIC.COVERAGE_RAP2 AS (V NUMBER) RETURNS BOOLEAN -> TRUE
     combined:
       fields:
       - change_tracking
@@ -61187,7 +61870,7 @@ objects:
       - enable_schema_evolution
       - max_data_extension_time_in_days
       sql:
-      - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.COMBINED SET COMMENT = $$b$$
+      - ALTER TABLE COVERAGE_TABLE_487DE591.PUBLIC.COMBINED SET COMMENT = $$b$$
       result: fail
       missed:
       - data_retention_time_in_days
@@ -61195,7 +61878,7 @@ objects:
       - change_tracking
       - default_ddl_collation
       - enable_schema_evolution
-    tested_inputs: 2a1be89ca744
+    tested_inputs: 5aca3ea1b2f0
 - object: TAG
   variant: null
   scope_level: schema
@@ -61297,9 +61980,9 @@ objects:
       - '[''a'', ''c'']'
       evidence:
         create_sql:
-        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R00_ALLOWED_VALUES__ ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY
+        - CREATE TAG COVERAGE_TAG_93F3C44E.PUBLIC.R00_ALLOWED_VALUES__ ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY
         L4_sql:
-        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R00_ALLOWED_VALUES__ SET ALLOWED_VALUES $$a$$, $$c$$
+        - ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.R00_ALLOWED_VALUES__ SET ALLOWED_VALUES $$a$$, $$c$$
   - name: add_allowed_values
     sql: ADD ALLOWED_VALUES
     kind: property
@@ -61322,7 +62005,9 @@ objects:
         L3: pass
         L4: pass
         L5: pass
-      candidates: []
+      candidates:
+      - 'L4: snowcap renders [''ALTER TAG COVERAGE_STATIC.PUBLIC.P SET ALLOWED_VALUES $$a$$, $$b$$, $$c$$''], docs syntax
+        is "ALTER TAG <name> ADD ALLOWED_VALUES ''<val_1>'' [ , ''<val_2>'' [ , ... ] ]"'
       sample:
       - - a
         - b
@@ -61335,9 +62020,9 @@ objects:
       - '[''a'', ''b'', ''c'']'
       evidence:
         create_sql:
-        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R01_ADD_ALLOWED_VALUES ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY
+        - CREATE TAG COVERAGE_TAG_93F3C44E.PUBLIC.R01_ADD_ALLOWED_VALUES ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY
         L4_sql:
-        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R01_ADD_ALLOWED_VALUES SET ALLOWED_VALUES $$a$$, $$b$$, $$c$$
+        - ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.R01_ADD_ALLOWED_VALUES SET ALLOWED_VALUES $$a$$, $$b$$, $$c$$
   - name: drop_allowed_values
     sql: DROP ALLOWED_VALUES
     kind: property
@@ -61361,7 +62046,9 @@ objects:
         L3: pass
         L4: pass
         L5: pass
-      candidates: []
+      candidates:
+      - 'L4: snowcap renders [''ALTER TAG COVERAGE_STATIC.PUBLIC.P SET ALLOWED_VALUES $$a$$, $$b$$''], docs syntax is "ALTER
+        TAG <name> DROP ALLOWED_VALUES ''<val_1>'' [ , ''<val_2>'' [ , ... ] ]"'
       sample:
       - - a
         - b
@@ -61374,9 +62061,9 @@ objects:
       - '[''a'', ''b'']'
       evidence:
         create_sql:
-        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R02_DROP_ALLOWED_VALUES ALLOWED_VALUES $$a$$, $$b$$, $$c$$ propagate = ON_DEPENDENCY
+        - CREATE TAG COVERAGE_TAG_93F3C44E.PUBLIC.R02_DROP_ALLOWED_VALUES ALLOWED_VALUES $$a$$, $$b$$, $$c$$ propagate = ON_DEPENDENCY
         L4_sql:
-        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R02_DROP_ALLOWED_VALUES SET ALLOWED_VALUES $$a$$, $$b$$
+        - ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.R02_DROP_ALLOWED_VALUES SET ALLOWED_VALUES $$a$$, $$b$$
   - name: multi_value
     sql: MULTI_VALUE
     kind: property
@@ -61429,9 +62116,9 @@ objects:
       truth: propagate
       evidence:
         create_sql:
-        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R03_PROPAGATE ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DATA_MOVEMENT
+        - CREATE TAG COVERAGE_TAG_93F3C44E.PUBLIC.R03_PROPAGATE ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DATA_MOVEMENT
         L4_sql:
-        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R03_PROPAGATE SET propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
+        - ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.R03_PROPAGATE SET propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
   - name: on_conflict
     sql: ON_CONFLICT
     kind: property
@@ -61454,17 +62141,19 @@ objects:
         L3: pass
         L4: pass
         L5: pass
-      candidates: []
+      candidates:
+      - 'L4: snowcap renders [''ALTER TAG COVERAGE_STATIC.PUBLIC.P SET ON_CONFLICT = $$a$$''], docs syntax is "ALTER TAG <name>
+        SET PROPAGATE = <value> ON_CONFLICT = { ''<string>'' | ALLOWED_VALUES_SEQUENCE | MERGE }"'
       sample:
       - ALLOWED_VALUES_SEQUENCE
       - a
       truth: on_conflict
       evidence:
         create_sql:
-        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R04_ON_CONFLICT ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY ON_CONFLICT
+        - CREATE TAG COVERAGE_TAG_93F3C44E.PUBLIC.R04_ON_CONFLICT ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY ON_CONFLICT
           = ALLOWED_VALUES_SEQUENCE
         L4_sql:
-        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R04_ON_CONFLICT SET ON_CONFLICT = $$a$$
+        - ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.R04_ON_CONFLICT SET ON_CONFLICT = $$a$$
   - name: comment
     sql: COMMENT
     kind: property
@@ -61494,10 +62183,10 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R05_COMMENT ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY COMMENT
+        - CREATE TAG COVERAGE_TAG_93F3C44E.PUBLIC.R05_COMMENT ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY COMMENT
           = $$a$$
         L4_sql:
-        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
+        - ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
   - name: data_movement_policy
     sql: SET DATA MOVEMENT POLICY
     kind: relationship
@@ -61623,11 +62312,11 @@ objects:
       - on_conflict
       - propagate
       sql:
-      - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.COMBINED SET ALLOWED_VALUES $$a$$, $$c$$ propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
+      - ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.COMBINED SET ALLOWED_VALUES $$a$$, $$c$$ propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
         ON_CONFLICT = $$a$$ COMMENT = $$b$$
       result: fail
       error: 'ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 80 unexpected ''propagate''.
-        on: ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.COMBINED SET ALLOWED_VALUES $$a$$, $$c$$ propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
+        on: ALTER TAG COVERAGE_TAG_93F3C44E.PUBLIC.COMBINED SET ALLOWED_VALUES $$a$$, $$c$$ propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
         ON_CONFLICT = $$ ...'
     tested_inputs: c4659f9103fe
 - object: TASK
@@ -65650,14 +66339,28 @@ objects:
       note: '_View.volatile: bool renders VOLATILE via FlagProp("volatile"); the docs row lists VOLATILE as a TEMPORARY synonym.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''volatile'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - true
+      - false
+      truth: is_volatile
+      evidence:
+        create_sql:
+        - CREATE VOLATILE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R00_TEMPORARY (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID,
+          NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L3: Snowflake reports is_volatile='true', snowcap fetches None
+        L4_sql:
+        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R00_TEMPORARY SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          58 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R00_TEMPORARY SET'
+        L5: 'plan after create: ["update [''volatile'']"]; plan after change: []'
   - name: recursive
     sql: RECURSIVE
     kind: property
@@ -65675,14 +66378,28 @@ objects:
       field: recursive
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''recursive'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - true
+      - false
+      truth: is_recursive
+      evidence:
+        create_sql:
+        - CREATE RECURSIVE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R01_RECURSIVE (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID,
+          NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L3: Snowflake reports is_recursive='true', snowcap fetches None
+        L4_sql:
+        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R01_RECURSIVE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          58 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R01_RECURSIVE SET'
+        L5: 'plan after create: ["update [''recursive'']"]; plan after change: []'
   - name: as
     sql: AS <select_statement>
     kind: property
@@ -65700,13 +66417,26 @@ objects:
       field: as_
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T
+      - SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T WHERE ID > 0
+      evidence:
+        create_sql:
+        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R02_AS (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R02_AS SET as SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+          WHERE ID > 0
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          52 unexpected ''as''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R02_AS SET as SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+          WHERE ID > 0'
+        L5: fails because L4 fails
   - name: secure
     sql: SECURE
     kind: property
@@ -65724,11 +66454,26 @@ objects:
       field: secure
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
-      candidates: []
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: snowcap renders [''ALTER VIEW COVERAGE_STATIC.PUBLIC.P SET''], docs syntax is ''ALTER VIEW <name> { SET | UNSET
+        } SECURE'''
+      sample:
+      - true
+      - false
+      truth: is_secure
+      evidence:
+        create_sql:
+        - CREATE SECURE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R03_SECURE (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME
+          FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R03_SECURE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          55 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R03_SECURE SET'
+        L5: fails because L4 fails
   - name: change_tracking
     sql: CHANGE_TRACKING
     kind: property
@@ -65747,11 +66492,21 @@ objects:
       field: change_tracking
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: change_tracking
+      evidence:
+        create_sql:
+        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R04_CHANGE_TRACKING (ID, NAME) CHANGE_TRACKING = TRUE as SELECT ID, NAME
+          FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R04_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
   - name: comment
     sql: COMMENT
     kind: property
@@ -65769,11 +66524,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R05_COMMENT (ID, NAME) CHANGE_TRACKING = FALSE COMMENT = $$a$$ as SELECT
+          ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -65840,11 +66605,26 @@ objects:
       field: columns[].name
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+        - name: NAME
+      - - name: ID2
+        - name: NAME
+      truth: first_column
+      expect:
+      - ID
+      - ID2
+      evidence:
+        create_sql:
+        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R06_COLUMNS___NAME (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME
+          FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L4: 'a change to [{''name'': ''ID2''}, {''name'': ''NAME''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].comment
     sql: <col_name> COMMENT '<string_literal>'
     kind: property
@@ -65862,11 +66642,28 @@ objects:
       field: columns[].comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          comment: a
+        - name: NAME
+      - - name: ID
+          comment: b
+        - name: NAME
+      truth: id_comment
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R07_COLUMNS___COMMENT (ID COMMENT 'a', NAME) CHANGE_TRACKING = FALSE as
+          SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        L4: 'a change to [{''name'': ''ID'', ''comment'': ''b''}, {''name'': ''NAME''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[]
     sql: ADD [ COLUMN ] [ IF NOT EXISTS ] <col_name> <col_type>
     kind: property
@@ -65981,7 +66778,7 @@ objects:
     snowcap:
       field: columns[].tags
       levels:
-        L1: pass
+        L1: fail
         L2: untested
         L3: untested
         L4: untested
@@ -66313,11 +67110,22 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: ProgrammingError: 391806 (0A000): SQL compilation error: Invalid value VIEW for argument OBJECT_TYPE.
+          Please use object type TABLE for all kinds of table-like objects. on: SELECT * FROM table(COVERAGE_VIEW_8D82031F.information_schema.tag_references(
+          ''COVERAGE_VIEW_8D82031F.PUBLIC.R08_TAGS'', ''VIEW'' ))'
   - name: contacts
     sql: WITH CONTACT / SET CONTACT
     kind: relationship
@@ -66408,8 +67216,29 @@ objects:
     reason: deprecated
   snowcap:
     class: View
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T (ID NUMBER(38,0), NAME VARCHAR(16777216))
+    create_args:
+      as_: SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T
+      columns:
+      - name: ID
+      - name: NAME
+    truth:
+    - SHOW VIEWS LIKE '{name}' IN SCHEMA {container}
+    - SELECT f.key, f.value::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL FLATTEN(OBJECT_CONSTRUCT('is_volatile',
+      CONTAINS(r."text", 'CREATE VOLATILE'), 'is_recursive', CONTAINS(r."text", 'RECURSIVE VIEW'))) f
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
+    - SELECT 'id_comment' AS key, comment AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'PUBLIC'
+      AND table_name = '{name}' AND column_name = 'ID'
+    - SELECT 'first_column' AS key, column_name AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'PUBLIC'
+      AND table_name = '{name}' AND ordinal_position = 1
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 58cee0f2a32e
 - object: WAREHOUSE
   variant: null
   scope_level: account
@@ -66634,12 +67463,12 @@ objects:
       truth: auto_suspend
       evidence:
         create_sql:
-        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R00_AUTO_SUSPEND warehouse_type = 'STANDARD' warehouse_size = XSMALL
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R00_AUTO_SUSPEND warehouse_type = 'STANDARD' warehouse_size = XSMALL
           MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE INITIALLY_SUSPENDED
           = TRUE
-        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R00_AUTO_SUSPEND TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R00_AUTO_SUSPEND TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R00_AUTO_SUSPEND SET AUTO_SUSPEND = 120
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R00_AUTO_SUSPEND SET AUTO_SUSPEND = 120
   - name: auto_resume
     sql: AUTO_RESUME
     kind: property
@@ -66803,12 +67632,12 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R01_COMMENT warehouse_type = 'STANDARD' warehouse_size = XSMALL MAX_CLUSTER_COUNT
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R01_COMMENT warehouse_type = 'STANDARD' warehouse_size = XSMALL MAX_CLUSTER_COUNT
           = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE INITIALLY_SUSPENDED =
           TRUE COMMENT = $$a$$
-        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R01_COMMENT TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R01_COMMENT TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R01_COMMENT SET COMMENT = $$b$$
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R01_COMMENT SET COMMENT = $$b$$
   - name: wait_for_completion
     sql: WAIT_FOR_COMPLETION
     kind: property
@@ -66959,13 +67788,13 @@ objects:
       truth: statement_timeout_in_seconds
       evidence:
         create_sql:
-        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R02_STATEMENT_TIMEOUT_IN_SECONDS warehouse_type = 'STANDARD' warehouse_size
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R02_STATEMENT_TIMEOUT_IN_SECONDS warehouse_type = 'STANDARD' warehouse_size
           = XSMALL MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE
           INITIALLY_SUSPENDED = TRUE STATEMENT_TIMEOUT_IN_SECONDS = 100
-        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R02_STATEMENT_TIMEOUT_IN_SECONDS TO ROLE ACCOUNTADMIN COPY
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R02_STATEMENT_TIMEOUT_IN_SECONDS TO ROLE ACCOUNTADMIN COPY
           CURRENT GRANTS
         L4_sql:
-        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R02_STATEMENT_TIMEOUT_IN_SECONDS SET STATEMENT_TIMEOUT_IN_SECONDS =
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R02_STATEMENT_TIMEOUT_IN_SECONDS SET STATEMENT_TIMEOUT_IN_SECONDS =
           200
   - name: resource_monitor
     sql: RESOURCE_MONITOR
@@ -67058,14 +67887,14 @@ objects:
       - b
       evidence:
         create_sql:
-        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS warehouse_type = 'STANDARD' warehouse_size = XSMALL MAX_CLUSTER_COUNT
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R03_TAGS SET TAG COVERAGE_WAREHOUSE_DC560D5F.PUBLIC.COVERAGE_TAG='a'
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R03_TAGS warehouse_type = 'STANDARD' warehouse_size = XSMALL MAX_CLUSTER_COUNT
           = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE INITIALLY_SUSPENDED =
           TRUE
-        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
-        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS SET TAG COVERAGE_WAREHOUSE_F2C2D059.PUBLIC.COVERAGE_TAG='a'
-        L3: 'declared {''COVERAGE_WAREHOUSE_F2C2D059.PUBLIC.COVERAGE_TAG'': ''a''}, snowcap fetches None'
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R03_TAGS TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        L3: 'declared {''COVERAGE_WAREHOUSE_DC560D5F.PUBLIC.COVERAGE_TAG'': ''a''}, snowcap fetches None'
         L4_sql:
-        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS SET TAG COVERAGE_WAREHOUSE_F2C2D059.PUBLIC.COVERAGE_TAG='b'
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_R03_TAGS SET TAG COVERAGE_WAREHOUSE_DC560D5F.PUBLIC.COVERAGE_TAG='b'
         L5: 'plan after create: [''CreateResource'']; plan after change: [''CreateResource'']'
   - name: dcm_project
     sql: DCM PROJECT
@@ -67112,7 +67941,7 @@ objects:
       - comment
       - statement_timeout_in_seconds
       sql:
-      - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_COMBINED SET AUTO_SUSPEND = 120 COMMENT = $$b$$ STATEMENT_TIMEOUT_IN_SECONDS
+      - ALTER WAREHOUSE COVERAGE_WAREHOUSE_DC560D5F_COMBINED SET AUTO_SUSPEND = 120 COMMENT = $$b$$ STATEMENT_TIMEOUT_IN_SECONDS
         = 200
       result: pass
     tested_inputs: c1c810ac916c

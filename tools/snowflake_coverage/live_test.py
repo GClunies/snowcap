@@ -6,7 +6,8 @@ For each row the script creates one object with the first sample value, then:
 
 - L2 Created: Snowflake reports the declared value (truth queries). Without a truth key, L2 passes
   only through L3.
-- L3 Fetched: snowcap's fetch, read through the spec as plan does, equals the declared value.
+- L3 Fetched: snowcap's fetch, read through the spec as plan does, equals Snowflake's value (truth
+  queries) or the declared value. When Snowflake reports no value, L3 is untested.
 - L4 Updated: a change to the second sample value lands in Snowflake. When ALTER cannot change the
   property (docs `alter: none`), L4 passes only if snowcap refuses the change with an error before
   it sends SQL. A refusal is an error that snowcap raises on purpose: a bare Exception,
@@ -14,8 +15,8 @@ For each row the script creates one object with the first sample value, then:
 - L5 Round trip: plan shows no change after the create and after the change. When snowcap
   correctly refuses the change, nothing is applied, so L5 is n/a.
 
-A nested row (`columns[].comment`, `credentials.aws_key_id`) tests the field its path heads, so L3 compares
-the whole field. A tags row tests the TagReference that snowcap plans for the object.
+A nested row (`columns[].comment`, `credentials.aws_key_id`) declares and plans the field its path heads,
+and L3 compares the values the path names. A tags row tests the TagReference that snowcap plans for the object.
 
 It also runs one combined test per object: every combinable SET property changes in one plan, and
 each value must land.
@@ -45,6 +46,7 @@ from common import (
     live_inputs_digest,
     load_inventory,
     object_label,
+    path_steps,
     resource_class,
     save_inventory,
     select_objects,
@@ -184,7 +186,10 @@ class Account:
         }
         truth = {}
         for query in obj["snowcap"]["truth"]:
-            for row in self.cur.execute(query.format(**values)).fetchall():
+            # Plain replacement, because truth SQL can contain literal braces.
+            for key, value in values.items():
+                query = query.replace(f"{{{key}}}", value)
+            for row in self.cur.execute(query).fetchall():
                 row = {k.lower(): v for k, v in row.items()}
                 if "key" in row and "value" in row:
                     truth[row["key"].lower()] = row["value"]
@@ -214,6 +219,30 @@ def subject(resource, path: str) -> tuple:
     if path == "tags":
         return tag_reference_for_resource(resource, resource.tags), "tags"
     return resource, top_field(path)
+
+
+def leaf(value, path: str):
+    """The part of a head field's value that a row path names: `columns[].comment` gives each column's comment.
+
+    Other parts stay out of the comparison, for example a view column's data_type, which the declaration leaves
+    unknown until apply.
+    """
+
+    def pick(value, steps: list[str]):
+        if not steps or value is None:
+            return value
+        if steps[0] == "[]":
+            return [pick(item, steps[1:]) for item in value]
+        return pick(value.get(steps[0]), steps[1:])
+
+    return pick(value, path_steps(path)[1:])
+
+
+def read_back(account: Account, resource, path: str) -> tuple:
+    """The row's value as the resource declares it and as snowcap fetches it."""
+    held_by, field = subject(resource, path)
+    fetched = (account.fetched(held_by) or {}).get(field)
+    return leaf(held_by.to_dict(account.edition)[field], path), leaf(fetched, path)
 
 
 def is_plain(path: str) -> bool:
@@ -263,9 +292,7 @@ def landed(account: Account, obj: dict, resource, database: str, path: str, expe
     if truth_key:
         reported = account.truth(obj, resource, database).get(truth_key)
         return norm(reported) == norm(expected), f"Snowflake reports {truth_key}={reported!r}"
-    held_by, field = subject(resource, path)
-    fetched = (account.fetched(held_by) or {}).get(field)
-    declared = held_by.to_dict(account.edition)[field]
+    declared, fetched = read_back(account, resource, path)
     return fetched == declared, f"snowcap fetches {fetched!r}"
 
 
@@ -295,27 +322,28 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         evidence["L2"] = f"create failed: {short(err)}"
         return
 
-    held_by, field = subject(resource, path)
-    declared = held_by.to_dict(account.edition)[field]
-    fetched = (account.fetched(held_by) or {}).get(field)
+    declared, fetched = read_back(account, resource, path)
     if truth_key:
         # L2 and L3 are separate checks against Snowflake's own value.
         reported = account.truth(obj, resource, database).get(truth_key)
         levels["L2"] = "pass" if norm(reported) == norm(expect[0]) else "fail"
         if levels["L2"] == "fail":
             evidence["L2"] = f"declared {before!r}, Snowflake reports {truth_key}={reported!r}"
-        if is_plain(path):
+        if is_plain(path) and reported is not None:
             levels["L3"] = "pass" if norm(fetched) == norm(reported) else "fail"
             if levels["L3"] == "fail":
                 evidence["L3"] = f"Snowflake reports {truth_key}={reported!r}, snowcap fetches {fetched!r}"
+        elif is_plain(path):
+            levels["L3"] = "untested"
+            evidence["L3"] = f"Snowflake reports no {truth_key}, so the read-back has no reference"
         elif levels["L2"] == "pass":
-            # A nested or tag value is one part of the fetched field, so compare the whole field to the declaration.
+            # The truth reports one value of a nested or tag path, so compare the path's values to the declaration.
             levels["L3"] = "pass" if fetched == declared else "fail"
             if levels["L3"] == "fail":
                 evidence["L3"] = f"declared {declared!r}, snowcap fetches {fetched!r}"
         else:
             levels["L3"] = "untested"
-            evidence["L3"] = "CREATE did not write the value, so the whole-field read-back has no reference"
+            evidence["L3"] = "CREATE did not write the value, so the read-back of the path has no reference"
     else:
         # Without an independent read, a matching fetch is the only proof that CREATE wrote the value.
         levels["L3"] = "pass" if fetched == declared else "fail"
@@ -333,7 +361,7 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
     applied = False
     try:
         blueprint, plan = account.plan(changed)
-        if not touches(plan, subject(changed, path)[0], field):
+        if not touches(plan, *subject(changed, path)):
             raise NotPlanned(f"a change to {target!r} plans {drift(plan, changed, path) or 'nothing'}")
         evidence["L4_sql"] = account.sql(plan)
         account.apply(blueprint, plan)

@@ -13,7 +13,8 @@ inventory.yaml is the coverage source of truth. Each object entry holds the Snow
       truth: [SQL, ...]       # queries that report Snowflake's own values; {name} {database} {container} {fqn}
       field_notes: {copy_grants: reason}  # why a spec field has no docs row (for example a CREATE option)
 
-Strings in setup, create_args, and samples can use {database}, the throwaway database.
+Strings in setup, create_args, and samples can use {database}, the throwaway database. All placeholders
+are replaced as plain text, so SQL braces need no escaping.
 
 Each property row has its own `snowcap` block:
 
@@ -110,9 +111,14 @@ def resource_class(obj: dict) -> type:
     return getattr(resources, obj["snowcap"]["class"])
 
 
+def path_steps(field: str) -> list[str]:
+    """The steps of a row path: `storage_locations[].encryption.type` is storage_locations, [], encryption, type."""
+    return re.findall(r"\[\]|[^.\[\]]+", field)
+
+
 def top_field(field: str) -> str:
     """The spec field that a row path names: `credentials.aws_key_id` and `columns[].comment` both name their head."""
-    return re.split(r"[.\[]", field, maxsplit=1)[0]
+    return path_steps(field)[0]
 
 
 def fill(value, database: str):
@@ -152,5 +158,5 @@ def testable_rows(obj: dict) -> list[dict]:
         for p in obj["properties"]
         if p["snowcap"].get("sample")
         and not p["snowcap"].get("n_a")
-        and top_field(p["snowcap"]["field"] or "") in spec_fields
+        and top_field(p["snowcap"]["field"]) in spec_fields
     ]

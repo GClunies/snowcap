@@ -20,13 +20,14 @@ import inspect
 import re
 import sys
 from dataclasses import fields
-from typing import Optional
+from typing import Optional, get_args, get_type_hints, is_typeddict
 
 from common import (
     LEVELS,
     build_resource,
     load_inventory,
     object_label,
+    path_steps,
     resource_class,
     save_inventory,
     select_objects,
@@ -35,7 +36,6 @@ from common import (
 
 from snowcap import data_provider, lifecycle
 from snowcap.identifiers import resource_label_for_type
-from snowcap.resources.column import Column
 from snowcap.resources.tag import TaggableResource
 
 # Fields that every resource carries outside its props: the name is in the CREATE header and
@@ -116,12 +116,24 @@ def head_pattern(alter_syntax: str):
 
 
 def l1(cls, field: str) -> bool:
-    if field.startswith("columns[]."):
-        return field.split(".", 1)[1] in {f.name for f in fields(Column.spec)}
+    """Whether the spec models the row path. A `head[].x` path also needs x in the list's element type:
+    Table columns are Column, which has tags, and View columns are ViewColumn, which does not."""
     if field == "tags":
         # Tags are a relationship: snowcap models them on the resource class (snowcap/resources/tag.py), not in the spec.
         return issubclass(cls, TaggableResource)
-    return top_field(field) in {f.name for f in fields(cls.spec)}
+    types = {f.name: f.type for f in fields(cls.spec)}
+    head, *rest = path_steps(field)
+    if head not in types:
+        return False
+    if rest[:1] != ["[]"]:
+        return True
+    element, key = get_args(types[head])[0], rest[1]
+    if hasattr(element, "spec"):
+        return key in {f.name for f in fields(element.spec)}
+    if is_typeddict(element):
+        return key in get_type_hints(element)
+    # A list of plain dicts (HybridTable indexes) does not declare its keys.
+    return True
 
 
 def l4_candidates(obj: dict, row: dict, cls) -> list[str]:
