@@ -7286,7 +7286,7 @@ objects:
         L4_sql:
         - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R01_GOOGLE_AUDIENCE SET GOOGLE_AUDIENCE
           = $$coverage-audience-2$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: api_key
     sql: API_KEY
     kind: property
@@ -9963,7 +9963,7 @@ objects:
         L4_sql:
         - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R03_CATALOG_NAMESPACE SET CATALOG_NAMESPACE
           = $$coverage_ns2$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: enabled
     sql: ENABLED
     kind: property
@@ -9999,7 +9999,7 @@ objects:
           = $$coverage_ns$$ GLUE_REGION = $$us-west-2$$ ENABLED = FALSE
         L4_sql:
         - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R04_ENABLED SET ENABLED = TRUE
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: refresh_interval_seconds
     sql: REFRESH_INTERVAL_SECONDS
     kind: property
@@ -10239,7 +10239,7 @@ objects:
         L4_sql:
         - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R00_CATALOG_NAMESPACE SET CATALOG_NAMESPACE
           = $$coverage_ns2$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: rest_config.catalog_uri
     sql: REST_CONFIG = ( CATALOG_URI )
     kind: property
@@ -10804,7 +10804,7 @@ objects:
           ENABLED = FALSE
         L4_sql:
         - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R10_ENABLED SET ENABLED = TRUE
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: refresh_interval_seconds
     sql: REFRESH_INTERVAL_SECONDS
     kind: property
@@ -11075,7 +11075,7 @@ objects:
           table_format = ICEBERG ENABLED = FALSE
         L4_sql:
         - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_OBJECT_STORAGE_3A88B09A_R01_ENABLED SET ENABLED = TRUE
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: refresh_interval_seconds
     sql: REFRESH_INTERVAL_SECONDS
     kind: property
@@ -12000,8 +12000,9 @@ objects:
   excluded: []
   snowcap:
     class: ComputePool
-    test: untested
+    test: docs_only
     unmapped_fields: []
+    test_reason: 'cost: the audit scope skips Snowpark Container Services objects (compute pool nodes consume credits)'
 - object: CONNECTION
   variant: null
   scope_level: account
@@ -15525,12 +15526,22 @@ objects:
       note: _SharedDatabase.from_share holds <provider_account>.<share_name>; props from_share=IdentifierProp("from share").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates:
       - 'L3: the fetch function does not return ''from_share'''
+      sample:
+      - SFSALESSHARED.SFC_SAMPLES_PROD3.SAMPLE_DATA
+      - SNOWFLAKE.ACCOUNT_USAGE
+      truth: origin
+      evidence:
+        create_sql:
+        - CREATE DATABASE COVERAGE_DATABASE_FROM_SHARE_111FC222_R00_SHARE FROM SHARE SFSALESSHARED.SFC_SAMPLES_PROD3.SAMPLE_DATA
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:database/COVERAGE_DATABASE_FROM_SHARE_111FC222_R00_SHARE:
+          changing ''from_share'' requires replacing the resource, which snowcap does not do.'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: resharing_settings
     sql: resharing_settings
     kind: property
@@ -15612,8 +15623,16 @@ objects:
   excluded: []
   snowcap:
     class: SharedDatabase
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      from_share: SFSALESSHARED.SFC_SAMPLES_PROD3.SAMPLE_DATA
+    truth:
+    - SHOW DATABASES LIKE '{name}'
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: a9569aa3c60c
 - object: DATABASE ROLE
   variant: null
   scope_level: database
@@ -22527,8 +22546,10 @@ objects:
   excluded: []
   snowcap:
     class: FailoverGroup
-    test: untested
+    test: docs_only
     unmapped_fields: []
+    test_reason: 'edition: failover groups need Business Critical and the test account is ENTERPRISE; a placeholder CREATE
+      FAILOVER GROUP fails with "003078 (55000): Replication is not enabled for your account."'
 - object: FEATURE POLICY
   variant: null
   scope_level: schema
@@ -26377,7 +26398,7 @@ objects:
         L4_sql:
         - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns
           VARCHAR language JAVASCRIPT AS $$return X;$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
         L5: 'plan after create: []; plan after change: [''plan crashes: Exception: Found multiple functions matching COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR,
           VARCHAR)'']'
   - name: arguments[].default
@@ -27113,7 +27134,7 @@ objects:
         - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns\
           \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
         L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
           ''runtime_version'' and ''handler''"]; plan after change: [''plan crashes: Exception: Found multiple functions matching
           COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR, VARCHAR)'']'
@@ -33484,7 +33505,7 @@ objects:
         L4_sql:
         - ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R12_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
           = 12
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: change_tracking
     sql: CHANGE_TRACKING = { TRUE | FALSE }
     kind: property
@@ -33627,7 +33648,7 @@ objects:
           CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED COMMENT = $$a$$
         L4_sql:
         - ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R14_COMMENT SET COMMENT = $$b$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: iceberg_version
     sql: ICEBERG_VERSION = <integer>
     kind: parameter
@@ -36901,11 +36922,39 @@ objects:
       field: specification
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type:\
+        \ number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier:\
+        \ {database}.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n"
+      - "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type:\
+        \ number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier:\
+        \ {database}.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\n- description: desc b\n  name:\
+        \ tool_b\n  title: title b\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      truth: server_spec
+      expect:
+      - '{"version":1,"tools":[{"title":"title a","name":"tool_a","identifier":"{database}.PUBLIC.COVERAGE_FN","type":"GENERIC","description":"desc
+        a","config":{"input_schema":{"properties":{"x":{"description":"a number","type":"number"}},"type":"object"},"type":"function","warehouse":"STATIC_WAREHOUSE"}}]}'
+      - '{"version":1,"tools":[{"title":"title a","name":"tool_a","identifier":"{database}.PUBLIC.COVERAGE_FN","type":"GENERIC","description":"desc
+        a","config":{"input_schema":{"properties":{"x":{"description":"a number","type":"number"}},"type":"object"},"type":"function","warehouse":"STATIC_WAREHOUSE"}},{"title":"title
+        b","name":"tool_b","type":"SYSTEM_EXECUTE_SQL","description":"desc b"}]}'
+      evidence:
+        create_sql:
+        - "CREATE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R00_SPECIFICATION FROM SPECIFICATION $$tools:\n- config:\n\
+          \    input_schema:\n      properties:\n        x:\n          description: a number\n          type: number\n   \
+          \   type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier: COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.COVERAGE_FN\n\
+          \  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n$$"
+        L4_sql:
+        - "CREATE OR REPLACE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R00_SPECIFICATION FROM SPECIFICATION $$tools:\n\
+          - config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type: number\n\
+          \      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier: COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.COVERAGE_FN\n\
+          \  name: tool_a\n  title: title a\n  type: GENERIC\n- description: desc b\n  name: tool_b\n  title: title b\n  type:\
+          \ SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: tools[].name
     sql: 'tools: - name'
     kind: property
@@ -36924,11 +36973,26 @@ objects:
       note: '_MCPServer.specification: str holds the whole spec YAML, including the tools list.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - "tools:\n- description: desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      - "tools:\n- description: desc a\n  name: tool_b\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      truth: tool_name
+      expect:
+      - tool_a
+      - tool_b
+      evidence:
+        create_sql:
+        - "CREATE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R01_TOOLS___NAME FROM SPECIFICATION $$tools:\n- description:\
+          \ desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4_sql:
+        - "CREATE OR REPLACE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R01_TOOLS___NAME FROM SPECIFICATION $$tools:\n\
+          - description: desc a\n  name: tool_b\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: tools[].type
     sql: 'tools: - type'
     kind: property
@@ -36947,11 +37011,30 @@ objects:
       note: '_MCPServer.specification: str holds the whole spec YAML, including the tools list.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - "tools:\n- description: desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      - "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type:\
+        \ number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier:\
+        \ {database}.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n"
+      truth: tool_type
+      expect:
+      - SYSTEM_EXECUTE_SQL
+      - GENERIC
+      evidence:
+        create_sql:
+        - "CREATE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R02_TOOLS___TYPE FROM SPECIFICATION $$tools:\n- description:\
+          \ desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4_sql:
+        - "CREATE OR REPLACE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R02_TOOLS___TYPE FROM SPECIFICATION $$tools:\n\
+          - config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type: number\n\
+          \      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier: COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.COVERAGE_FN\n\
+          \  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n$$"
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: tools[].title
     sql: 'tools: - title'
     kind: property
@@ -36970,11 +37053,26 @@ objects:
       note: '_MCPServer.specification: str holds the whole spec YAML, including the tools list.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - "tools:\n- description: desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      - "tools:\n- description: desc a\n  name: tool_a\n  title: title b\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      truth: tool_title
+      expect:
+      - title a
+      - title b
+      evidence:
+        create_sql:
+        - "CREATE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R03_TOOLS___TITLE FROM SPECIFICATION $$tools:\n- description:\
+          \ desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4_sql:
+        - "CREATE OR REPLACE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R03_TOOLS___TITLE FROM SPECIFICATION $$tools:\n\
+          - description: desc a\n  name: tool_a\n  title: title b\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: tools[].description
     sql: 'tools: - description'
     kind: property
@@ -36993,11 +37091,26 @@ objects:
       note: '_MCPServer.specification: str holds the whole spec YAML, including the tools list.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - "tools:\n- description: desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      - "tools:\n- description: desc b\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n"
+      truth: tool_description
+      expect:
+      - desc a
+      - desc b
+      evidence:
+        create_sql:
+        - "CREATE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R04_TOOLS___DESCRIPTION FROM SPECIFICATION $$tools:\n- description:\
+          \ desc a\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4_sql:
+        - "CREATE OR REPLACE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R04_TOOLS___DESCRIPTION FROM SPECIFICATION $$tools:\n\
+          - description: desc b\n  name: tool_a\n  title: title a\n  type: SYSTEM_EXECUTE_SQL\nversion: 1\n$$"
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: tools[].identifier
     sql: 'tools: - identifier'
     kind: relationship
@@ -37016,11 +37129,34 @@ objects:
       note: '_MCPServer.specification: str holds the whole spec YAML, including the tools list.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type:\
+        \ number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier:\
+        \ {database}.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n"
+      - "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type:\
+        \ number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier:\
+        \ {database}.PUBLIC.COVERAGE_FN2\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n"
+      truth: tool_identifier
+      expect:
+      - '{database}.PUBLIC.COVERAGE_FN'
+      - '{database}.PUBLIC.COVERAGE_FN2'
+      evidence:
+        create_sql:
+        - "CREATE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R05_TOOLS___IDENTIFIER FROM SPECIFICATION $$tools:\n- config:\n\
+          \    input_schema:\n      properties:\n        x:\n          description: a number\n          type: number\n   \
+          \   type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier: COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.COVERAGE_FN\n\
+          \  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n$$"
+        L4_sql:
+        - "CREATE OR REPLACE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R05_TOOLS___IDENTIFIER FROM SPECIFICATION $$tools:\n\
+          - config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type: number\n\
+          \      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier: COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.COVERAGE_FN2\n\
+          \  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n$$"
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: tools[].config
     sql: 'tools: - config: { type, warehouse, input_schema }'
     kind: property
@@ -37039,11 +37175,35 @@ objects:
       note: '_MCPServer.specification: str holds the whole spec YAML, including the tools list.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n          type:\
+        \ number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier:\
+        \ {database}.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n"
+      - "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: another number\n    \
+        \      type: number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc\
+        \ a\n  identifier: {database}.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n"
+      truth: tool_config
+      expect:
+      - '{"input_schema":{"properties":{"x":{"description":"a number","type":"number"}},"type":"object"},"type":"function","warehouse":"STATIC_WAREHOUSE"}'
+      - '{"input_schema":{"properties":{"x":{"description":"another number","type":"number"}},"type":"object"},"type":"function","warehouse":"STATIC_WAREHOUSE"}'
+      evidence:
+        create_sql:
+        - "CREATE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R06_TOOLS___CONFIG FROM SPECIFICATION $$tools:\n- config:\n\
+          \    input_schema:\n      properties:\n        x:\n          description: a number\n          type: number\n   \
+          \   type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier: COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.COVERAGE_FN\n\
+          \  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n$$"
+        L4_sql:
+        - "CREATE OR REPLACE MCP SERVER COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.R06_TOOLS___CONFIG FROM SPECIFICATION $$tools:\n\
+          - config:\n    input_schema:\n      properties:\n        x:\n          description: another number\n          type:\
+          \ number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc a\n  identifier:\
+          \ COVERAGE_MCP_SERVER_B91EFCFA.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n\
+          $$"
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: comment
     sql: comment
     kind: property
@@ -37101,8 +37261,25 @@ objects:
   excluded: []
   snowcap:
     class: MCPServer
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE FUNCTION {database}.PUBLIC.COVERAGE_FN(x NUMBER) RETURNS NUMBER AS 'x * 10'
+    - CREATE FUNCTION {database}.PUBLIC.COVERAGE_FN2(x NUMBER) RETURNS NUMBER AS 'x * 20'
+    create_args:
+      specification: "tools:\n- config:\n    input_schema:\n      properties:\n        x:\n          description: a number\n\
+        \          type: number\n      type: object\n    type: function\n    warehouse: STATIC_WAREHOUSE\n  description: desc\
+        \ a\n  identifier: {database}.PUBLIC.COVERAGE_FN\n  name: tool_a\n  title: title a\n  type: GENERIC\nversion: 1\n"
+    truth:
+    - DESC MCP SERVER {fqn}
+    - SELECT f.key AS key, f.value::string AS value FROM (SELECT OBJECT_CONSTRUCT('tool_name', t:name, 'tool_type', t:type,
+      'tool_title', t:title, 'tool_description', t:description, 'tool_identifier', t:identifier, 'tool_config', TO_JSON(t:config))
+      AS o FROM (SELECT PARSE_JSON(r."server_spec"):tools[0] AS t FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r)) s, LATERAL
+      FLATTEN(s.o) f
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 3d0a37267a13
 - object: MODEL
   variant: from_model
   scope_level: schema
@@ -39087,7 +39264,7 @@ objects:
           MAIN_FILE = $$coverage_nb_a.ipynb$$ QUERY_WAREHOUSE = STATIC_WAREHOUSE
         L4_sql:
         - ALTER NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R01_MAIN_FILE SET MAIN_FILE = $$coverage_nb_b.ipynb$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: comment
     sql: COMMENT
     kind: property
@@ -39842,7 +40019,7 @@ objects:
         L4_sql:
         - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R01_AZURE_TENANT_ID SET
           AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000002$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
         L5: 'plan after create: ["update [''azure_tenant_id'']"]; plan after change: ["update [''azure_tenant_id'']"]'
   - name: use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT
@@ -47278,8 +47455,11 @@ objects:
   excluded: []
   snowcap:
     class: ReplicationGroup
-    test: untested
+    test: docs_only
     unmapped_fields: []
+    test_reason: 'org: CREATE REPLICATION GROUP ... OBJECT_TYPES = DATABASES ALLOWED_ACCOUNTS = TOBTIUJ.MPA54011 (the only
+      other account in the organization) fails with "003078 (55000): Replication is not enabled for your account.", and enabling
+      it needs ORGADMIN, which the audit does not use'
 - object: RESOURCE MONITOR
   variant: null
   scope_level: account
@@ -57535,13 +57715,14 @@ objects:
   excluded: []
   snowcap:
     class: Service
-    test: untested
+    test: docs_only
     field_notes:
       stage: 'snowcap-only: meant for the @<stage> part of the specification row''s SPECIFICATION_FILE form, but props never
         render it.'
       yaml_file_stage_path: 'snowcap-only: meant for the path in the specification row''s SPECIFICATION_FILE form, but props
         never render it.'
     unmapped_fields: []
+    test_reason: 'cost: the audit scope skips Snowpark Container Services objects (compute pool nodes consume credits)'
 - object: SESSION POLICY
   variant: null
   scope_level: schema
@@ -59696,7 +59877,7 @@ objects:
           directory = (ENABLE = FALSE)
         L4_sql:
         - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R00_URL SET URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path2/$$
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: storage_integration
     sql: STORAGE_INTEGRATION = <integration_name>
     kind: relationship
@@ -59732,7 +59913,7 @@ objects:
           STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009_OL_A directory = (ENABLE = FALSE)
         L4_sql:
         - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R01_STORAGE_INTEGRATION SET STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009_OL_B
-        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L4: the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed
   - name: credentials.azure_sas_token
     sql: CREDENTIALS = ( AZURE_SAS_TOKEN = '<string>' )
     kind: property

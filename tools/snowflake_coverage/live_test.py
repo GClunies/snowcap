@@ -420,7 +420,9 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         if not ok:
             evidence["L4"] = f"apply ran but the change did not land: {detail}"
         elif row["alter"] == "none":
-            evidence["L4"] = "the docs say ALTER cannot change it, but the ALTER ran and the change landed"
+            evidence["L4"] = (
+                "the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed"
+            )
     except Refused as err:
         refused_ok = row["alter"] == "none"
         levels["L4"] = "pass" if refused_ok else "fail"
