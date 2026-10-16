@@ -38947,11 +38947,21 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_EMAIL_D235D6A7_R00_ENABLED type = EMAIL ENABLED
+          = FALSE
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_EMAIL_D235D6A7_R00_ENABLED SET ENABLED = TRUE
   - name: allowed_recipients
     sql: ALLOWED_RECIPIENTS
     kind: property
@@ -39039,11 +39049,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_EMAIL_D235D6A7_R01_COMMENT type = EMAIL ENABLED
+          = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_EMAIL_D235D6A7_R01_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -39111,8 +39131,24 @@ objects:
   excluded: []
   snowcap:
     class: EmailNotificationIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      allowed_recipients: null
+    truth:
+    - SHOW NOTIFICATION INTEGRATIONS LIKE '{name}'
+    - DESCRIBE NOTIFICATION INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - enabled
+      sql:
+      - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_EMAIL_D235D6A7_COMBINED SET ENABLED = TRUE COMMENT
+        = $$b$$
+      result: pass
+    tested_inputs: be60165ee280
 - object: NOTIFICATION INTEGRATION
   variant: inbound_azure
   scope_level: account
@@ -39240,13 +39276,30 @@ objects:
       field: azure_storage_queue_primary_uri
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - https://coverageplaceholder.queue.core.windows.net/coverage-a
+      - https://coverageplaceholder.queue.core.windows.net/coverage-b
+      truth: azure_storage_queue_primary_uri
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R00_AZURE_STORAGE_QUEUE_PRIMARY_URI
+          ENABLED = FALSE type = QUEUE notification_provider = AZURE_STORAGE_QUEUE AZURE_STORAGE_QUEUE_PRIMARY_URI = $$https://coverageplaceholder.queue.core.windows.net/coverage-a$$
+          AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R00_AZURE_STORAGE_QUEUE_PRIMARY_URI
+          SET AZURE_STORAGE_QUEUE_PRIMARY_URI = $$https://coverageplaceholder.queue.core.windows.net/coverage-b$$ AZURE_TENANT_ID
+          = $$00000000-0000-0000-0000-000000000001$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''AZURE_STORAGE_QUEUE_PRIMARY_URI''
+          for ''INTEGRATION - QUEUE - AZURE_STORAGE_QUEUE'' on: ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R00_AZURE_STORAGE_QUEUE_PRIMARY_URI
+          SET AZURE_STORAG ...'
+        L5: 'plan after create: ["update [''azure_tenant_id'']"]; plan after change: []'
   - name: azure_tenant_id
     sql: AZURE_TENANT_ID
     kind: property
@@ -39264,13 +39317,29 @@ objects:
       field: azure_tenant_id
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: pass
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - 00000000-0000-0000-0000-000000000001
+      - 00000000-0000-0000-0000-000000000002
+      truth: azure_tenant_id
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R01_AZURE_TENANT_ID ENABLED
+          = FALSE type = QUEUE notification_provider = AZURE_STORAGE_QUEUE AZURE_STORAGE_QUEUE_PRIMARY_URI = $$https://coverageplaceholder.queue.core.windows.net/coverage-a$$
+          AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$
+        L3: Snowflake reports azure_tenant_id='00000000-0000-0000-0000-000000000001' (declared form '00000000-0000-0000-0000-000000000001'),
+          snowcap fetches None
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R01_AZURE_TENANT_ID SET
+          AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000002$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L5: 'plan after create: ["update [''azure_tenant_id'']"]; plan after change: ["update [''azure_tenant_id'']"]'
   - name: use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT
     kind: property
@@ -39311,11 +39380,24 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R02_ENABLED ENABLED = FALSE
+          type = QUEUE notification_provider = AZURE_STORAGE_QUEUE AZURE_STORAGE_QUEUE_PRIMARY_URI = $$https://coverageplaceholder.queue.core.windows.net/coverage-a$$
+          AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R02_ENABLED SET ENABLED
+          = TRUE AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$
+        L5: 'plan after create: ["update [''azure_tenant_id'']"]; plan after change: ["update [''azure_tenant_id'']"]'
   - name: comment
     sql: COMMENT
     kind: property
@@ -39333,11 +39415,24 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R03_COMMENT ENABLED = FALSE
+          type = QUEUE notification_provider = AZURE_STORAGE_QUEUE AZURE_STORAGE_QUEUE_PRIMARY_URI = $$https://coverageplaceholder.queue.core.windows.net/coverage-a$$
+          AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$ COMMENT = $$a$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_R03_COMMENT SET AZURE_TENANT_ID
+          = $$00000000-0000-0000-0000-000000000001$$ COMMENT = $$b$$
+        L5: 'plan after create: ["update [''azure_tenant_id'']"]; plan after change: ["update [''azure_tenant_id'']"]'
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -39405,8 +39500,26 @@ objects:
   excluded: []
   snowcap:
     class: AzureInboundNotificationIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      azure_storage_queue_primary_uri: https://coverageplaceholder.queue.core.windows.net/coverage-a
+      azure_tenant_id: 00000000-0000-0000-0000-000000000001
+    truth:
+    - SHOW NOTIFICATION INTEGRATIONS LIKE '{name}'
+    - DESCRIBE NOTIFICATION INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) UNION ALL SELECT 'azure_tenant_id',
+      SPLIT_PART("property_value", '/', 4) FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE "property" = 'AZURE_CONSENT_URL'
+    combined:
+      fields:
+      - comment
+      - enabled
+      sql:
+      - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_AZURE_D9E6F00D_COMBINED SET ENABLED = TRUE
+        AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$ COMMENT = $$b$$
+      result: pass
+    tested_inputs: dc9e74bc5e80
 - object: NOTIFICATION INTEGRATION
   variant: inbound_gcp
   scope_level: account
@@ -39534,13 +39647,28 @@ objects:
       field: gcp_pubsub_subscription_name
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - projects/coverage-placeholder/subscriptions/coverage-a
+      - projects/coverage-placeholder/subscriptions/coverage-b
+      truth: gcp_pubsub_subscription_name
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_R00_GCP_PUBSUB_SUBSCRIPTION_NAME
+          ENABLED = FALSE type = QUEUE notification_provider = GCP_PUBSUB GCP_PUBSUB_SUBSCRIPTION_NAME = $$projects/coverage-placeholder/subscriptions/coverage-a$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_R00_GCP_PUBSUB_SUBSCRIPTION_NAME
+          SET GCP_PUBSUB_SUBSCRIPTION_NAME = $$projects/coverage-placeholder/subscriptions/coverage-b$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''GCP_PUBSUB_SUBSCRIPTION_NAME''
+          for ''INTEGRATION - QUEUE - GCP_PUBSUB'' on: ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_R00_GCP_PUBSUB_SUBSCRIPTION_NAME
+          SET GCP_PUBSUB_SUBSCR ...'
+        L5: fails because L4 fails
   - name: enabled
     sql: ENABLED
     kind: property
@@ -39558,11 +39686,22 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_R01_ENABLED ENABLED = FALSE
+          type = QUEUE notification_provider = GCP_PUBSUB GCP_PUBSUB_SUBSCRIPTION_NAME = $$projects/coverage-placeholder/subscriptions/coverage-a$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_R01_ENABLED SET ENABLED =
+          TRUE
   - name: comment
     sql: COMMENT
     kind: property
@@ -39580,11 +39719,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_R02_COMMENT ENABLED = FALSE
+          type = QUEUE notification_provider = GCP_PUBSUB GCP_PUBSUB_SUBSCRIPTION_NAME = $$projects/coverage-placeholder/subscriptions/coverage-a$$
+          COMMENT = $$a$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_R02_COMMENT SET COMMENT =
+          $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -39652,8 +39803,24 @@ objects:
   excluded: []
   snowcap:
     class: GCPInboundNotificationIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      gcp_pubsub_subscription_name: projects/coverage-placeholder/subscriptions/coverage-a
+    truth:
+    - SHOW NOTIFICATION INTEGRATIONS LIKE '{name}'
+    - DESCRIBE NOTIFICATION INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - enabled
+      sql:
+      - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_INBOUND_GCP_98D31C3C_COMBINED SET ENABLED = TRUE
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: b0b0f098ea63
 - object: NOTIFICATION INTEGRATION
   variant: multi_queue
   scope_level: account
@@ -40050,11 +40217,23 @@ objects:
       field: aws_sns_topic_arn
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - arn:aws:sns:us-west-2:123456789012:coverage
+      - arn:aws:sns:us-west-2:123456789012:coverage2
+      truth: aws_sns_topic_arn
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R00_AWS_SNS_TOPIC_ARN ENABLED
+          = FALSE direction = OUTBOUND type = QUEUE notification_provider = AWS_SNS AWS_SNS_TOPIC_ARN = $$arn:aws:sns:us-west-2:123456789012:coverage$$
+          AWS_SNS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R00_AWS_SNS_TOPIC_ARN SET
+          AWS_SNS_TOPIC_ARN = $$arn:aws:sns:us-west-2:123456789012:coverage2$$
   - name: aws_sns_role_arn
     sql: AWS_SNS_ROLE_ARN
     kind: property
@@ -40072,11 +40251,23 @@ objects:
       field: aws_sns_role_arn
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - arn:aws:iam::123456789012:role/coverage
+      - arn:aws:iam::123456789012:role/coverage2
+      truth: aws_sns_role_arn
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R01_AWS_SNS_ROLE_ARN ENABLED
+          = FALSE direction = OUTBOUND type = QUEUE notification_provider = AWS_SNS AWS_SNS_TOPIC_ARN = $$arn:aws:sns:us-west-2:123456789012:coverage$$
+          AWS_SNS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R01_AWS_SNS_ROLE_ARN SET
+          AWS_SNS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage2$$
   - name: enabled
     sql: ENABLED
     kind: property
@@ -40094,11 +40285,23 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R02_ENABLED ENABLED = FALSE
+          direction = OUTBOUND type = QUEUE notification_provider = AWS_SNS AWS_SNS_TOPIC_ARN = $$arn:aws:sns:us-west-2:123456789012:coverage$$
+          AWS_SNS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R02_ENABLED SET ENABLED =
+          TRUE
   - name: comment
     sql: COMMENT
     kind: property
@@ -40116,11 +40319,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R03_COMMENT ENABLED = FALSE
+          direction = OUTBOUND type = QUEUE notification_provider = AWS_SNS AWS_SNS_TOPIC_ARN = $$arn:aws:sns:us-west-2:123456789012:coverage$$
+          AWS_SNS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ COMMENT = $$a$$
+        L4_sql:
+        - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_R03_COMMENT SET COMMENT =
+          $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -40188,8 +40403,28 @@ objects:
   excluded: []
   snowcap:
     class: AWSOutboundNotificationIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      aws_sns_topic_arn: arn:aws:sns:us-west-2:123456789012:coverage
+      aws_sns_role_arn: arn:aws:iam::123456789012:role/coverage
+    truth:
+    - SHOW NOTIFICATION INTEGRATIONS LIKE '{name}'
+    - DESCRIBE NOTIFICATION INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - aws_sns_role_arn
+      - aws_sns_topic_arn
+      - comment
+      - enabled
+      sql:
+      - ALTER NOTIFICATION INTEGRATION COVERAGE_NOTIFICATION_INTEGRATION_OUTBOUND_AWS_ADB8CECD_COMBINED SET ENABLED = TRUE
+        AWS_SNS_TOPIC_ARN = $$arn:aws:sns:us-west-2:123456789012:coverage2$$ AWS_SNS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage2$$
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: 54771ff9b386
 - object: NOTIFICATION INTEGRATION
   variant: outbound_azure
   scope_level: account
@@ -40452,8 +40687,11 @@ objects:
   excluded: []
   snowcap:
     class: AzureOutboundNotificationIntegration
-    test: untested
+    test: docs_only
     unmapped_fields: []
+    test_reason: 'Outbound Azure Event Grid integrations need a Snowflake account on Azure; on this AWS account a CREATE with
+      placeholder values fails with "001008 (22023): SQL compilation error: invalid value [QUEUE - AZURE_EVENT_GRID] for parameter
+      ''Integration Type''".'
 - object: NOTIFICATION INTEGRATION
   variant: outbound_gcp
   scope_level: account
@@ -40695,8 +40933,10 @@ objects:
   excluded: []
   snowcap:
     class: GCPOutboundNotificationIntegration
-    test: untested
+    test: docs_only
     unmapped_fields: []
+    test_reason: 'Outbound Google Pub/Sub integrations need a Snowflake account on Google Cloud; on this AWS account a CREATE
+      with placeholder values fails with "001422 (22023): SQL compilation error: invalid value ''OUTBOUND'' for property ''Direction''".'
 - object: NOTIFICATION INTEGRATION
   variant: webhook
   scope_level: account
