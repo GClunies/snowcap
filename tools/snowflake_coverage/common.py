@@ -9,11 +9,12 @@ inventory.yaml is the coverage source of truth. Each object entry holds the Snow
       test: live              # live | docs_only | untested
       test_reason: reason     # why a docs_only object is not tested live
       setup: [SQL, ...]       # prerequisites created in the throwaway database before the tests
+      teardown: [SQL, ...]    # drops the account-level prerequisites from setup after the tests
       create_args: {...}      # the minimum arguments to create a test object
       truth: [SQL, ...]       # queries that report Snowflake's own values; {name} {database} {container} {fqn}
       field_notes: {copy_grants: reason}  # why a spec field has no docs row (for example a CREATE option)
 
-Strings in setup, create_args, and samples can use {database}, the throwaway database. All placeholders
+Strings in setup, teardown, create_args, and samples can use {database}, the throwaway database. All placeholders
 are replaced as plain text, so SQL braces need no escaping.
 
 Each property row has its own `snowcap` block:

@@ -22,7 +22,8 @@ It also runs one combined test per object: every combinable SET property changes
 each value must land.
 
 Every object runs in its own throwaway database, which is dropped at the end, also on failure. The
-object's setup SQL runs in it first. Account-level test objects are dropped in the same cleanup.
+object's setup SQL runs in it first. Account-level test objects are dropped in the same cleanup, and then the
+object's teardown SQL drops the account-level prerequisites that setup created.
 
 Usage: uv run python tools/snowflake_coverage/live_test.py [OBJECT[:variant] ...]
 """
@@ -53,7 +54,7 @@ from common import (
     testable_rows,
     top_field,
 )  # noqa: E402
-from conftest import TEST_ROLE, connection_params  # noqa: E402
+from conftest import TEST_ROLE, TEST_WAREHOUSE, connection_params  # noqa: E402
 
 from snowcap import data_provider, lifecycle  # noqa: E402
 from snowcap.blueprint import (  # noqa: E402
@@ -160,18 +161,22 @@ class Account:
         self.apply(blueprint, plan)
         return sql
 
-    def drop_account_objects(self) -> None:
-        """Drop the account-level test objects with snowcap's own DROP SQL, newest first.
+    def clean_up(self, teardown: list[str]) -> None:
+        """Drop the account-level test objects with snowcap's own DROP SQL, newest first, then run teardown SQL.
 
-        Every drop is attempted. Raises afterward when one failed, because that object is left in the account.
+        Every statement is attempted. Raises afterward when one failed, because its object is left in the account.
         """
-        failed = []
-        for resource in reversed(list(self.account_objects.values())):
-            try:
-                self.cur.execute(lifecycle.drop_resource(resource.urn, resource.to_dict(self.edition), if_exists=True))
-            except snowflake.connector.errors.Error as err:
-                failed.append(f"{resource.urn}: {short(err)}")
+        drops = [
+            lifecycle.drop_resource(resource.urn, resource.to_dict(self.edition), if_exists=True)
+            for resource in reversed(list(self.account_objects.values()))
+        ]
         self.account_objects.clear()
+        failed = []
+        for statement in drops + teardown:
+            try:
+                self.cur.execute(statement)
+            except snowflake.connector.errors.Error as err:
+                failed.append(f"{statement}: {short(err)}")
         if failed:
             raise RuntimeError("cleanup left account objects behind: " + "; ".join(failed))
 
@@ -330,9 +335,15 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         if levels["L2"] == "fail":
             evidence["L2"] = f"declared {before!r}, Snowflake reports {truth_key}={reported!r}"
         if is_plain(path) and reported is not None:
-            levels["L3"] = "pass" if norm(fetched) == norm(reported) else "fail"
+            # Snowflake can spell a value differently from the declaration (warehouse_size 'X-Small' for 'XSMALL'),
+            # so a reported value that `expect` lists compares in its sample form.
+            reference = {norm(e): s for e, s in zip(expect, (before, after))}.get(norm(reported), reported)
+            levels["L3"] = "pass" if norm(fetched) == norm(reference) else "fail"
             if levels["L3"] == "fail":
-                evidence["L3"] = f"Snowflake reports {truth_key}={reported!r}, snowcap fetches {fetched!r}"
+                evidence["L3"] = (
+                    f"Snowflake reports {truth_key}={reported!r} (declared form {reference!r}), "
+                    f"snowcap fetches {fetched!r}"
+                )
         elif is_plain(path):
             levels["L3"] = "untested"
             evidence["L3"] = f"Snowflake reports no {truth_key}, so the read-back has no reference"
@@ -456,13 +467,18 @@ def test_object(account: Account, obj: dict) -> None:
             test_row(account, obj, row, database, index)
             levels = row["snowcap"]["levels"]
             print(f"{label}.{row['name']}: " + " ".join(f"{k}={v}" for k, v in levels.items()), flush=True)
+        # Row objects can hold account-unique values, such as a user's login_name, that the combined object reuses.
+        account.clean_up([])
         obj["snowcap"]["combined"] = test_combined(account, obj, database)
         obj["snowcap"]["tested_inputs"] = live_inputs_digest(obj)
         print(f"{label} combined: {obj['snowcap']['combined']['result']}", flush=True)
     finally:
         account.cur.execute(f"USE ROLE {TEST_ROLE}")
+        # CREATE WAREHOUSE makes the new warehouse current, and the queries after its drop need a warehouse.
+        if TEST_WAREHOUSE:
+            account.cur.execute(f"USE WAREHOUSE {TEST_WAREHOUSE}")
         try:
-            account.drop_account_objects()
+            account.clean_up(fill(obj["snowcap"].get("teardown", []), database))
         finally:
             account.cur.execute(f"DROP DATABASE IF EXISTS {database}")
 
