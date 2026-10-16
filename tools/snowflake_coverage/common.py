@@ -7,9 +7,13 @@ inventory.yaml is the coverage source of truth. Each object entry holds the Snow
     snowcap:
       class: Table            # snowcap resource class, or null when snowcap does not model the object
       test: live              # live | docs_only | untested
+      test_reason: reason     # why a docs_only object is not tested live
+      setup: [SQL, ...]       # prerequisites created in the throwaway database before the tests
       create_args: {...}      # the minimum arguments to create a test object
       truth: [SQL, ...]       # queries that report Snowflake's own values; {name} {database} {container} {fqn}
       field_notes: {copy_grants: reason}  # why a spec field has no docs row (for example a CREATE option)
+
+Strings in setup, create_args, and samples can use {database}, the throwaway database.
 
 Each property row has its own `snowcap` block:
 
@@ -19,19 +23,22 @@ Each property row has its own `snowcap` block:
                                           # a column field
       note: reason                        # why the row maps to a differently named field, or what snowcap lacks
       n_a: reason                         # set when the row is not a manageable state of this object
-      sample: [3, 5]                      # create value, changed value (rows without it stay untested)
+      sample: [3, 5]                      # create value, changed value (rows without it stay untested);
+                                          # values of the field the path heads, for example two `columns` lists
       truth: retention_time               # key in the truth query output
+      expect: [3, 5]                      # the values Snowflake reports under the truth key (default: sample)
       levels: {L1: pass, L2: ..., L5: ...}
       evidence: {L3: ...}
       candidates: [...]                   # static findings to confirm live
 
-static_map.py writes L1 and candidates. live_test.py writes L2 to L5, evidence, the object's
-`combined` result, and `tested_inputs`, a digest of the inputs that produced those results.
+static_map.py writes L1, candidates, and the object's `unmapped_fields`. live_test.py writes L2 to L5,
+evidence, the object's `combined` result, and `tested_inputs`, a digest of the inputs that produced those results.
+Every other value is an input.
 """
 
-import copy
 import hashlib
 import json
+import re
 from dataclasses import fields
 from pathlib import Path
 from typing import Iterator, Optional
@@ -39,11 +46,14 @@ from typing import Iterator, Optional
 import yaml
 
 from snowcap import resources
+from snowcap.resources.tag import TaggableResource
 from snowcap.scope import DatabaseScope, SchemaScope
 
 INVENTORY = Path(__file__).with_name("inventory.yaml")
 LEVELS = ("L1", "L2", "L3", "L4", "L5")
 LIVE_LEVELS = LEVELS[1:]
+OBJECT_OUTPUTS = ("unmapped_fields", "combined", "tested_inputs")
+ROW_OUTPUTS = ("levels", "candidates", "evidence")
 
 
 def load_inventory() -> dict:
@@ -58,12 +68,14 @@ def load_inventory() -> dict:
 
 
 def live_inputs_digest(obj: dict) -> str:
-    """A short digest of every inventory value that decides the object's live results."""
-    rows = [
-        {k: row["snowcap"].get(k) for k in ("field", "sample", "truth")} | {k: row[k] for k in ("alter", "combinable")}
-        for row in testable_rows(obj)
-    ]
-    inputs = [obj["snowcap"]["create_args"], obj["snowcap"]["truth"], rows]
+    """A short digest of the object's inventory entry without the script outputs, so any input edit clears live results."""
+    inputs = obj | {
+        "snowcap": {k: v for k, v in obj["snowcap"].items() if k not in OBJECT_OUTPUTS},
+        "properties": [
+            row | {"snowcap": {k: v for k, v in row["snowcap"].items() if k not in ROW_OUTPUTS}}
+            for row in obj["properties"]
+        ],
+    }
     return hashlib.sha256(json.dumps(inputs, sort_keys=True, default=str).encode()).hexdigest()[:12]
 
 
@@ -98,24 +110,47 @@ def resource_class(obj: dict) -> type:
     return getattr(resources, obj["snowcap"]["class"])
 
 
+def top_field(field: str) -> str:
+    """The spec field that a row path names: `credentials.aws_key_id` and `columns[].comment` both name their head."""
+    return re.split(r"[.\[]", field, maxsplit=1)[0]
+
+
+def fill(value, database: str):
+    """Replace {database} in every string of value. Plain replacement, because SQL and code bodies contain braces."""
+    if isinstance(value, str):
+        return value.replace("{database}", database)
+    if isinstance(value, list):
+        return [fill(v, database) for v in value]
+    if isinstance(value, dict):
+        return {fill(k, database): fill(v, database) for k, v in value.items()}
+    return value
+
+
 def build_resource(obj: dict, name: str, database: str, owner: str, values: Optional[dict] = None):
     """Create the snowcap resource for a test object in database, with the given spec field values."""
     cls = resource_class(obj)
-    kwargs = copy.deepcopy(obj["snowcap"]["create_args"])
-    kwargs.update(name=name, owner=owner)
+    kwargs = fill(obj["snowcap"]["create_args"], database)
+    kwargs.update(name=name)
+    if "owner" in {f.name for f in fields(cls.spec)}:
+        kwargs.update(owner=owner)
     if isinstance(cls.scope, SchemaScope):
         kwargs.update(database=database, schema="PUBLIC")
     elif isinstance(cls.scope, DatabaseScope):
         kwargs.update(database=database)
-    kwargs.update(copy.deepcopy(values or {}))
+    kwargs.update(fill(values or {}, database))
     return cls(**kwargs)
 
 
 def testable_rows(obj: dict) -> list[dict]:
-    """Rows that map to a top-level spec field and carry samples. Column and tag rows stay untested."""
-    spec_fields = {f.name for f in fields(resource_class(obj).spec)}
+    """Rows with samples whose path heads a spec field, plus tags rows of a TaggableResource."""
+    cls = resource_class(obj)
+    spec_fields = {f.name for f in fields(cls.spec)}
+    if issubclass(cls, TaggableResource):
+        spec_fields.add("tags")
     return [
         p
         for p in obj["properties"]
-        if p["snowcap"].get("sample") and not p["snowcap"].get("n_a") and p["snowcap"]["field"] in spec_fields
+        if p["snowcap"].get("sample")
+        and not p["snowcap"].get("n_a")
+        and top_field(p["snowcap"]["field"] or "") in spec_fields
     ]

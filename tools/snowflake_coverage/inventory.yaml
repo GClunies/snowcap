@@ -7,9 +7,9 @@ account:
   edition: ENTERPRISE
   cloud: AWS
   cloud_region: US_WEST_2
-  snowflake_version: 10.36.101
+  snowflake_version: 10.37.102
   test_role: ACCOUNTADMIN
-  checked_on: '2026-10-09'
+  checked_on: '2026-10-16'
 objects:
 - object: ACCOUNT
   variant: null
@@ -40233,13 +40233,13 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R00_RETURNS () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R00_RETURNS () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R00_RETURNS() SET returns NUMBER
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R00_RETURNS() SET returns NUMBER
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          84 unexpected ''NUMBER''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R00_RETURNS() SET returns
+          84 unexpected ''NUMBER''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R00_RETURNS() SET returns
           NUMBER'
         L5: fails because L4 fails
   - name: language
@@ -40290,15 +40290,15 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R01_NULL_HANDLING () returns VARCHAR language PYTHON\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R01_NULL_HANDLING () returns VARCHAR language PYTHON\
           \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined\
           \ procedure$$ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n\
           $$"
         L2: declared 'RETURNS NULL ON NULL INPUT', Snowflake reports null handling='CALLED ON NULL INPUT'
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R01_NULL_HANDLING() SET
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R01_NULL_HANDLING() SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          81 unexpected ''<EOF>''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R01_NULL_HANDLING() SET'
+          81 unexpected ''<EOF>''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R01_NULL_HANDLING() SET'
         L5: 'plan after create: ["update [''null_handling'']"]; plan after change: []'
   - name: comment
     sql: COMMENT
@@ -40328,11 +40328,11 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R02_COMMENT () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R02_COMMENT () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$a$$ execute as CALLER AS\
           \ $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R02_COMMENT() SET COMMENT = $$b$$
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R02_COMMENT() SET COMMENT = $$b$$
   - name: execute_as
     sql: EXECUTE AS { CALLER | OWNER | RESTRICTED CALLER }
     kind: property
@@ -40361,11 +40361,11 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R03_EXECUTE_AS () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R03_EXECUTE_AS () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R03_EXECUTE_AS() EXECUTE AS OWNER
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R03_EXECUTE_AS() EXECUTE AS OWNER
   - name: body
     sql: AS '<procedure_definition>'
     kind: property
@@ -40396,14 +40396,14 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R04_BODY () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R04_BODY () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - "ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R04_BODY() SET AS $$def main(session):\n    return 'c'\n\
+        - "ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R04_BODY() SET AS $$def main(session):\n    return 'c'\n\
           \ndef main2(session):\n    return 'd'\n$$"
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          73 unexpected ''AS''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R04_BODY() SET AS $$def main(session):
+          73 unexpected ''AS''. on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R04_BODY() SET AS $$def main(session):
           return ''c'' def main2(session): return ''d'' $ ...'
         L5: fails because L4 fails
   - name: tags
@@ -40455,11 +40455,11 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R05_OWNER () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R05_OWNER () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - GRANT OWNERSHIP ON PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R05_OWNER() TO ROLE SYSADMIN COPY CURRENT
+        - GRANT OWNERSHIP ON PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R05_OWNER() TO ROLE SYSADMIN COPY CURRENT
           GRANTS
   - name: log_level
     sql: LOG_LEVEL
@@ -40580,7 +40580,7 @@ objects:
         ALTER'
       evidence:
         L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 70 unexpected
-          ''SECURE''. on: CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R06_SECURE SECURE () returns VARCHAR
+          ''SECURE''. on: CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R06_SECURE SECURE () returns VARCHAR
           language PYTHON RUNTIME_VERSION = $$3.11$$ P ...'
   - name: temporary
     sql: TEMPORARY
@@ -40635,14 +40635,14 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R07_RUNTIME_VERSION () returns VARCHAR language PYTHON\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R07_RUNTIME_VERSION () returns VARCHAR language PYTHON\
           \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined\
           \ procedure$$ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n\
           $$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$
         L4: 'Snowflake rejects the SQL: ProgrammingError: 000002 (0A000): Unsupported feature ''ALTER PROCEDURE SET RUNTIME_VERSION''.
-          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$'
+          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R07_RUNTIME_VERSION() SET RUNTIME_VERSION = $$3.12$$'
         L5: fails because L4 fails
   - name: artifact_repository
     sql: ARTIFACT_REPOSITORY = <repository>
@@ -40698,14 +40698,14 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R08_PACKAGES () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R08_PACKAGES () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
           $$pyyaml$$)
         L4: 'Snowflake rejects the SQL: ProgrammingError: 000002 (0A000): Unsupported feature ''ALTER PROCEDURE SET PACKAGES''.
-          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
+          on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R08_PACKAGES() SET PACKAGES = ($$snowflake-snowpark-python$$,
           $$pyyaml$$)'
         L5: fails because L4 fails
   - name: imports
@@ -40761,13 +40761,13 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R09_HANDLER () returns VARCHAR language PYTHON RUNTIME_VERSION\
+        - "CREATE PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R09_HANDLER () returns VARCHAR language PYTHON RUNTIME_VERSION\
           \ = $$3.11$$ PACKAGES = ($$snowflake-snowpark-python$$) HANDLER = $$main$$ COMMENT = $$user-defined procedure$$\
           \ execute as CALLER AS $$def main(session):\n    return 'a'\n\ndef main2(session):\n    return 'b'\n$$"
         L4_sql:
-        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$
+        - ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''HANDLER''
-          for ''PROCEDURE'' on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_BF1B48A0.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$'
+          for ''PROCEDURE'' on: ALTER PROCEDURE COVERAGE_PROCEDURE_PYTHON_0E03F6B7.PUBLIC.R09_HANDLER() SET HANDLER = $$main2$$'
         L5: fails because L4 fails
   - name: external_access_integrations
     sql: EXTERNAL_ACCESS_INTEGRATIONS = ( <name> , ... )
@@ -40834,13 +40834,13 @@ objects:
     - DESCRIBE PROCEDURE {fqn}
     - SHOW PARAMETERS IN PROCEDURE {fqn}
     unmapped_fields: []
+    field_notes:
+      copy_grants: 'CREATE option, not state: COPY GRANTS on replace.'
     combined:
       fields:
       - comment
       result: untested (needs two or more fields)
-    tested_inputs: c060e90dca29
-    field_notes:
-      copy_grants: 'CREATE option, not state: COPY GRANTS on replace.'
+    tested_inputs: b84bf656a6b8
 - object: PROCEDURE
   variant: scala
   scope_level: schema
@@ -43275,7 +43275,7 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_69B0469B.R00_TRANSIENT
+        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_B652CFC6.R00_TRANSIENT
         L4: 'snowcap refuses: Exception: Cannot change transient property of schema'
         L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: swap_with
@@ -43321,9 +43321,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R01_MANAGED_ACCESS WITH MANAGED ACCESS
+        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R01_MANAGED_ACCESS WITH MANAGED ACCESS
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
+        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -43352,9 +43352,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R02_OWNER
+        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R02_OWNER
         L4_sql:
-        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_69B0469B.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_B652CFC6.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
   - name: tags
     sql: WITH TAG / SET TAG
     kind: relationship
@@ -43427,9 +43427,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
+        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
+        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
     kind: parameter
@@ -43458,9 +43458,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
+        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
+        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
           12
   - name: external_volume
     sql: EXTERNAL_VOLUME
@@ -43622,9 +43622,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
+        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
   - name: storage_serialization_policy
     sql: STORAGE_SERIALIZATION_POLICY
     kind: parameter
@@ -43697,9 +43697,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_69B0469B.R06_COMMENT COMMENT = $$a$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_B652CFC6.R06_COMMENT COMMENT = $$a$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.R06_COMMENT SET comment = 'b'
+        - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.R06_COMMENT SET comment = 'b'
   - name: catalog_sync
     sql: CATALOG_SYNC
     kind: parameter
@@ -44338,13 +44338,13 @@ objects:
       - default_ddl_collation
       - max_data_extension_time_in_days
       sql:
-      - ALTER SCHEMA COVERAGE_SCHEMA_69B0469B.COMBINED SET comment = 'b'
+      - ALTER SCHEMA COVERAGE_SCHEMA_B652CFC6.COMBINED SET comment = 'b'
       result: fail
       missed:
       - data_retention_time_in_days
       - max_data_extension_time_in_days
       - default_ddl_collation
-    tested_inputs: ef3f09a76f71
+    tested_inputs: 5b9cc52f3584
 - object: SECRET
   variant: cloud_provider_token
   scope_level: schema
@@ -58825,12 +58825,12 @@ objects:
         ALTER'
       evidence:
         create_sql:
-        - CREATE TRANSIENT TABLE COVERAGE_TABLE_41402367.PUBLIC.R00_TABLE_TYPE (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TRANSIENT TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R00_TABLE_TYPE (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = FALSE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R00_TABLE_TYPE SET
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R00_TABLE_TYPE SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          61 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R00_TABLE_TYPE SET'
+          61 unexpected ''<EOF>''. on: ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R00_TABLE_TYPE SET'
         L5: fails because L4 fails
   - name: read_only
     sql: READ ONLY
@@ -59022,11 +59022,33 @@ objects:
       field: columns[].comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          comment: a
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          comment: b
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      truth: id_comment
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R01_COLUMNS___COMMENT (ID NUMBER(38,0) COMMENT 'a', NAME VARCHAR(16777216))
+          ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)'', ''comment'': ''b''}, {''name'': ''NAME'', ''data_type'':
+          ''VARCHAR(16777216)''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].masking_policy
     sql: '[ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name>, <condition_col> ... ) ]'
     kind: relationship
@@ -59540,12 +59562,12 @@ objects:
         <name> CLUSTER BY ( <expr> [ , ... ] )'''
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R01_CLUSTER_BY (ID NUMBER(38,0), NAME VARCHAR(16777216)) CLUSTER BY
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R02_CLUSTER_BY (ID NUMBER(38,0), NAME VARCHAR(16777216)) CLUSTER BY
           (ID) ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R01_CLUSTER_BY SET CLUSTER BY (NAME)
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R02_CLUSTER_BY SET CLUSTER BY (NAME)
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          70 unexpected ''BY''. syntax error line 1 at position 78 unexpected '')''. on: ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R01_CLUSTER_BY
+          70 unexpected ''BY''. syntax error line 1 at position 78 unexpected '')''. on: ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R02_CLUSTER_BY
           SET CLUSTER BY (NAME)'
         L5: fails because L4 fails
   - name: clustering_key_drop
@@ -59637,11 +59659,11 @@ objects:
       - 'L3: the fetch function does not return ''data_retention_time_in_days'''
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R02_DATA_RETENTION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R03_DATA_RETENTION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = FALSE DATA_RETENTION_TIME_IN_DAYS = 3 CHANGE_TRACKING = FALSE
         L3: Snowflake reports retention_time='3', snowcap fetches None
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R02_DATA_RETENTION_TIME_IN_DAYS SET DATA_RETENTION_TIME_IN_DAYS = 5
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R03_DATA_RETENTION_TIME_IN_DAYS SET DATA_RETENTION_TIME_IN_DAYS = 5
         L5: 'plan after create: ["update [''data_retention_time_in_days'']"]; plan after change: ["update [''data_retention_time_in_days'']"]'
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
@@ -59672,11 +59694,11 @@ objects:
       - 'L3: the fetch function does not return ''max_data_extension_time_in_days'''
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R03_MAX_DATA_EXTENSION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = FALSE MAX_DATA_EXTENSION_TIME_IN_DAYS = 10 CHANGE_TRACKING = FALSE
         L3: Snowflake reports max_data_extension_time_in_days='10', snowcap fetches None
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R03_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
           = 12
         L5: 'plan after create: ["update [''max_data_extension_time_in_days'']"]; plan after change: ["update [''max_data_extension_time_in_days'']"]'
   - name: change_tracking
@@ -59707,10 +59729,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R04_CHANGE_TRACKING (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R05_CHANGE_TRACKING (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = TRUE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R04_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R05_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
   - name: default_ddl_collation
     sql: DEFAULT_DDL_COLLATION
     kind: parameter
@@ -59739,10 +59761,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R05_DEFAULT_DDL_COLLATION (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R06_DEFAULT_DDL_COLLATION (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = FALSE CHANGE_TRACKING = FALSE DEFAULT_DDL_COLLATION = $$en-ci$$
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R05_DEFAULT_DDL_COLLATION SET DEFAULT_DDL_COLLATION = $$en-cs$$
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R06_DEFAULT_DDL_COLLATION SET DEFAULT_DDL_COLLATION = $$en-cs$$
   - name: enable_schema_evolution
     sql: ENABLE_SCHEMA_EVOLUTION
     kind: property
@@ -59771,10 +59793,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R06_ENABLE_SCHEMA_EVOLUTION (ID NUMBER(38,0), NAME VARCHAR(16777216))
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R07_ENABLE_SCHEMA_EVOLUTION (ID NUMBER(38,0), NAME VARCHAR(16777216))
           ENABLE_SCHEMA_EVOLUTION = TRUE CHANGE_TRACKING = FALSE
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R06_ENABLE_SCHEMA_EVOLUTION SET ENABLE_SCHEMA_EVOLUTION = FALSE
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R07_ENABLE_SCHEMA_EVOLUTION SET ENABLE_SCHEMA_EVOLUTION = FALSE
   - name: error_logging
     sql: ERROR_LOGGING
     kind: property
@@ -59962,10 +59984,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R07_COMMENT (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R08_COMMENT (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = FALSE COMMENT = $$a$$
         L4_sql:
-        - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.R07_COMMENT SET COMMENT = $$b$$
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R08_COMMENT SET COMMENT = $$b$$
   - name: tags
     sql: WITH TAG ( <tag_name> = '<tag_value>' [ , ... ] )
     kind: relationship
@@ -59983,11 +60005,29 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+          = FALSE CHANGE_TRACKING = FALSE
+        - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS SET TAG COVERAGE_TABLE_C02A2C5C.PUBLIC.COVERAGE_TAG='a'
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS?domain=TABLE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_TABLE_C02A2C5C''. on: ALTER TAG REFERENCE COVERAGE_TABLE_C02A2C5C.PUBLIC.R09_TAGS?domain=TABLE
+          SET'
+        L5: fails because L4 fails
   - name: contacts
     sql: WITH CONTACT ( <purpose> = <contact_name> [ , ... ] )
     kind: relationship
@@ -60171,10 +60211,10 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TABLE COVERAGE_TABLE_41402367.PUBLIC.R08_OWNERSHIP (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
+        - CREATE TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R10_OWNERSHIP (ID NUMBER(38,0), NAME VARCHAR(16777216)) ENABLE_SCHEMA_EVOLUTION
           = FALSE CHANGE_TRACKING = FALSE
         L4_sql:
-        - GRANT OWNERSHIP ON TABLE COVERAGE_TABLE_41402367.PUBLIC.R08_OWNERSHIP TO ROLE SYSADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.R10_OWNERSHIP TO ROLE SYSADMIN COPY CURRENT GRANTS
   - name: swap_with
     sql: SWAP WITH <target_table_name>
     kind: relationship
@@ -60210,7 +60250,14 @@ objects:
     truth:
     - SHOW TABLES LIKE '{name}' IN SCHEMA {container}
     - SHOW PARAMETERS IN TABLE {fqn}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
+    - SELECT 'id_comment' AS key, comment AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'PUBLIC'
+      AND table_name = '{name}' AND column_name = 'ID'
     unmapped_fields: []
+    field_notes:
+      copy_grants: 'CREATE option, not state: COPY GRANTS on replace.'
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
     combined:
       fields:
       - change_tracking
@@ -60220,7 +60267,7 @@ objects:
       - enable_schema_evolution
       - max_data_extension_time_in_days
       sql:
-      - ALTER TABLE COVERAGE_TABLE_41402367.PUBLIC.COMBINED SET COMMENT = $$b$$
+      - ALTER TABLE COVERAGE_TABLE_C02A2C5C.PUBLIC.COMBINED SET COMMENT = $$b$$
       result: fail
       missed:
       - data_retention_time_in_days
@@ -60228,9 +60275,7 @@ objects:
       - change_tracking
       - default_ddl_collation
       - enable_schema_evolution
-    tested_inputs: 57341f3bf8fe
-    field_notes:
-      copy_grants: 'CREATE option, not state: COPY GRANTS on replace.'
+    tested_inputs: 2a1be89ca744
 - object: TAG
   variant: null
   scope_level: schema
@@ -65562,11 +65607,23 @@ objects:
       field: auto_suspend
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 60
+      - 120
+      truth: auto_suspend
+      evidence:
+        create_sql:
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R00_AUTO_SUSPEND warehouse_type = 'STANDARD' warehouse_size = XSMALL
+          MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE INITIALLY_SUSPENDED
+          = TRUE
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R00_AUTO_SUSPEND TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        L4_sql:
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R00_AUTO_SUSPEND SET AUTO_SUSPEND = 120
   - name: auto_resume
     sql: AUTO_RESUME
     kind: property
@@ -65719,11 +65776,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R01_COMMENT warehouse_type = 'STANDARD' warehouse_size = XSMALL MAX_CLUSTER_COUNT
+          = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE INITIALLY_SUSPENDED =
+          TRUE COMMENT = $$a$$
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R01_COMMENT TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        L4_sql:
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R01_COMMENT SET COMMENT = $$b$$
   - name: wait_for_completion
     sql: WAIT_FOR_COMPLETION
     kind: property
@@ -65863,11 +65932,25 @@ objects:
       field: statement_timeout_in_seconds
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 100
+      - 200
+      truth: statement_timeout_in_seconds
+      evidence:
+        create_sql:
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R02_STATEMENT_TIMEOUT_IN_SECONDS warehouse_type = 'STANDARD' warehouse_size
+          = XSMALL MAX_CLUSTER_COUNT = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE
+          INITIALLY_SUSPENDED = TRUE STATEMENT_TIMEOUT_IN_SECONDS = 100
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R02_STATEMENT_TIMEOUT_IN_SECONDS TO ROLE ACCOUNTADMIN COPY
+          CURRENT GRANTS
+        L4_sql:
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R02_STATEMENT_TIMEOUT_IN_SECONDS SET STATEMENT_TIMEOUT_IN_SECONDS =
+          200
   - name: resource_monitor
     sql: RESOURCE_MONITOR
     kind: relationship
@@ -65945,11 +66028,29 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS warehouse_type = 'STANDARD' warehouse_size = XSMALL MAX_CLUSTER_COUNT
+          = 1 MIN_CLUSTER_COUNT = 1 scaling_policy = STANDARD AUTO_SUSPEND = 60 AUTO_RESUME = FALSE INITIALLY_SUSPENDED =
+          TRUE
+        - GRANT OWNERSHIP ON WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS SET TAG COVERAGE_WAREHOUSE_F2C2D059.PUBLIC.COVERAGE_TAG='a'
+        L3: 'declared {''COVERAGE_WAREHOUSE_F2C2D059.PUBLIC.COVERAGE_TAG'': ''a''}, snowcap fetches None'
+        L4_sql:
+        - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_R03_TAGS SET TAG COVERAGE_WAREHOUSE_F2C2D059.PUBLIC.COVERAGE_TAG='b'
+        L5: 'plan after create: [''CreateResource'']; plan after change: [''CreateResource'']'
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -65976,5 +66077,26 @@ objects:
   excluded: []
   snowcap:
     class: Warehouse
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    create_args:
+      warehouse_size: XSMALL
+      initially_suspended: true
+      auto_suspend: 60
+      auto_resume: false
+    truth:
+    - SHOW WAREHOUSES LIKE '{name}'
+    - SHOW PARAMETERS IN WAREHOUSE {fqn}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'warehouse') AS value
+    combined:
+      fields:
+      - auto_suspend
+      - comment
+      - statement_timeout_in_seconds
+      sql:
+      - ALTER WAREHOUSE COVERAGE_WAREHOUSE_F2C2D059_COMBINED SET AUTO_SUSPEND = 120 COMMENT = $$b$$ STATEMENT_TIMEOUT_IN_SECONDS
+        = 200
+      result: pass
+    tested_inputs: c1c810ac916c

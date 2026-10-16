@@ -22,7 +22,16 @@ import sys
 from dataclasses import fields
 from typing import Optional
 
-from common import LEVELS, build_resource, load_inventory, object_label, resource_class, save_inventory, select_objects
+from common import (
+    LEVELS,
+    build_resource,
+    load_inventory,
+    object_label,
+    resource_class,
+    save_inventory,
+    select_objects,
+    top_field,
+)
 
 from snowcap import data_provider, lifecycle
 from snowcap.identifiers import resource_label_for_type
@@ -87,11 +96,6 @@ def handler_keys(cls, action: str) -> set[str]:
         ):
             keys.add(node.args[0].value)
     return keys
-
-
-def top_field(field: str) -> str:
-    """The spec field that a row path names: `credentials.aws_key_id` and `columns[].comment` both name their head."""
-    return re.split(r"[.\[]", field, maxsplit=1)[0]
 
 
 def head_pattern(alter_syntax: str):
