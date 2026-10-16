@@ -9794,13 +9794,29 @@ objects:
       field: glue_aws_role_arn
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - arn:aws:iam::123456789012:role/coverage
+      - arn:aws:iam::123456789012:role/coverage2
+      truth: glue_aws_role_arn
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R00_GLUE_AWS_ROLE_ARN catalog_source = GLUE
+          table_format = ICEBERG GLUE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ GLUE_CATALOG_ID = $$123456789012$$
+          CATALOG_NAMESPACE = $$coverage_ns$$ GLUE_REGION = $$us-west-2$$ ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R00_GLUE_AWS_ROLE_ARN SET GLUE_AWS_ROLE_ARN
+          = $$arn:aws:iam::123456789012:role/coverage2$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''GLUE_AWS_ROLE_ARN''
+          for ''INTEGRATION - CATALOG'' on: ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R00_GLUE_AWS_ROLE_ARN
+          SET GLUE_AWS_ROLE_ARN = $$arn:aws:iam::1234567890 ...'
+        L5: fails because L4 fails
   - name: glue_catalog_id
     sql: GLUE_CATALOG_ID
     kind: property
@@ -9818,13 +9834,28 @@ objects:
       field: glue_catalog_id
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - '123456789012'
+      - '210987654321'
+      truth: glue_catalog_id
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R01_GLUE_CATALOG_ID catalog_source = GLUE
+          table_format = ICEBERG GLUE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ GLUE_CATALOG_ID = $$123456789012$$
+          CATALOG_NAMESPACE = $$coverage_ns$$ GLUE_REGION = $$us-west-2$$ ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R01_GLUE_CATALOG_ID SET GLUE_CATALOG_ID = $$210987654321$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''GLUE_CATALOG_ID''
+          for ''INTEGRATION - CATALOG'' on: ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R01_GLUE_CATALOG_ID
+          SET GLUE_CATALOG_ID = $$210987654321$$'
+        L5: fails because L4 fails
   - name: glue_region
     sql: GLUE_REGION
     kind: property
@@ -9842,13 +9873,28 @@ objects:
       field: glue_region
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - us-west-2
+      - us-east-1
+      truth: glue_region
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R02_GLUE_REGION catalog_source = GLUE table_format
+          = ICEBERG GLUE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ GLUE_CATALOG_ID = $$123456789012$$ CATALOG_NAMESPACE
+          = $$coverage_ns$$ GLUE_REGION = $$us-west-2$$ ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R02_GLUE_REGION SET GLUE_REGION = $$us-east-1$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''GLUE_REGION''
+          for ''INTEGRATION - CATALOG'' on: ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R02_GLUE_REGION
+          SET GLUE_REGION = $$us-east-1$$'
+        L5: fails because L4 fails
   - name: glue_aws_iam_user_arn
     sql: GLUE_AWS_IAM_USER_ARN
     kind: property
@@ -9898,13 +9944,26 @@ objects:
       field: catalog_namespace
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - coverage_ns
+      - coverage_ns2
+      truth: catalog_namespace
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R03_CATALOG_NAMESPACE catalog_source = GLUE
+          table_format = ICEBERG GLUE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ GLUE_CATALOG_ID = $$123456789012$$
+          CATALOG_NAMESPACE = $$coverage_ns$$ GLUE_REGION = $$us-west-2$$ ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R03_CATALOG_NAMESPACE SET CATALOG_NAMESPACE
+          = $$coverage_ns2$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: enabled
     sql: ENABLED
     kind: property
@@ -9922,13 +9981,25 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R04_ENABLED catalog_source = GLUE table_format
+          = ICEBERG GLUE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ GLUE_CATALOG_ID = $$123456789012$$ CATALOG_NAMESPACE
+          = $$coverage_ns$$ GLUE_REGION = $$us-west-2$$ ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R04_ENABLED SET ENABLED = TRUE
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: refresh_interval_seconds
     sql: REFRESH_INTERVAL_SECONDS
     kind: property
@@ -9969,11 +10040,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R05_COMMENT catalog_source = GLUE table_format
+          = ICEBERG GLUE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ GLUE_CATALOG_ID = $$123456789012$$ CATALOG_NAMESPACE
+          = $$coverage_ns$$ GLUE_REGION = $$us-west-2$$ ENABLED = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_GLUE_3ABC39BE_R05_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -10018,8 +10100,23 @@ objects:
     reason: deprecated
   snowcap:
     class: GlueCatalogIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      table_format: ICEBERG
+      glue_aws_role_arn: arn:aws:iam::123456789012:role/coverage
+      glue_catalog_id: '123456789012'
+      glue_region: us-west-2
+      catalog_namespace: coverage_ns
+      enabled: false
+    truth:
+    - DESCRIBE CATALOG INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: 54b2a3b7ef45
 - object: CATALOG INTEGRATION
   variant: iceberg_rest
   scope_level: account
@@ -10122,13 +10219,27 @@ objects:
       field: catalog_namespace
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - coverage_ns
+      - coverage_ns2
+      truth: catalog_namespace
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R00_CATALOG_NAMESPACE catalog_source
+          = ICEBERG_REST table_format = ICEBERG CATALOG_NAMESPACE = $$coverage_ns$$ rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$
+          catalog_api_type = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE
+          = $$arn:aws:iam::123456789012:role/coverage$$) ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R00_CATALOG_NAMESPACE SET CATALOG_NAMESPACE
+          = $$coverage_ns2$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: rest_config.catalog_uri
     sql: REST_CONFIG = ( CATALOG_URI )
     kind: property
@@ -10147,11 +10258,31 @@ objects:
       note: 'rest_config PropSet: catalog_uri=StringProp("catalog_uri").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+      - catalog_uri: https://catalog2.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+      truth: rest_config.catalog_uri
+      expect:
+      - https://catalog.example.com/api/catalog
+      - https://catalog2.example.com/api/catalog
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R01_REST_CONFIG_CATALOG_URI catalog_source
+          = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$)
+          ENABLED = FALSE
+        L4: 'a change to {''catalog_uri'': ''https://catalog2.example.com/api/catalog'', ''catalog_api_type'': ''AWS_API_GATEWAY'',
+          ''catalog_name'': ''coverage''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_config.prefix
     sql: REST_CONFIG = ( PREFIX )
     kind: property
@@ -10170,11 +10301,33 @@ objects:
       note: 'rest_config PropSet: prefix=StringProp("prefix").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+        prefix: p1
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+        prefix: p2
+      truth: rest_config.prefix
+      expect:
+      - p1
+      - p2
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R02_REST_CONFIG_PREFIX catalog_source
+          = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$ PREFIX = $$p1$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE
+          = $$arn:aws:iam::123456789012:role/coverage$$) ENABLED = FALSE
+        L4: 'a change to {''catalog_uri'': ''https://catalog.example.com/api/catalog'', ''catalog_api_type'': ''AWS_API_GATEWAY'',
+          ''catalog_name'': ''coverage'', ''prefix'': ''p2''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_config.catalog_name
     sql: REST_CONFIG = ( CATALOG_NAME )
     kind: property
@@ -10194,11 +10347,31 @@ objects:
       note: 'rest_config PropSet: catalog_name=StringProp("catalog_name").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage2
+      truth: rest_config.catalog_name
+      expect:
+      - coverage
+      - coverage2
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R03_REST_CONFIG_CATALOG_NAME catalog_source
+          = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$)
+          ENABLED = FALSE
+        L4: 'a change to {''catalog_uri'': ''https://catalog.example.com/api/catalog'', ''catalog_api_type'': ''AWS_API_GATEWAY'',
+          ''catalog_name'': ''coverage2''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_config.catalog_api_type
     sql: REST_CONFIG = ( CATALOG_API_TYPE )
     kind: property
@@ -10218,11 +10391,31 @@ objects:
       note: 'rest_config PropSet: catalog_api_type=EnumProp("catalog_api_type", CatalogApiType).'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_GLUE
+        catalog_name: coverage
+      truth: rest_config.catalog_api_type
+      expect:
+      - AWS_API_GATEWAY
+      - AWS_GLUE
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R04_REST_CONFIG_CATALOG_API_TYPE catalog_source
+          = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$)
+          ENABLED = FALSE
+        L4: 'a change to {''catalog_uri'': ''https://catalog.example.com/api/catalog'', ''catalog_api_type'': ''AWS_GLUE'',
+          ''catalog_name'': ''coverage''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_config.access_delegation_mode
     sql: REST_CONFIG = ( ACCESS_DELEGATION_MODE )
     kind: property
@@ -10242,11 +10435,33 @@ objects:
       note: 'rest_config PropSet: access_delegation_mode=EnumProp("access_delegation_mode", AccessDelegationMode).'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+        access_delegation_mode: VENDED_CREDENTIALS
+      - catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+        access_delegation_mode: EXTERNAL_VOLUME_CREDENTIALS
+      truth: rest_config.access_delegation_mode
+      expect:
+      - VENDED_CREDENTIALS
+      - EXTERNAL_VOLUME_CREDENTIALS
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R05_REST_CONFIG_ACCESS_DELEGATION_MODE
+          catalog_source = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$
+          catalog_api_type = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$ access_delegation_mode = VENDED_CREDENTIALS) rest_authentication
+          = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$) ENABLED = FALSE
+        L4: 'a change to {''catalog_uri'': ''https://catalog.example.com/api/catalog'', ''catalog_api_type'': ''AWS_API_GATEWAY'',
+          ''catalog_name'': ''coverage'', ''access_delegation_mode'': ''EXTERNAL_VOLUME_CREDENTIALS''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_authentication.type
     sql: REST_AUTHENTICATION = ( TYPE )
     kind: property
@@ -10265,11 +10480,28 @@ objects:
       note: 'rest_authentication PropSet: type=EnumProp("type", RestAuthenticationType).'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage
+      - type: BEARER
+        bearer_token: coverage-placeholder-token
+      truth: rest_authentication.type
+      expect:
+      - SIGV4
+      - BEARER
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R06_REST_AUTHENTICATION_TYPE catalog_source
+          = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$)
+          ENABLED = FALSE
+        L4: 'a change to {''type'': ''BEARER'', ''bearer_token'': ''coverage-placeholder-token''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_authentication.oauth_api_type
     sql: REST_AUTHENTICATION = ( OAUTH_API_TYPE )
     kind: property
@@ -10427,11 +10659,28 @@ objects:
       note: 'rest_authentication PropSet: sigv4_iam_role=StringProp("sigv4_iam_role").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage
+      - type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage2
+      truth: rest_authentication.sigv4_iam_role
+      expect:
+      - arn:aws:iam::123456789012:role/coverage
+      - arn:aws:iam::123456789012:role/coverage2
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R07_REST_AUTHENTICATION_SIGV4_IAM_ROLE
+          catalog_source = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$
+          catalog_api_type = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE
+          = $$arn:aws:iam::123456789012:role/coverage$$) ENABLED = FALSE
+        L4: 'a change to {''type'': ''SIGV4'', ''sigv4_iam_role'': ''arn:aws:iam::123456789012:role/coverage2''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_authentication.sigv4_signing_region
     sql: REST_AUTHENTICATION = ( SIGV4_SIGNING_REGION )
     kind: property
@@ -10450,11 +10699,31 @@ objects:
       note: 'rest_authentication PropSet: sigv4_signing_region=StringProp("sigv4_signing_region").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage
+        sigv4_signing_region: us-west-2
+      - type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage
+        sigv4_signing_region: us-east-1
+      truth: rest_authentication.sigv4_signing_region
+      expect:
+      - us-west-2
+      - us-east-1
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R08_REST_AUTHENTICATION_SIGV4_SIGNING_REGION
+          catalog_source = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$
+          catalog_api_type = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE
+          = $$arn:aws:iam::123456789012:role/coverage$$ SIGV4_SIGNING_REGION = $$us-west-2$$) ENABLED = FALSE
+        L4: 'a change to {''type'': ''SIGV4'', ''sigv4_iam_role'': ''arn:aws:iam::123456789012:role/coverage'', ''sigv4_signing_region'':
+          ''us-east-1''} plans nothing'
+        L5: fails because L4 fails
   - name: rest_authentication.sigv4_external_id
     sql: REST_AUTHENTICATION = ( SIGV4_EXTERNAL_ID )
     kind: property
@@ -10473,11 +10742,32 @@ objects:
       note: 'rest_authentication PropSet: sigv4_external_id=StringProp("sigv4_external_id").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage
+        sigv4_external_id: coverage-ext-1
+      - type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage
+        sigv4_external_id: coverage-ext-2
+      truth: api_aws_external_id
+      expect:
+      - coverage-ext-1
+      - coverage-ext-2
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R09_REST_AUTHENTICATION_SIGV4_EXTERNAL_ID
+          catalog_source = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$
+          catalog_api_type = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE
+          = $$arn:aws:iam::123456789012:role/coverage$$ SIGV4_EXTERNAL_ID = $$coverage-ext-1$$) ENABLED = FALSE
+        L3: declared 'coverage-ext-1', snowcap fetches None
+        L4: 'a change to {''type'': ''SIGV4'', ''sigv4_iam_role'': ''arn:aws:iam::123456789012:role/coverage'', ''sigv4_external_id'':
+          ''coverage-ext-2''} plans nothing'
+        L5: fails because L4 fails
   - name: enabled
     sql: ENABLED
     kind: property
@@ -10495,13 +10785,26 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R10_ENABLED catalog_source = ICEBERG_REST
+          table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$)
+          ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R10_ENABLED SET ENABLED = TRUE
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: refresh_interval_seconds
     sql: REFRESH_INTERVAL_SECONDS
     kind: property
@@ -10519,11 +10822,24 @@ objects:
       field: refresh_interval_seconds
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 60
+      - 120
+      truth: refresh_interval_seconds
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R11_REFRESH_INTERVAL_SECONDS catalog_source
+          = ICEBERG_REST table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$)
+          ENABLED = FALSE REFRESH_INTERVAL_SECONDS = 60
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R11_REFRESH_INTERVAL_SECONDS SET REFRESH_INTERVAL_SECONDS
+          = 120
   - name: comment
     sql: COMMENT
     kind: property
@@ -10541,11 +10857,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R12_COMMENT catalog_source = ICEBERG_REST
+          table_format = ICEBERG rest_config = (CATALOG_URI = $$https://catalog.example.com/api/catalog$$ catalog_api_type
+          = AWS_API_GATEWAY CATALOG_NAME = $$coverage$$) rest_authentication = (type = SIGV4 SIGV4_IAM_ROLE = $$arn:aws:iam::123456789012:role/coverage$$)
+          ENABLED = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_R12_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -10592,12 +10920,37 @@ objects:
     reason: deprecated
   snowcap:
     class: IcebergRestCatalogIntegration
-    test: untested
+    test: live
     field_notes:
       rest_authentication: 'snowcap-only: dict container for the REST_AUTHENTICATION keys, which the rows above map key by
         key.'
       rest_config: 'snowcap-only: dict container for the REST_CONFIG keys, which the rows above map key by key.'
     unmapped_fields: []
+    create_args:
+      rest_config:
+        catalog_uri: https://catalog.example.com/api/catalog
+        catalog_api_type: AWS_API_GATEWAY
+        catalog_name: coverage
+      rest_authentication:
+        type: SIGV4
+        sigv4_iam_role: arn:aws:iam::123456789012:role/coverage
+      enabled: false
+    truth:
+    - DESCRIBE CATALOG INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    - DESCRIBE CATALOG INTEGRATION {name}
+    - SELECT LOWER(r."property") || '.' || LOWER(SPLIT_PART(s.value, '=', 1)) AS key, SUBSTR(s.value, POSITION('=', s.value)
+      + 1) AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL SPLIT_TO_TABLE(TRIM(r."property_value", '{}'), ',
+      ') s WHERE r."property_type" = 'EnumMap'
+    combined:
+      fields:
+      - comment
+      - refresh_interval_seconds
+      sql:
+      - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_ICEBERG_REST_C0EEA30C_COMBINED SET REFRESH_INTERVAL_SECONDS
+        = 120 COMMENT = $$b$$
+      result: pass
+    tested_inputs: 4ec5f9dffee6
 - object: CATALOG INTEGRATION
   variant: object_storage
   scope_level: account
@@ -10674,13 +11027,20 @@ objects:
       field: table_format
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - DELTA
+      - ICEBERG
+      truth: table_format
+      evidence:
+        L2: 'create failed: Crashed: snowcap rejects the declaration: TypeError: Expected ObjectStoreCatalogIntegration.table_format
+          to be one of (ICEBERG), got ''DELTA'' instead'
   - name: enabled
     sql: ENABLED
     kind: property
@@ -10698,13 +11058,24 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_OBJECT_STORAGE_3A88B09A_R01_ENABLED catalog_source = OBJECT_STORE
+          table_format = ICEBERG ENABLED = FALSE
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_OBJECT_STORAGE_3A88B09A_R01_ENABLED SET ENABLED = TRUE
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: refresh_interval_seconds
     sql: REFRESH_INTERVAL_SECONDS
     kind: property
@@ -10745,11 +11116,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_OBJECT_STORAGE_3A88B09A_R02_COMMENT catalog_source = OBJECT_STORE
+          table_format = ICEBERG ENABLED = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER CATALOG INTEGRATION COVERAGE_CATALOG_INTEGRATION_OBJECT_STORAGE_3A88B09A_R02_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -10794,8 +11175,19 @@ objects:
     reason: deprecated
   snowcap:
     class: ObjectStoreCatalogIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      table_format: ICEBERG
+      enabled: false
+    truth:
+    - DESCRIBE CATALOG INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: d657399803cf
 - object: CATALOG INTEGRATION
   variant: open_catalog
   scope_level: account
@@ -47234,7 +47626,7 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_79D8817D.R00_TRANSIENT
+        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_66EC3355.R00_TRANSIENT
         L4: 'snowcap refuses: Exception: Cannot change transient property of schema'
         L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: swap_with
@@ -47280,9 +47672,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R01_MANAGED_ACCESS WITH MANAGED ACCESS
+        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R01_MANAGED_ACCESS WITH MANAGED ACCESS
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
+        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -47311,9 +47703,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R02_OWNER
+        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R02_OWNER
         L4_sql:
-        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_79D8817D.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_66EC3355.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
   - name: tags
     sql: WITH TAG / SET TAG
     kind: relationship
@@ -47386,9 +47778,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
+        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
+        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
     kind: parameter
@@ -47417,9 +47809,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
+        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
+        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
           12
   - name: external_volume
     sql: EXTERNAL_VOLUME
@@ -47581,9 +47973,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
+        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
   - name: storage_serialization_policy
     sql: STORAGE_SERIALIZATION_POLICY
     kind: parameter
@@ -47656,9 +48048,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_79D8817D.R06_COMMENT COMMENT = $$a$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R06_COMMENT COMMENT = $$a$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.R06_COMMENT SET comment = 'b'
+        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R06_COMMENT SET comment = 'b'
   - name: catalog_sync
     sql: CATALOG_SYNC
     kind: parameter
@@ -48297,7 +48689,7 @@ objects:
       - default_ddl_collation
       - max_data_extension_time_in_days
       sql:
-      - ALTER SCHEMA COVERAGE_SCHEMA_79D8817D.COMBINED SET comment = 'b'
+      - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.COMBINED SET comment = 'b'
       result: fail
       missed:
       - data_retention_time_in_days
@@ -59420,11 +59812,23 @@ objects:
       field: azure_tenant_id
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 00000000-0000-0000-0000-000000000001
+      - 00000000-0000-0000-0000-000000000002
+      truth: azure_tenant_id
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R00_AZURE_TENANT_ID TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = AZURE AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$azure://coverageplaceholder.blob.core.windows.net/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R00_AZURE_TENANT_ID SET AZURE_TENANT_ID =
+          $$00000000-0000-0000-0000-000000000002$$
   - name: use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT
     kind: property
@@ -59466,11 +59870,21 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R01_ENABLED TYPE = $$EXTERNAL_STAGE$$ storage_provider
+          = AZURE AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS = ($$azure://coverageplaceholder.blob.core.windows.net/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R01_ENABLED SET ENABLED = TRUE
   - name: storage_allowed_locations[]
     sql: STORAGE_ALLOWED_LOCATIONS
     kind: property
@@ -59489,11 +59903,24 @@ objects:
       field: storage_allowed_locations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - azure://coverageplaceholder.blob.core.windows.net/a/
+      - - azure://coverageplaceholder.blob.core.windows.net/a/
+        - azure://coverageplaceholder.blob.core.windows.net/b/
+      truth: storage_allowed_locations
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R02_STORAGE_ALLOWED_LOCATIONS__ TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = AZURE AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$azure://coverageplaceholder.blob.core.windows.net/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R02_STORAGE_ALLOWED_LOCATIONS__ SET STORAGE_ALLOWED_LOCATIONS
+          = ($$azure://coverageplaceholder.blob.core.windows.net/a/$$, $$azure://coverageplaceholder.blob.core.windows.net/b/$$)
   - name: storage_blocked_locations[]
     sql: STORAGE_BLOCKED_LOCATIONS
     kind: property
@@ -59512,11 +59939,27 @@ objects:
       field: storage_blocked_locations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - - azure://coverageplaceholder.blob.core.windows.net/a/x/
+      - - azure://coverageplaceholder.blob.core.windows.net/a/x/
+        - azure://coverageplaceholder.blob.core.windows.net/a/y/
+      truth: storage_blocked_locations
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R03_STORAGE_BLOCKED_LOCATIONS__ TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = AZURE AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$azure://coverageplaceholder.blob.core.windows.net/a/$$) STORAGE_BLOCKED_LOCATIONS = ($$azure://coverageplaceholder.blob.core.windows.net/a/x/$$)
+        L3: Snowflake reports storage_blocked_locations="['azure://coverageplaceholder.blob.core.windows.net/a/x/']" (declared
+          form ['azure://coverageplaceholder.blob.core.windows.net/a/x/']), snowcap fetches None
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R03_STORAGE_BLOCKED_LOCATIONS__ SET STORAGE_BLOCKED_LOCATIONS
+          = ($$azure://coverageplaceholder.blob.core.windows.net/a/x/$$, $$azure://coverageplaceholder.blob.core.windows.net/a/y/$$)
+        L5: 'plan after create: ["update [''storage_blocked_locations'']"]; plan after change: ["update [''storage_blocked_locations'']"]'
   - name: comment
     sql: COMMENT
     kind: property
@@ -59534,11 +59977,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R04_COMMENT TYPE = $$EXTERNAL_STAGE$$ storage_provider
+          = AZURE AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000001$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS = ($$azure://coverageplaceholder.blob.core.windows.net/a/$$)
+          COMMENT = $$a$$
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_R04_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -59605,8 +60059,32 @@ objects:
   excluded: []
   snowcap:
     class: AzureStorageIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      azure_tenant_id: 00000000-0000-0000-0000-000000000001
+      storage_allowed_locations:
+      - azure://coverageplaceholder.blob.core.windows.net/a/
+    truth:
+    - DESCRIBE INTEGRATION {name}
+    - SELECT "property" AS key, CASE WHEN "property_type" IN ('List', 'Object') THEN CASE WHEN TRIM("property_value", '[]')
+      = '' THEN '[]' ELSE '[''' || REPLACE(REPLACE(TRIM("property_value", '[]'), ', ', ','), ',', ''', ''') || ''']' END ELSE
+      "property_value" END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - azure_tenant_id
+      - comment
+      - enabled
+      - storage_allowed_locations
+      - storage_blocked_locations
+      sql:
+      - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_AZURE_54F98D9B_COMBINED SET AZURE_TENANT_ID = $$00000000-0000-0000-0000-000000000002$$
+        ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ($$azure://coverageplaceholder.blob.core.windows.net/a/$$, $$azure://coverageplaceholder.blob.core.windows.net/b/$$)
+        STORAGE_BLOCKED_LOCATIONS = ($$azure://coverageplaceholder.blob.core.windows.net/a/x/$$, $$azure://coverageplaceholder.blob.core.windows.net/a/y/$$)
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: dc48996d14de
 - object: STORAGE INTEGRATION
   variant: gcs
   scope_level: account
@@ -59707,11 +60185,21 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R00_ENABLED TYPE = $$EXTERNAL_STAGE$$ storage_provider
+          = GCS ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS = ($$gcs://coverage-placeholder-bucket/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R00_ENABLED SET ENABLED = TRUE
   - name: storage_allowed_locations[]
     sql: STORAGE_ALLOWED_LOCATIONS
     kind: property
@@ -59729,11 +60217,23 @@ objects:
       field: storage_allowed_locations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - gcs://coverage-placeholder-bucket/a/
+      - - gcs://coverage-placeholder-bucket/a/
+        - gcs://coverage-placeholder-bucket/b/
+      truth: storage_allowed_locations
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R01_STORAGE_ALLOWED_LOCATIONS__ TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = GCS ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS = ($$gcs://coverage-placeholder-bucket/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R01_STORAGE_ALLOWED_LOCATIONS__ SET STORAGE_ALLOWED_LOCATIONS
+          = ($$gcs://coverage-placeholder-bucket/a/$$, $$gcs://coverage-placeholder-bucket/b/$$)
   - name: storage_blocked_locations[]
     sql: STORAGE_BLOCKED_LOCATIONS
     kind: property
@@ -59751,11 +60251,24 @@ objects:
       field: storage_blocked_locations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - gcs://coverage-placeholder-bucket/a/x/
+      - - gcs://coverage-placeholder-bucket/a/x/
+        - gcs://coverage-placeholder-bucket/a/y/
+      truth: storage_blocked_locations
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R02_STORAGE_BLOCKED_LOCATIONS__ TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = GCS ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS = ($$gcs://coverage-placeholder-bucket/a/$$) STORAGE_BLOCKED_LOCATIONS
+          = ($$gcs://coverage-placeholder-bucket/a/x/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R02_STORAGE_BLOCKED_LOCATIONS__ SET STORAGE_BLOCKED_LOCATIONS
+          = ($$gcs://coverage-placeholder-bucket/a/x/$$, $$gcs://coverage-placeholder-bucket/a/y/$$)
   - name: comment
     sql: COMMENT
     kind: property
@@ -59773,11 +60286,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R03_COMMENT TYPE = $$EXTERNAL_STAGE$$ storage_provider
+          = GCS ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS = ($$gcs://coverage-placeholder-bucket/a/$$) COMMENT = $$a$$
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_R03_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -59844,8 +60367,29 @@ objects:
   excluded: []
   snowcap:
     class: GCSStorageIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      storage_allowed_locations:
+      - gcs://coverage-placeholder-bucket/a/
+    truth:
+    - DESCRIBE INTEGRATION {name}
+    - SELECT "property" AS key, CASE WHEN "property_type" IN ('List', 'Object') THEN CASE WHEN TRIM("property_value", '[]')
+      = '' THEN '[]' ELSE '[''' || REPLACE(REPLACE(TRIM("property_value", '[]'), ', ', ','), ',', ''', ''') || ''']' END ELSE
+      "property_value" END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - enabled
+      - storage_allowed_locations
+      - storage_blocked_locations
+      sql:
+      - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_GCS_44C33213_COMBINED SET ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS
+        = ($$gcs://coverage-placeholder-bucket/a/$$, $$gcs://coverage-placeholder-bucket/b/$$) STORAGE_BLOCKED_LOCATIONS =
+        ($$gcs://coverage-placeholder-bucket/a/x/$$, $$gcs://coverage-placeholder-bucket/a/y/$$) COMMENT = $$b$$
+      result: pass
+    tested_inputs: 938966f52463
 - object: STORAGE INTEGRATION
   variant: multi_location
   scope_level: account
@@ -60613,11 +61157,23 @@ objects:
       field: storage_aws_role_arn
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - arn:aws:iam::123456789012:role/coverage
+      - arn:aws:iam::123456789012:role/coverage2
+      truth: storage_aws_role_arn
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R00_STORAGE_AWS_ROLE_ARN TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = S3 STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R00_STORAGE_AWS_ROLE_ARN SET STORAGE_AWS_ROLE_ARN
+          = $$arn:aws:iam::123456789012:role/coverage2$$
   - name: storage_aws_external_id
     sql: STORAGE_AWS_EXTERNAL_ID
     kind: property
@@ -60658,11 +61214,24 @@ objects:
       field: storage_aws_object_acl
       levels:
         L1: pass
-        L2: untested
+        L2: pass
         L3: untested
-        L4: untested
-        L5: untested
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - null
+      - bucket-owner-full-control
+      truth: storage_aws_object_acl
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R01_STORAGE_AWS_OBJECT_ACL TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = S3 STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/$$)
+        L3: Snowflake reports no storage_aws_object_acl, so the read-back has no reference
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R01_STORAGE_AWS_OBJECT_ACL SET STORAGE_AWS_OBJECT_ACL
+          = $$bucket-owner-full-control$$
   - name: use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT
     kind: property
@@ -60703,11 +61272,22 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R02_ENABLED TYPE = $$EXTERNAL_STAGE$$ storage_provider
+          = S3 STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R02_ENABLED SET ENABLED = TRUE
   - name: storage_allowed_locations[]
     sql: STORAGE_ALLOWED_LOCATIONS
     kind: property
@@ -60726,11 +61306,24 @@ objects:
       field: storage_allowed_locations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - s3://coverage-placeholder-bucket/a/
+      - - s3://coverage-placeholder-bucket/a/
+        - s3://coverage-placeholder-bucket/b/
+      truth: storage_allowed_locations
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R03_STORAGE_ALLOWED_LOCATIONS__ TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = S3 STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R03_STORAGE_ALLOWED_LOCATIONS__ SET STORAGE_ALLOWED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/$$, $$s3://coverage-placeholder-bucket/b/$$)
   - name: storage_blocked_locations[]
     sql: STORAGE_BLOCKED_LOCATIONS
     kind: property
@@ -60749,11 +61342,24 @@ objects:
       field: storage_blocked_locations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - s3://coverage-placeholder-bucket/a/x/
+      - - s3://coverage-placeholder-bucket/a/x/
+        - s3://coverage-placeholder-bucket/a/y/
+      truth: storage_blocked_locations
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R04_STORAGE_BLOCKED_LOCATIONS__ TYPE = $$EXTERNAL_STAGE$$
+          storage_provider = S3 STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/$$) STORAGE_BLOCKED_LOCATIONS = ($$s3://coverage-placeholder-bucket/a/x/$$)
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R04_STORAGE_BLOCKED_LOCATIONS__ SET STORAGE_BLOCKED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/x/$$, $$s3://coverage-placeholder-bucket/a/y/$$)
   - name: comment
     sql: COMMENT
     kind: property
@@ -60771,11 +61377,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R05_COMMENT TYPE = $$EXTERNAL_STAGE$$ storage_provider
+          = S3 STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ ENABLED = FALSE STORAGE_ALLOWED_LOCATIONS
+          = ($$s3://coverage-placeholder-bucket/a/$$) COMMENT = $$a$$
+        L4_sql:
+        - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_R05_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -60843,8 +61460,33 @@ objects:
   excluded: []
   snowcap:
     class: S3StorageIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      storage_aws_role_arn: arn:aws:iam::123456789012:role/coverage
+      storage_allowed_locations:
+      - s3://coverage-placeholder-bucket/a/
+    truth:
+    - DESCRIBE INTEGRATION {name}
+    - SELECT "property" AS key, CASE WHEN "property_type" IN ('List', 'Object') THEN CASE WHEN TRIM("property_value", '[]')
+      = '' THEN '[]' ELSE '[''' || REPLACE(REPLACE(TRIM("property_value", '[]'), ', ', ','), ',', ''', ''') || ''']' END ELSE
+      "property_value" END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - enabled
+      - storage_allowed_locations
+      - storage_aws_object_acl
+      - storage_aws_role_arn
+      - storage_blocked_locations
+      sql:
+      - ALTER STORAGE INTEGRATION COVERAGE_STORAGE_INTEGRATION_S3_869B5254_COMBINED SET STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage2$$
+        STORAGE_AWS_OBJECT_ACL = $$bucket-owner-full-control$$ ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS = ($$s3://coverage-placeholder-bucket/a/$$,
+        $$s3://coverage-placeholder-bucket/b/$$) STORAGE_BLOCKED_LOCATIONS = ($$s3://coverage-placeholder-bucket/a/x/$$, $$s3://coverage-placeholder-bucket/a/y/$$)
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: 6e85e6cee393
 - object: STORAGE LIFECYCLE POLICY
   variant: null
   scope_level: schema

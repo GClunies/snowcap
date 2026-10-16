@@ -77,7 +77,8 @@ class Refused(Exception):
 
 
 class Crashed(Exception):
-    """snowcap failed with an internal error, for example a KeyError in an update handler."""
+    """snowcap failed with an internal error, for example a KeyError in an update handler, or its resource class
+    rejected a value that Snowflake accepts."""
 
 
 def snowcap_error(err: Exception) -> Exception:
@@ -216,6 +217,15 @@ class Account:
             raise Crashed(short(err)) from err
 
 
+def declare(obj: dict, name: str, database: str, values: dict):
+    """The snowcap resource for the test object. A sample is a value Snowflake accepts, so a constructor that
+    rejects it (object_storage table_format DELTA) is a snowcap failure, recorded like any other crash."""
+    try:
+        return build_resource(obj, name, database, TEST_ROLE, values)
+    except Exception as err:
+        raise Crashed(f"snowcap rejects the declaration: {short(err)}") from err
+
+
 def unique_name(obj: dict, database: str, label: str) -> str:
     """An account-level object outlives the throwaway database, so its name carries the database name to stay unique."""
     return f"{database}_{label}" if isinstance(resource_class(obj).scope, AccountScope) else label
@@ -333,10 +343,10 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
 
     def make(value):
         # A blueprint finalizes its resources, so each plan needs a new instance.
-        return build_resource(obj, name, database, TEST_ROLE, {top_field(path): value})
+        return declare(obj, name, database, {top_field(path): value})
 
-    resource = make(before)
     try:
+        resource = make(before)
         evidence["create_sql"] = account.create(resource)
     except (Refused, Crashed, snowflake.connector.errors.Error) as err:
         levels.update(L2="fail", L3="untested", L4="untested", L5="untested")
@@ -386,9 +396,9 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
     # When CREATE did not write the first value, Snowflake can already hold the second one, so a
     # change toward it is a no-op. Change toward the first value instead: Snowflake does not hold it.
     target, expected = (before, expect[0]) if levels["L2"] == "fail" else (after, expect[1])
-    changed = make(target)
     applied = False
     try:
+        changed = make(target)
         blueprint, plan = account.plan(changed)
         if not touches(plan, *subject(changed, path)):
             raise NotPlanned(f"a change to {target!r} plans {drift(plan, changed, path) or 'nothing'}")
@@ -446,8 +456,8 @@ def test_combined(account: Account, obj: dict, database: str) -> dict:
         return result | {"result": "untested (needs two or more fields)"}
     name = unique_name(obj, database, "COMBINED")
     try:
-        account.create(build_resource(obj, name, database, TEST_ROLE, before))
-        changed = build_resource(obj, name, database, TEST_ROLE, after)
+        account.create(declare(obj, name, database, before))
+        changed = declare(obj, name, database, after)
         blueprint, plan = account.plan(changed)
         result["sql"] = account.sql(plan)
         account.apply(blueprint, plan)
