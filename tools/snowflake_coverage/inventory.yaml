@@ -19836,12 +19836,27 @@ objects:
       note: '_ExternalFunction.args: list[Arg]; Arg has key name.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C1
+          data_type: NUMBER
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C2
+          data_type: NUMBER
+      truth: signature
+      expect:
+      - (VAL VARCHAR, C1 NUMBER)
+      - (VAL VARCHAR, C2 NUMBER)
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: arguments[].data_type
     sql: <arg_data_type>
     kind: identity
@@ -19860,12 +19875,27 @@ objects:
       note: '_ExternalFunction.args: list[Arg]; Arg has key data_type.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C1
+          data_type: NUMBER
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C1
+          data_type: FLOAT
+      truth: signature
+      expect:
+      - (VAL VARCHAR, C1 NUMBER)
+      - (VAL VARCHAR, C1 FLOAT)
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: returns
     sql: RETURNS <result_data_type>
     kind: property
@@ -19883,7 +19913,7 @@ objects:
       field: returns
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
@@ -19891,6 +19921,12 @@ objects:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - VARIANT
+      - OBJECT
+      truth: returns
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: return_not_null
     sql: '[ NOT ] NULL'
     kind: property
@@ -19909,7 +19945,7 @@ objects:
       note: '_ExternalFunction.not_null: bool = False. Note: props comment out not_null, so it is never rendered.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
@@ -19918,6 +19954,15 @@ objects:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - false
+      - true
+      truth: returns
+      expect:
+      - VARIANT
+      - VARIANT NOT NULL
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: null_handling
     sql: CALLED ON NULL INPUT | RETURNS NULL ON NULL INPUT | STRICT
     kind: property
@@ -19935,7 +19980,7 @@ objects:
       field: null_handling
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
@@ -19943,6 +19988,12 @@ objects:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - CALLED ON NULL INPUT
+      - RETURNS NULL ON NULL INPUT
+      truth: null handling
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: volatility
     sql: VOLATILE | IMMUTABLE
     kind: property
@@ -19960,7 +20011,7 @@ objects:
       field: volatility
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
@@ -19968,6 +20019,12 @@ objects:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - VOLATILE
+      - IMMUTABLE
+      truth: volatility
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: secure
     sql: SECURE
     kind: property
@@ -19985,12 +20042,18 @@ objects:
       field: secure
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - false
+      - true
+      truth: is_secure
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: comment
     sql: COMMENT
     kind: property
@@ -20008,12 +20071,18 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: api_integration
     sql: API_INTEGRATION
     kind: relationship
@@ -20032,12 +20101,18 @@ objects:
       field: api_integration
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - '{database}_AWS_A'
+      - '{database}_AWS_B'
+      truth: api_integration
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: url
     sql: AS '<url_of_proxy_and_resource>'
     kind: property
@@ -20056,7 +20131,7 @@ objects:
       note: '_ExternalFunction.as_: str with as_=StringProp("as"), the AS ''<url_of_proxy_and_resource>'' clause.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
@@ -20064,6 +20139,12 @@ objects:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - https://example.execute-api.us-west-2.amazonaws.com/prod/f
+      - https://example.execute-api.us-west-2.amazonaws.com/prod/g
+      truth: body
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: headers[]
     sql: HEADERS
     kind: property
@@ -20081,12 +20162,21 @@ objects:
       field: headers
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - h1: v1
+      - h1: v2
+      truth: headers
+      expect:
+      - '{"h1":"v1"}'
+      - '{"h1":"v2"}'
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: context_headers[]
     sql: CONTEXT_HEADERS
     kind: property
@@ -20127,12 +20217,18 @@ objects:
       field: max_batch_rows
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - 100
+      - 200
+      truth: max_batch_rows
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: compression
     sql: COMPRESSION
     kind: property
@@ -20150,12 +20246,18 @@ objects:
       field: compression
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - GZIP
+      - DEFLATE
+      truth: compression
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: request_translator
     sql: REQUEST_TRANSLATOR
     kind: relationship
@@ -20173,12 +20275,18 @@ objects:
       field: request_translator
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - '{database}.PUBLIC.REQ_A'
+      - '{database}.PUBLIC.REQ_B'
+      truth: request_translator
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: response_translator
     sql: RESPONSE_TRANSLATOR
     kind: relationship
@@ -20196,12 +20304,18 @@ objects:
       field: response_translator
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_external_function, so fetch_resource raises'
+      sample:
+      - '{database}.PUBLIC.RESP_A'
+      - '{database}.PUBLIC.RESP_B'
+      truth: response_translator
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_external_function'''
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -20269,8 +20383,39 @@ objects:
   excluded: []
   snowcap:
     class: ExternalFunction
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE API INTEGRATION {database}_AWS_A API_PROVIDER = aws_api_gateway API_AWS_ROLE_ARN = 'arn:aws:iam::001234567890:role/coverage'
+      API_ALLOWED_PREFIXES = ('https://example.execute-api.us-west-2.amazonaws.com/prod/') ENABLED = TRUE
+    - CREATE API INTEGRATION {database}_AWS_B API_PROVIDER = aws_api_gateway API_AWS_ROLE_ARN = 'arn:aws:iam::001234567890:role/coverage'
+      API_ALLOWED_PREFIXES = ('https://example.execute-api.us-west-2.amazonaws.com/prod/') ENABLED = TRUE
+    - 'CREATE FUNCTION {database}.PUBLIC.REQ_A(EVENT OBJECT) RETURNS OBJECT LANGUAGE JAVASCRIPT AS ''return {"body": EVENT.body};'''
+    - 'CREATE FUNCTION {database}.PUBLIC.REQ_B(EVENT OBJECT) RETURNS OBJECT LANGUAGE JAVASCRIPT AS ''return {"body": EVENT.body};'''
+    - 'CREATE FUNCTION {database}.PUBLIC.RESP_A(EVENT OBJECT) RETURNS OBJECT LANGUAGE JAVASCRIPT AS ''return {"body": EVENT.body};'''
+    - 'CREATE FUNCTION {database}.PUBLIC.RESP_B(EVENT OBJECT) RETURNS OBJECT LANGUAGE JAVASCRIPT AS ''return {"body": EVENT.body};'''
+    teardown:
+    - DROP API INTEGRATION IF EXISTS {database}_AWS_A
+    - DROP API INTEGRATION IF EXISTS {database}_AWS_B
+    create_args:
+      returns: VARIANT
+      api_integration: '{database}_AWS_A'
+      as_: https://example.execute-api.us-west-2.amazonaws.com/prod/f
+      args:
+      - name: VAL
+        data_type: VARCHAR
+      - name: C1
+        data_type: NUMBER
+    truth:
+    - SELECT function_name AS name, argument_signature AS signature, is_secure, comment, api_integration FROM {database}.INFORMATION_SCHEMA.FUNCTIONS
+      WHERE function_schema = 'PUBLIC' AND function_name = '{name}'
+    - "EXECUTE IMMEDIATE $$\nDECLARE\n  stmt VARCHAR;\n  res RESULTSET;\nBEGIN\n  SELECT 'DESCRIBE FUNCTION {fqn}' || REGEXP_REPLACE(argument_signature,\
+      \ '(\\\\(|, )[^ ]+ ', '\\\\1') INTO :stmt FROM {database}.INFORMATION_SCHEMA.FUNCTIONS WHERE function_schema = 'PUBLIC'\
+      \ AND function_name = '{name}' LIMIT 1;\n  res := (EXECUTE IMMEDIATE :stmt);\n  RETURN TABLE(res);\nEND;\n$$"
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: c7e36b855440
 - object: EXTERNAL TABLE
   variant: null
   scope_level: schema
@@ -21094,10 +21239,42 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+        - name: loc2
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/b/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R00_ADD_STORAGE_LOCATION storage_locations = ((NAME = $$loc1$$
+          storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE') STORAGE_AWS_ROLE_ARN
+          = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE
+        L3: 'declared [{''name'': ''loc1'', ''storage_provider'': ''S3'', ''storage_base_url'': ''s3://coverage-audit-bucket/a/'',
+          ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'', ''storage_aws_external_id'':
+          None}], snowcap fetches [{''name'': ''loc1'', ''storage_provider'': ''S3'', ''storage_base_url'': ''s3://coverage-audit-bucket/a/'',
+          ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'', ''storage_aws_external_id'':
+          ''FOB52671_SFCRole=4_Kv7Bh8qcHNifsP5iHYzrz1J5LqU=''}]'
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R00_ADD_STORAGE_LOCATION SET storage_locations = ((NAME
+          = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE')
+          STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$), (NAME = $$loc2$$ storage_provider = 'S3' STORAGE_BASE_URL
+          = $$s3://coverage-audit-bucket/b/$$ encryption = (type = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+        L4: 'apply ran but the change did not land: snowcap fetches [{''name'': ''loc1'', ''storage_provider'': ''S3'', ''storage_base_url'':
+          ''s3://coverage-audit-bucket/a/'', ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'',
+          ''storage_aws_external_id'': ''FOB52671_SFCRole=4_Kv7Bh8qcHNifsP5iHYzrz1J5LqU=''}]'
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: remove_storage_location
     sql: REMOVE STORAGE_LOCATION
     kind: property
@@ -21117,10 +21294,49 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+        - name: loc2
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/b/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R01_REMOVE_STORAGE_LOCATION storage_locations = ((NAME
+          = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE')
+          STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$), (NAME = $$loc2$$ storage_provider = 'S3' STORAGE_BASE_URL
+          = $$s3://coverage-audit-bucket/b/$$ encryption = (type = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+          ALLOW_WRITES = TRUE
+        L3: 'declared [{''name'': ''loc1'', ''storage_provider'': ''S3'', ''storage_base_url'': ''s3://coverage-audit-bucket/a/'',
+          ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'', ''storage_aws_external_id'':
+          None}, {''name'': ''loc2'', ''storage_provider'': ''S3'', ''storage_base_url'': ''s3://coverage-audit-bucket/b/'',
+          ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'', ''storage_aws_external_id'':
+          None}], snowcap fetches [{''name'': ''loc1'', ''storage_provider'': ''S3'', ''storage_base_url'': ''s3://coverage-audit-bucket/a/'',
+          ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'', ''storage_aws_external_id'':
+          ''FOB52671_SFCRole=4_17BsIk5YXNMUqSocQxSsRi/jhp0=''}, {''name'': ''loc2'', ''storage_provider'': ''S3'', ''storage_base_url'':
+          ''s3://coverage-audit-bucket/b/'', ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'',
+          ''storage_aws_external_id'': ''FOB52671_SFCRole=4_17BsIk5YXNMUqSocQxSsRi/jhp0=''}]'
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R01_REMOVE_STORAGE_LOCATION SET storage_locations = ((NAME
+          = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE')
+          STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+        L4: 'apply ran but the change did not land: snowcap fetches [{''name'': ''loc1'', ''storage_provider'': ''S3'', ''storage_base_url'':
+          ''s3://coverage-audit-bucket/a/'', ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'': ''arn:aws:iam::001234567890:role/coverage'',
+          ''storage_aws_external_id'': ''FOB52671_SFCRole=4_17BsIk5YXNMUqSocQxSsRi/jhp0=''}, {''name'': ''loc2'', ''storage_provider'':
+          ''S3'', ''storage_base_url'': ''s3://coverage-audit-bucket/b/'', ''encryption'': {''type'': ''NONE''}, ''storage_aws_role_arn'':
+          ''arn:aws:iam::001234567890:role/coverage'', ''storage_aws_external_id'': ''FOB52671_SFCRole=4_17BsIk5YXNMUqSocQxSsRi/jhp0=''}]'
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].name
     sql: NAME
     kind: identity
@@ -21140,11 +21356,35 @@ objects:
       note: '_ExternalVolumeStorageLocation.name: str.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      - - name: loc1b
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      truth: loc1_name
+      expect:
+      - loc1
+      - loc1b
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R02_STORAGE_LOCATIONS___NAME storage_locations = ((NAME
+          = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE')
+          STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R02_STORAGE_LOCATIONS___NAME SET storage_locations = ((NAME
+          = $$loc1b$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE')
+          STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+        L4: 'apply ran but the change did not land: Snowflake reports loc1_name=''loc1'''
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].storage_provider
     sql: STORAGE_PROVIDER
     kind: property
@@ -21163,11 +21403,34 @@ objects:
       note: '_ExternalVolumeStorageLocation.storage_provider: ExternalVolumeStorageProvider.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      - - name: loc1
+          storage_provider: GCS
+          storage_base_url: gcs://coverage-audit-bucket/a/
+      truth: loc1_storage_provider
+      expect:
+      - S3
+      - GCS
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R03_STORAGE_LOCATIONS___STORAGE_PROVIDER storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R03_STORAGE_LOCATIONS___STORAGE_PROVIDER SET storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'GCS' STORAGE_BASE_URL = $$gcs://coverage-audit-bucket/a/$$ encryption =
+          (type = 'NONE')))
+        L4: 'apply ran but the change did not land: Snowflake reports loc1_storage_provider=''S3'''
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].storage_base_url
     sql: STORAGE_BASE_URL
     kind: property
@@ -21187,11 +21450,35 @@ objects:
       note: '_ExternalVolumeStorageLocation.storage_base_url: str.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a2/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      truth: loc1_storage_base_url
+      expect:
+      - s3://coverage-audit-bucket/a/
+      - s3://coverage-audit-bucket/a2/
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R04_STORAGE_LOCATIONS___STORAGE_BASE_URL storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R04_STORAGE_LOCATIONS___STORAGE_BASE_URL SET storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a2/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+        L4: 'apply ran but the change did not land: Snowflake reports loc1_storage_base_url=''s3://coverage-audit-bucket/a/'''
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].storage_aws_role_arn
     sql: STORAGE_AWS_ROLE_ARN
     kind: property
@@ -21210,11 +21497,35 @@ objects:
       note: '_ExternalVolumeStorageLocation.storage_aws_role_arn: str = None.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage2
+      truth: loc1_storage_aws_role_arn
+      expect:
+      - arn:aws:iam::001234567890:role/coverage
+      - arn:aws:iam::001234567890:role/coverage2
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R05_STORAGE_LOCATIONS___STORAGE_AWS_ROLE_ARN storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R05_STORAGE_LOCATIONS___STORAGE_AWS_ROLE_ARN SET storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage2$$))
+        L4: 'apply ran but the change did not land: Snowflake reports loc1_storage_aws_role_arn=''arn:aws:iam::001234567890:role/coverage'''
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].storage_aws_access_point_arn
     sql: STORAGE_AWS_ACCESS_POINT_ARN
     kind: property
@@ -21256,11 +21567,38 @@ objects:
       note: '_ExternalVolumeStorageLocation.storage_aws_external_id: str = None.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+          storage_aws_external_id: coverage-ext-1
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+          storage_aws_external_id: coverage-ext-2
+      truth: loc1_storage_aws_external_id
+      expect:
+      - coverage-ext-1
+      - coverage-ext-2
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R06_STORAGE_LOCATIONS___STORAGE_AWS_EXTERNAL_ID storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$ STORAGE_AWS_EXTERNAL_ID = $$coverage-ext-1$$))
+          ALLOW_WRITES = TRUE
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R06_STORAGE_LOCATIONS___STORAGE_AWS_EXTERNAL_ID SET storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$ STORAGE_AWS_EXTERNAL_ID = $$coverage-ext-2$$))
+        L4: 'apply ran but the change did not land: Snowflake reports loc1_storage_aws_external_id=''coverage-ext-1'''
+        L5: 'plan after create: []; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].encryption.type
     sql: ENCRYPTION = ( TYPE = ... )
     kind: property
@@ -21279,11 +21617,39 @@ objects:
       note: 'encryption PropSet: type=EnumProp("type", [...], quoted=True).'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+          encryption:
+            type: NONE
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+          encryption:
+            type: AWS_SSE_S3
+      truth: loc1_encryption_type
+      expect:
+      - NONE
+      - AWS_SSE_S3
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R07_STORAGE_LOCATIONS___ENCRYPTION_TYPE storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'NONE') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R07_STORAGE_LOCATIONS___ENCRYPTION_TYPE SET storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'AWS_SSE_S3') STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+        L4: 'apply ran but the change did not land: Snowflake reports loc1_encryption_type=''NONE'''
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].encryption.kms_key_id
     sql: KMS_KEY_ID
     kind: property
@@ -21302,11 +21668,43 @@ objects:
       note: 'encryption PropSet: kms_key_id=StringProp("kms_key_id").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+          encryption:
+            type: AWS_SSE_KMS
+            kms_key_id: coverage-kms-1
+      - - name: loc1
+          storage_provider: S3
+          storage_base_url: s3://coverage-audit-bucket/a/
+          storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+          encryption:
+            type: AWS_SSE_KMS
+            kms_key_id: coverage-kms-2
+      truth: loc1_encryption_kms_key_id
+      expect:
+      - coverage-kms-1
+      - coverage-kms-2
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R08_STORAGE_LOCATIONS___ENCRYPTION_KMS_KEY_ID storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'AWS_SSE_KMS' KMS_KEY_ID = $$coverage-kms-1$$) STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+          ALLOW_WRITES = TRUE
+        L3: declared ['coverage-kms-1'], snowcap fetches [None]
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R08_STORAGE_LOCATIONS___ENCRYPTION_KMS_KEY_ID SET storage_locations
+          = ((NAME = $$loc1$$ storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type
+          = 'AWS_SSE_KMS' KMS_KEY_ID = $$coverage-kms-2$$) STORAGE_AWS_ROLE_ARN = $$arn:aws:iam::001234567890:role/coverage$$))
+        L4: 'apply ran but the change did not land: Snowflake reports loc1_encryption_kms_key_id=''coverage-kms-1'''
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: storage_locations[].use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT
     kind: property
@@ -21418,11 +21816,25 @@ objects:
       field: allow_writes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - false
+      - true
+      truth: allow_writes
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R09_ALLOW_WRITES storage_locations = ((NAME = $$loc1$$
+          storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE') STORAGE_AWS_ROLE_ARN
+          = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = FALSE
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R09_ALLOW_WRITES SET storage_locations = ((NAME = $$loc1$$
+          storage_provider = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE') STORAGE_AWS_ROLE_ARN
+          = $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: comment
     sql: COMMENT
     kind: property
@@ -21440,11 +21852,25 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R10_COMMENT storage_locations = ((NAME = $$loc1$$ storage_provider
+          = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE') STORAGE_AWS_ROLE_ARN =
+          $$arn:aws:iam::001234567890:role/coverage$$)) ALLOW_WRITES = TRUE COMMENT = $$a$$
+        L4_sql:
+        - ALTER EXTERNAL VOLUME COVERAGE_EXTERNAL_VOLUME_E61E6F2F_R10_COMMENT SET storage_locations = ((NAME = $$loc1$$ storage_provider
+          = 'S3' STORAGE_BASE_URL = $$s3://coverage-audit-bucket/a/$$ encryption = (type = 'NONE') STORAGE_AWS_ROLE_ARN =
+          $$arn:aws:iam::001234567890:role/coverage$$)) COMMENT = $$b$$
+        L5: 'plan after create: ["update [''storage_locations'']"]; plan after change: ["update [''storage_locations'']"]'
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -21486,8 +21912,23 @@ objects:
   excluded: []
   snowcap:
     class: ExternalVolume
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      storage_locations:
+      - name: loc1
+        storage_provider: S3
+        storage_base_url: s3://coverage-audit-bucket/a/
+        storage_aws_role_arn: arn:aws:iam::001234567890:role/coverage
+    truth:
+    - SHOW EXTERNAL VOLUMES LIKE '{name}'
+    - DESCRIBE EXTERNAL VOLUME {name}
+    - SELECT 'loc1_' || LOWER(f.key) AS key, f.value::string AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL
+      FLATTEN(PARSE_JSON(r."property_value")) f WHERE r."property" = 'STORAGE_LOCATION_1'
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 4f59065b05a2
 - object: FAILOVER GROUP
   variant: null
   scope_level: account
@@ -28700,13 +29141,27 @@ objects:
       field: origin
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - https://github.com/datacoves/snowcap.git
+      - https://github.com/datacoves/workshop__snowcap.git
+      truth: origin
+      evidence:
+        create_sql:
+        - CREATE GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.R00_ORIGIN ORIGIN = $$https://github.com/datacoves/snowcap.git$$
+          API_INTEGRATION = COVERAGE_GIT_REPOSITORY_21E611D7_GIT_A
+        L4_sql:
+        - ALTER GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.R00_ORIGIN SET ORIGIN = $$https://github.com/datacoves/workshop__snowcap.git$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''ORIGIN''
+          for ''GIT_REPOSITORY'' on: ALTER GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.R00_ORIGIN SET ORIGIN =
+          $$https://github.com/datacoves/workshop__snowcap.git$$'
+        L5: fails because L4 fails
   - name: api_integration
     sql: API_INTEGRATION
     kind: relationship
@@ -28724,11 +29179,21 @@ objects:
       field: api_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_GIT_A'
+      - '{database}_GIT_B'
+      truth: api_integration
+      evidence:
+        create_sql:
+        - CREATE GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.R01_API_INTEGRATION ORIGIN = $$https://github.com/datacoves/snowcap.git$$
+          API_INTEGRATION = COVERAGE_GIT_REPOSITORY_21E611D7_GIT_A
+        L4_sql:
+        - ALTER GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.R01_API_INTEGRATION SET API_INTEGRATION = COVERAGE_GIT_REPOSITORY_21E611D7_GIT_B
   - name: git_credentials
     sql: GIT_CREDENTIALS
     kind: relationship
@@ -28768,11 +29233,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.R02_COMMENT ORIGIN = $$https://github.com/datacoves/snowcap.git$$
+          API_INTEGRATION = COVERAGE_GIT_REPOSITORY_21E611D7_GIT_A COMMENT = $$a$$
+        L4_sql:
+        - ALTER GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: fetch
     sql: FETCH
     kind: property
@@ -28855,8 +29330,30 @@ objects:
   excluded: []
   snowcap:
     class: GitRepository
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE API INTEGRATION {database}_GIT_A API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ('https://github.com/datacoves/')
+      ENABLED = TRUE
+    - CREATE API INTEGRATION {database}_GIT_B API_PROVIDER = git_https_api API_ALLOWED_PREFIXES = ('https://github.com/datacoves/')
+      ENABLED = TRUE
+    teardown:
+    - DROP API INTEGRATION IF EXISTS {database}_GIT_A
+    - DROP API INTEGRATION IF EXISTS {database}_GIT_B
+    create_args:
+      origin: https://github.com/datacoves/snowcap.git
+      api_integration: '{database}_GIT_A'
+    truth:
+    - SHOW GIT REPOSITORIES LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields:
+      - api_integration
+      - comment
+      sql:
+      - ALTER GIT REPOSITORY COVERAGE_GIT_REPOSITORY_21E611D7.PUBLIC.COMBINED SET API_INTEGRATION = COVERAGE_GIT_REPOSITORY_21E611D7_GIT_B
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: d716ea737dc2
 - object: HYBRID TABLE
   variant: null
   scope_level: schema
@@ -33676,8 +34173,15 @@ objects:
   excluded: []
   snowcap:
     class: ImageRepository
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - SHOW IMAGE REPOSITORIES LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 88b06f13672b
 - object: INTERACTIVE TABLE
   variant: null
   scope_level: schema
@@ -49524,10 +50028,13 @@ objects:
   excluded: []
   snowcap:
     class: OAuthSecret
-    test: untested
+    test: docs_only
     field_notes:
       oauth_scopes: 'Other variant: oauth2_client_credentials.'
     unmapped_fields: []
+    test_reason: 'CREATE SECRET TYPE = OAUTH2 needs an enabled API_AUTHENTICATION integration, and this wave''s rules allow
+      only ENABLED = FALSE placeholder integrations; Snowflake rejects the CREATE with "003115 (42601): SQL compilation error:
+      Integration ''<name>'' is not enabled."'
 - object: SECRET
   variant: oauth2_client_credentials
   scope_level: schema
@@ -49727,11 +50234,14 @@ objects:
   excluded: []
   snowcap:
     class: OAuthSecret
-    test: untested
+    test: docs_only
     field_notes:
       oauth_refresh_token: 'Other variant: oauth2_authorization_code.'
       oauth_refresh_token_expiry_time: 'Other variant: oauth2_authorization_code.'
     unmapped_fields: []
+    test_reason: 'CREATE SECRET TYPE = OAUTH2 needs an enabled API_AUTHENTICATION integration, and this wave''s rules allow
+      only ENABLED = FALSE placeholder integrations; Snowflake rejects the CREATE with "003115 (42601): SQL compilation error:
+      Integration ''<name>'' is not enabled."'
 - object: SECRET
   variant: password
   scope_level: schema
