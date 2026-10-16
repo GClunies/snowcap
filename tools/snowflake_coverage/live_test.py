@@ -207,8 +207,13 @@ class Account:
     def fetched(self, resource):
         """The field values snowcap reads back, normalized through the spec the way plan does."""
         reset_cache()
-        data = data_provider.fetch_resource(self.conn, resource.urn)
-        return None if data is None else type(resource).spec(**data).to_dict(self.edition)
+        try:
+            data = data_provider.fetch_resource(self.conn, resource.urn)
+            return None if data is None else type(resource).spec(**data).to_dict(self.edition)
+        except snowflake.connector.errors.Error:
+            raise
+        except Exception as err:
+            raise Crashed(short(err)) from err
 
 
 def unique_name(obj: dict, database: str, label: str) -> str:
@@ -292,6 +297,17 @@ def drift(plan: list, resource, path: str) -> list[str]:
     return changes_for(plan, resource) + (changes_for(plan, held_by) if held_by is not resource else [])
 
 
+def plan_drift(account: Account, resource, path: str) -> list[str]:
+    """The drift of a new plan for the resource. A plan that snowcap stops is drift too: a fetch crash, or a refusal
+    such as a forced replacement when the fetch misreads a field that cannot change."""
+    try:
+        return drift(account.plan(resource)[1], resource, path)
+    except Refused as err:
+        return [f"plan refuses: {err}"]
+    except Crashed as err:
+        return [f"plan crashes: {err}"]
+
+
 def landed(account: Account, obj: dict, resource, database: str, path: str, expected, truth_key) -> tuple[bool, str]:
     """Whether Snowflake holds the row's value. Uses the truth query when the row has a key."""
     if truth_key:
@@ -327,14 +343,25 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         evidence["L2"] = f"create failed: {short(err)}"
         return
 
-    declared, fetched = read_back(account, resource, path)
+    reported = account.truth(obj, resource, database).get(truth_key) if truth_key else None
     if truth_key:
         # L2 and L3 are separate checks against Snowflake's own value.
-        reported = account.truth(obj, resource, database).get(truth_key)
         levels["L2"] = "pass" if norm(reported) == norm(expect[0]) else "fail"
         if levels["L2"] == "fail":
             evidence["L2"] = f"declared {before!r}, Snowflake reports {truth_key}={reported!r}"
-        if is_plain(path) and reported is not None:
+    try:
+        declared, fetched = read_back(account, resource, path)
+    except Crashed as err:
+        levels["L3"] = "fail"
+        evidence["L3"] = f"snowcap fetch crashes: {err}"
+    else:
+        if not truth_key or (not is_plain(path) and levels["L2"] == "pass"):
+            # No truth for the path's values: either no truth key at all, or a truth that reports one value of a
+            # nested or tag path, which CREATE wrote. Compare the path's values to the declaration.
+            levels["L3"] = "pass" if fetched == declared else "fail"
+            if levels["L3"] == "fail":
+                evidence["L3"] = f"declared {declared!r}, snowcap fetches {fetched!r}"
+        elif is_plain(path) and reported is not None:
             # Snowflake can spell a value differently from the declaration (warehouse_size 'X-Small' for 'XSMALL'),
             # so a reported value that `expect` lists compares in its sample form.
             reference = {norm(e): s for e, s in zip(expect, (before, after))}.get(norm(reported), reported)
@@ -347,23 +374,14 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         elif is_plain(path):
             levels["L3"] = "untested"
             evidence["L3"] = f"Snowflake reports no {truth_key}, so the read-back has no reference"
-        elif levels["L2"] == "pass":
-            # The truth reports one value of a nested or tag path, so compare the path's values to the declaration.
-            levels["L3"] = "pass" if fetched == declared else "fail"
-            if levels["L3"] == "fail":
-                evidence["L3"] = f"declared {declared!r}, snowcap fetches {fetched!r}"
         else:
             levels["L3"] = "untested"
             evidence["L3"] = "CREATE did not write the value, so the read-back of the path has no reference"
-    else:
+    if not truth_key:
         # Without an independent read, a matching fetch is the only proof that CREATE wrote the value.
-        levels["L3"] = "pass" if fetched == declared else "fail"
         levels["L2"] = "pass" if levels["L3"] == "pass" else "untested"
-        if levels["L3"] == "fail":
-            evidence["L3"] = f"declared {declared!r}, snowcap fetches {fetched!r}"
 
-    _, plan = account.plan(make(before))
-    drift_after_create = drift(plan, resource, path)
+    drift_after_create = plan_drift(account, make(before), path)
 
     # When CREATE did not write the first value, Snowflake can already hold the second one, so a
     # change toward it is a no-op. Change toward the first value instead: Snowflake does not hold it.
@@ -397,7 +415,7 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         levels["L4"] = "fail"
         evidence["L4"] = str(err)
 
-    drift_after_change = drift(account.plan(make(target))[1], changed, path) if applied else []
+    drift_after_change = plan_drift(account, make(target), path) if applied else []
     if drift_after_create or drift_after_change:
         levels["L5"] = "fail"
         evidence["L5"] = f"plan after create: {drift_after_create}; plan after change: {drift_after_change}"

@@ -4978,11 +4978,26 @@ objects:
       note: '_AggregationPolicy.body: str, rendered by props body=QueryProp("->").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE => 5)
+      - AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE => 10)
+      truth: body
+      evidence:
+        create_sql:
+        - CREATE AGGREGATION POLICY COVERAGE_AGGREGATION_POLICY_1DF702FB.PUBLIC.R00_BODY AS () RETURNS AGGREGATION_CONSTRAINT
+          -> AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE => 5)
+        L4_sql:
+        - ALTER AGGREGATION POLICY COVERAGE_AGGREGATION_POLICY_1DF702FB.PUBLIC.R00_BODY SET -> AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE
+          => 10)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          82 unexpected ''->''. on: ALTER AGGREGATION POLICY COVERAGE_AGGREGATION_POLICY_1DF702FB.PUBLIC.R00_BODY SET -> AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE
+          => 10)'
+        L5: fails because L4 fails
   - name: comment
     sql: COMMENT
     kind: property
@@ -5072,8 +5087,16 @@ objects:
   excluded: []
   snowcap:
     class: AggregationPolicy
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      body: AGGREGATION_CONSTRAINT(MIN_GROUP_SIZE => 5)
+    truth:
+    - DESC AGGREGATION POLICY {fqn}
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 2709e1763ac3
 - object: ALERT
   variant: null
   scope_level: schema
@@ -7905,11 +7928,26 @@ objects:
       field: authentication_methods
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - PASSWORD
+      - - PASSWORD
+        - KEYPAIR
+      truth: authentication_methods
+      expect:
+      - '[PASSWORD]'
+      - '[PASSWORD, KEYPAIR]'
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R00_AUTHENTICATION_METHODS__ AUTHENTICATION_METHODS
+          = ($$PASSWORD$$) mfa_enrollment = OPTIONAL CLIENT_TYPES = ($$ALL$$) SECURITY_INTEGRATIONS = ($$ALL$$)
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: client_types[]
     sql: CLIENT_TYPES
     kind: property
@@ -7929,11 +7967,26 @@ objects:
       field: client_types
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - SNOWFLAKE_UI
+      - - SNOWFLAKE_UI
+        - DRIVERS
+      truth: client_types
+      expect:
+      - '[SNOWFLAKE_UI]'
+      - '[SNOWFLAKE_UI, DRIVERS]'
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R01_CLIENT_TYPES__ AUTHENTICATION_METHODS
+          = ($$ALL$$) mfa_enrollment = OPTIONAL CLIENT_TYPES = ($$SNOWFLAKE_UI$$) SECURITY_INTEGRATIONS = ($$ALL$$)
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: client_policy[].client_type
     sql: CLIENT_POLICY = ( <client_type> = ( ... ) )
     kind: property
@@ -8026,11 +8079,25 @@ objects:
       field: mfa_enrollment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - REQUIRED
+      - OPTIONAL
+      truth: mfa_enrollment
+      expect:
+      - REQUIRED
+      - REQUIRED_PASSWORD_ONLY
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R02_MFA_ENROLLMENT AUTHENTICATION_METHODS
+          = ($$ALL$$) mfa_enrollment = REQUIRED CLIENT_TYPES = ($$ALL$$) SECURITY_INTEGRATIONS = ($$ALL$$)
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: mfa_policy.allowed_methods[]
     sql: MFA_POLICY = ( ALLOWED_METHODS = ( ... ) )
     kind: property
@@ -8098,11 +8165,33 @@ objects:
       note: _PAT_POLICY_PROPS default_expiry_in_days=IntProp("default_expiry_in_days").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - network_policy_evaluation: ENFORCED_NOT_REQUIRED
+        default_expiry_in_days: 30
+        max_expiry_in_days: 180
+        require_role_restriction_for_service_users: false
+      - network_policy_evaluation: ENFORCED_NOT_REQUIRED
+        default_expiry_in_days: 60
+        max_expiry_in_days: 180
+        require_role_restriction_for_service_users: false
+      truth: pat_default_expiry_in_days
+      expect:
+      - 30
+      - 60
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R03_PAT_POLICY_DEFAULT_EXPIRY_IN_DAYS
+          AUTHENTICATION_METHODS = ($$ALL$$) mfa_enrollment = OPTIONAL CLIENT_TYPES = ($$ALL$$) SECURITY_INTEGRATIONS = ($$ALL$$)
+          PAT_POLICY = (NETWORK_POLICY_EVALUATION = ENFORCED_NOT_REQUIRED DEFAULT_EXPIRY_IN_DAYS = 30 MAX_EXPIRY_IN_DAYS =
+          180 REQUIRE_ROLE_RESTRICTION_FOR_SERVICE_USERS = FALSE)
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: pat_policy.max_expiry_in_days
     sql: PAT_POLICY = ( MAX_EXPIRY_IN_DAYS = ... )
     kind: property
@@ -8121,11 +8210,33 @@ objects:
       note: _PAT_POLICY_PROPS max_expiry_in_days=IntProp("max_expiry_in_days").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - network_policy_evaluation: ENFORCED_NOT_REQUIRED
+        default_expiry_in_days: 30
+        max_expiry_in_days: 180
+        require_role_restriction_for_service_users: false
+      - network_policy_evaluation: ENFORCED_NOT_REQUIRED
+        default_expiry_in_days: 30
+        max_expiry_in_days: 200
+        require_role_restriction_for_service_users: false
+      truth: pat_max_expiry_in_days
+      expect:
+      - 180
+      - 200
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R04_PAT_POLICY_MAX_EXPIRY_IN_DAYS AUTHENTICATION_METHODS
+          = ($$ALL$$) mfa_enrollment = OPTIONAL CLIENT_TYPES = ($$ALL$$) SECURITY_INTEGRATIONS = ($$ALL$$) PAT_POLICY = (NETWORK_POLICY_EVALUATION
+          = ENFORCED_NOT_REQUIRED DEFAULT_EXPIRY_IN_DAYS = 30 MAX_EXPIRY_IN_DAYS = 180 REQUIRE_ROLE_RESTRICTION_FOR_SERVICE_USERS
+          = FALSE)
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: pat_policy.network_policy_evaluation
     sql: PAT_POLICY = ( NETWORK_POLICY_EVALUATION = ... )
     kind: property
@@ -8145,11 +8256,33 @@ objects:
       note: _PAT_POLICY_PROPS network_policy_evaluation=EnumProp("NETWORK_POLICY_EVALUATION", NetworkPolicyEvaluation).
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - network_policy_evaluation: ENFORCED_NOT_REQUIRED
+        default_expiry_in_days: 30
+        max_expiry_in_days: 180
+        require_role_restriction_for_service_users: false
+      - network_policy_evaluation: NOT_ENFORCED
+        default_expiry_in_days: 30
+        max_expiry_in_days: 180
+        require_role_restriction_for_service_users: false
+      truth: pat_network_policy_evaluation
+      expect:
+      - ENFORCED_NOT_REQUIRED
+      - NOT_ENFORCED
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R05_PAT_POLICY_NETWORK_POLICY_EVALUATION
+          AUTHENTICATION_METHODS = ($$ALL$$) mfa_enrollment = OPTIONAL CLIENT_TYPES = ($$ALL$$) SECURITY_INTEGRATIONS = ($$ALL$$)
+          PAT_POLICY = (NETWORK_POLICY_EVALUATION = ENFORCED_NOT_REQUIRED DEFAULT_EXPIRY_IN_DAYS = 30 MAX_EXPIRY_IN_DAYS =
+          180 REQUIRE_ROLE_RESTRICTION_FOR_SERVICE_USERS = FALSE)
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: pat_policy.require_role_restriction_for_service_users
     sql: PAT_POLICY = ( REQUIRE_ROLE_RESTRICTION_FOR_SERVICE_USERS = ... )
     kind: property
@@ -8169,11 +8302,33 @@ objects:
       note: _PAT_POLICY_PROPS require_role_restriction_for_service_users=BoolProp("require_role_restriction_for_service_users").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - network_policy_evaluation: ENFORCED_NOT_REQUIRED
+        default_expiry_in_days: 30
+        max_expiry_in_days: 180
+        require_role_restriction_for_service_users: false
+      - network_policy_evaluation: ENFORCED_NOT_REQUIRED
+        default_expiry_in_days: 30
+        max_expiry_in_days: 180
+        require_role_restriction_for_service_users: true
+      truth: pat_require_role_restriction_for_service_users
+      expect:
+      - false
+      - true
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R06_PAT_POLICY_REQUIRE_ROLE_RESTRICTION_FOR_SERVICE_USERS
+          AUTHENTICATION_METHODS = ($$ALL$$) mfa_enrollment = OPTIONAL CLIENT_TYPES = ($$ALL$$) SECURITY_INTEGRATIONS = ($$ALL$$)
+          PAT_POLICY = (NETWORK_POLICY_EVALUATION = ENFORCED_NOT_REQUIRED DEFAULT_EXPIRY_IN_DAYS = 30 MAX_EXPIRY_IN_DAYS =
+          180 REQUIRE_ROLE_RESTRICTION_FOR_SERVICE_USERS = FALSE)
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: workload_identity_policy.allowed_providers[]
     sql: WORKLOAD_IDENTITY_POLICY = ( ALLOWED_PROVIDERS = ( ... ) )
     kind: property
@@ -8287,11 +8442,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE AUTHENTICATION POLICY COVERAGE_AUTHENTICATION_POLICY_E385BB95.PUBLIC.R07_COMMENT AUTHENTICATION_METHODS =
+          ($$ALL$$) mfa_enrollment = OPTIONAL CLIENT_TYPES = ($$ALL$$) SECURITY_INTEGRATIONS = ($$ALL$$) COMMENT = $$a$$
+        L3: 'snowcap fetch crashes: KeyError: ''mfa_authentication_methods'''
+        L4: 'snowcap crashes: KeyError: ''mfa_authentication_methods'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''mfa_authentication_methods''"]; plan after change: []'
   - name: dcm_project
     sql: UNSET DCM PROJECT
     kind: relationship
@@ -8357,11 +8523,25 @@ objects:
   excluded: []
   snowcap:
     class: AuthenticationPolicy
-    test: untested
+    test: live
     field_notes:
       mfa_authentication_methods: 'No docs row: MFA_AUTHENTICATION_METHODS, deprecated in the 2025_06 bundle and replaced
         by MFA_POLICY.'
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - DESC AUTHENTICATION POLICY {fqn}
+    - SELECT 'pat_' || LOWER(TRIM(SPLIT_PART(kv.value, '=', 1))) AS key, TRIM(SPLIT_PART(kv.value, '=', 2)) AS value FROM
+      TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL SPLIT_TO_TABLE(TRIM(r."value", '{}'), ', ') kv WHERE r."property" = 'PAT_POLICY'
+    combined:
+      fields:
+      - authentication_methods
+      - client_types
+      - comment
+      - mfa_enrollment
+      result: fail
+      error: 'Crashed: KeyError: ''mfa_authentication_methods'''
+    tested_inputs: ff906d9646c1
 - object: BACKUP POLICY
   variant: null
   scope_level: schema
@@ -18610,7 +18790,7 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-external-function#required-parameters
     notes: Zero or more arguments; parentheses required even with none.
     snowcap:
-      field: args.name
+      field: args[].name
       note: '_ExternalFunction.args: list[Arg]; Arg has key name.'
       levels:
         L1: pass
@@ -18634,7 +18814,7 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-external-function#required-parameters
     notes: GEOGRAPHY is not allowed. Functions overload by name plus argument types.
     snowcap:
-      field: args.data_type
+      field: args[].data_type
       note: '_ExternalFunction.args: list[Arg]; Arg has key data_type.'
       levels:
         L1: pass
@@ -24638,7 +24818,7 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-function#all-languages
     notes: CREATE OR ALTER cannot change input arguments.
     snowcap:
-      field: args.name
+      field: args[].name
       note: '_JavascriptUDF.args: list[Arg]; Arg has key name.'
       levels:
         L1: pass
@@ -24661,7 +24841,7 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-function#all-languages
     notes: Must map per SQL-JavaScript type mapping. Functions overload by name plus argument types.
     snowcap:
-      field: args.data_type
+      field: args[].data_type
       note: '_JavascriptUDF.args: list[Arg]; Arg has key data_type.'
       levels:
         L1: pass
@@ -25218,7 +25398,7 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-function#all-languages
     notes: CREATE OR ALTER cannot change input arguments.
     snowcap:
-      field: args.name
+      field: args[].name
       note: '_PythonUDF.args: list[Arg]; Arg has key name.'
       levels:
         L1: pass
@@ -25241,7 +25421,7 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-function#all-languages
     notes: Must map per SQL-Python type mappings. Functions overload by name plus argument types.
     snowcap:
-      field: args.data_type
+      field: args[].data_type
       note: '_PythonUDF.args: list[Arg]; Arg has key data_type.'
       levels:
         L1: pass
@@ -32991,15 +33171,38 @@ objects:
     notes: First argument is the masked column. Extra arguments make a conditional policy. Change requires DROP and CREATE;
       CREATE OR ALTER cannot change it.
     snowcap:
-      field: args.name
+      field: args[].name
       note: '_MaskingPolicy.args: list[Arg], and Arg has key name.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C1
+          data_type: NUMBER
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C2
+          data_type: NUMBER
+      truth: signature
+      expect:
+      - (VAL VARCHAR, C1 NUMBER)
+      - (VAL VARCHAR, C2 NUMBER)
+      evidence:
+        create_sql:
+        - CREATE MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R00_SIGNATURE___ARG_NAME AS (VAL VARCHAR, C1 NUMBER)
+          returns VARCHAR(16777216) -> CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END EXEMPT_OTHER_POLICIES = FALSE
+        L4_sql:
+        - ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R00_SIGNATURE___ARG_NAME SET (VAL VARCHAR, C2 NUMBER)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          90 unexpected ''(''. on: ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R00_SIGNATURE___ARG_NAME SET
+          (VAL VARCHAR, C2 NUMBER)'
+        L5: fails because L4 fails
   - name: signature[].arg_type
     sql: <arg_type_to_mask> / <arg_type_1>
     kind: identity
@@ -33014,15 +33217,38 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-masking-policy#required-parameters
     notes: First argument cannot be a virtual column in a conditional policy.
     snowcap:
-      field: args.data_type
+      field: args[].data_type
       note: '_MaskingPolicy.args: list[Arg], and Arg has key data_type.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C1
+          data_type: NUMBER
+      - - name: VAL
+          data_type: VARCHAR
+        - name: C1
+          data_type: VARCHAR
+      truth: signature
+      expect:
+      - (VAL VARCHAR, C1 NUMBER)
+      - (VAL VARCHAR, C1 VARCHAR)
+      evidence:
+        create_sql:
+        - CREATE MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R01_SIGNATURE___ARG_TYPE AS (VAL VARCHAR, C1 NUMBER)
+          returns VARCHAR(16777216) -> CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END EXEMPT_OTHER_POLICIES = FALSE
+        L4_sql:
+        - ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R01_SIGNATURE___ARG_TYPE SET (VAL VARCHAR, C1 VARCHAR)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          90 unexpected ''(''. on: ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R01_SIGNATURE___ARG_TYPE SET
+          (VAL VARCHAR, C1 VARCHAR)'
+        L5: fails because L4 fails
   - name: return_type
     sql: RETURNS <arg_type_to_mask>
     kind: identity
@@ -33041,13 +33267,30 @@ objects:
       note: '_MaskingPolicy.returns: str, rendered by props returns=ReturnsProp("returns").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - VARCHAR(16777216)
+      - NUMBER(38,0)
+      truth: return_type
+      expect:
+      - VARCHAR(16777216)
+      - NUMBER(38,0)
+      evidence:
+        create_sql:
+        - CREATE MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R02_RETURN_TYPE AS (VAL VARCHAR) returns VARCHAR(16777216)
+          -> CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END EXEMPT_OTHER_POLICIES = FALSE
+        L4_sql:
+        - ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R02_RETURN_TYPE SET returns NUMBER(38,0)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          81 unexpected ''returns''. on: ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R02_RETURN_TYPE SET
+          returns NUMBER(38,0)'
+        L5: fails because L4 fails
   - name: body
     sql: -> <body>
     kind: property
@@ -33067,11 +33310,22 @@ objects:
       note: '_MaskingPolicy.body: str, rendered by props body=QueryProp("->").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END
+      - CASE WHEN CURRENT_ROLE() = 'Y' THEN VAL ELSE '###' END
+      truth: body
+      evidence:
+        create_sql:
+        - CREATE MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R03_BODY AS (VAL VARCHAR) returns VARCHAR(16777216)
+          -> CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END EXEMPT_OTHER_POLICIES = FALSE
+        L4_sql:
+        - ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R03_BODY SET BODY -> CASE WHEN CURRENT_ROLE() = 'Y'
+          THEN VAL ELSE '###' END
   - name: comment
     sql: COMMENT
     kind: property
@@ -33089,11 +33343,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R04_COMMENT AS (VAL VARCHAR) returns VARCHAR(16777216)
+          -> CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END COMMENT = $$a$$ EXEMPT_OTHER_POLICIES = FALSE
+        L4_sql:
+        - ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R04_COMMENT SET COMMENT = $$b$$
   - name: exempt_other_policies
     sql: EXEMPT_OTHER_POLICIES
     kind: property
@@ -33112,13 +33376,28 @@ objects:
       field: exempt_other_policies
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - false
+      - true
+      truth: exempt_other_policies
+      evidence:
+        create_sql:
+        - CREATE MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R05_EXEMPT_OTHER_POLICIES AS (VAL VARCHAR) returns
+          VARCHAR(16777216) -> CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END EXEMPT_OTHER_POLICIES = FALSE
+        L4_sql:
+        - ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R05_EXEMPT_OTHER_POLICIES SET EXEMPT_OTHER_POLICIES
+          = TRUE
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''EXEMPT_OTHER_POLICIES''
+          for ''MASKING_POLICY'' on: ALTER MASKING POLICY COVERAGE_MASKING_POLICY_333AD27D.PUBLIC.R05_EXEMPT_OTHER_POLICIES
+          SET EXEMPT_OTHER_POLICIES = TRUE'
+        L5: fails because L4 fails
   - name: tags
     sql: SET TAG / UNSET TAG
     kind: relationship
@@ -33185,8 +33464,23 @@ objects:
   excluded: []
   snowcap:
     class: MaskingPolicy
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      args:
+      - name: VAL
+        data_type: VARCHAR
+      returns: VARCHAR
+      body: CASE WHEN CURRENT_ROLE() = 'X' THEN VAL ELSE '***' END
+    truth:
+    - DESC MASKING POLICY {fqn}
+    - SHOW MASKING POLICIES LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'exempt_other_policies' AS key, COALESCE(PARSE_JSON(NULLIF("options", '')):EXEMPT_OTHER_POLICIES::STRING, 'false')
+      AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: b4bce24e9e23
 - object: MATERIALIZED VIEW
   variant: null
   scope_level: schema
@@ -39291,11 +39585,24 @@ objects:
       field: allowlist
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - numpy
+      - - numpy
+        - pandas
+      truth: allowlist
+      expect:
+      - '[''numpy'']'
+      - '[''numpy'',''pandas'']'
+      evidence:
+        create_sql:
+        - CREATE PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R00_ALLOWLIST language PYTHON ALLOWLIST = ($$numpy$$)
+        L4_sql:
+        - ALTER PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R00_ALLOWLIST SET ALLOWLIST = ($$numpy$$, $$pandas$$)
   - name: blocklist
     sql: BLOCKLIST
     kind: property
@@ -39314,11 +39621,24 @@ objects:
       field: blocklist
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - numpy
+      - - numpy
+        - pandas
+      truth: blocklist
+      expect:
+      - '[''numpy'']'
+      - '[''numpy'',''pandas'']'
+      evidence:
+        create_sql:
+        - CREATE PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R01_BLOCKLIST language PYTHON BLOCKLIST = ($$numpy$$)
+        L4_sql:
+        - ALTER PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R01_BLOCKLIST SET BLOCKLIST = ($$numpy$$, $$pandas$$)
   - name: additional_creation_blocklist
     sql: ADDITIONAL_CREATION_BLOCKLIST
     kind: property
@@ -39337,11 +39657,26 @@ objects:
       field: additional_creation_blocklist
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - numpy
+      - - numpy
+        - pandas
+      truth: additional_creation_blocklist
+      expect:
+      - '[''numpy'']'
+      - '[''numpy'',''pandas'']'
+      evidence:
+        create_sql:
+        - CREATE PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R02_ADDITIONAL_CREATION_BLOCKLIST language PYTHON
+          ADDITIONAL_CREATION_BLOCKLIST = ($$numpy$$)
+        L4_sql:
+        - ALTER PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R02_ADDITIONAL_CREATION_BLOCKLIST SET ADDITIONAL_CREATION_BLOCKLIST
+          = ($$numpy$$, $$pandas$$)
   - name: comment
     sql: COMMENT
     kind: property
@@ -39359,11 +39694,20 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R03_COMMENT language PYTHON COMMENT = $$a$$
+        L4_sql:
+        - ALTER PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.R03_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -39405,8 +39749,23 @@ objects:
   excluded: []
   snowcap:
     class: PackagesPolicy
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - DESC PACKAGES POLICY {fqn}
+    - SHOW PACKAGES POLICIES LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields:
+      - additional_creation_blocklist
+      - allowlist
+      - blocklist
+      - comment
+      sql:
+      - ALTER PACKAGES POLICY COVERAGE_PACKAGES_POLICY_3D7F24B7.PUBLIC.COMBINED SET ALLOWLIST = ($$numpy$$, $$pandas$$) BLOCKLIST
+        = ($$numpy$$, $$pandas$$) ADDITIONAL_CREATION_BLOCKLIST = ($$numpy$$, $$pandas$$) COMMENT = $$b$$
+      result: pass
+    tested_inputs: 5f1a056ef2ae
 - object: PASSWORD POLICY
   variant: null
   scope_level: schema
@@ -39490,11 +39849,24 @@ objects:
       field: password_min_length
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 10
+      - 12
+      truth: password_min_length
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R00_PASSWORD_MIN_LENGTH PASSWORD_MIN_LENGTH = 10
+          PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R00_PASSWORD_MIN_LENGTH SET PASSWORD_MIN_LENGTH =
+          12
   - name: password_max_length
     sql: PASSWORD_MAX_LENGTH
     kind: property
@@ -39512,11 +39884,24 @@ objects:
       field: password_max_length
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 100
+      - 120
+      truth: password_max_length
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R01_PASSWORD_MAX_LENGTH PASSWORD_MIN_LENGTH = 8
+          PASSWORD_MAX_LENGTH = 100 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R01_PASSWORD_MAX_LENGTH SET PASSWORD_MAX_LENGTH =
+          120
   - name: password_min_upper_case_chars
     sql: PASSWORD_MIN_UPPER_CASE_CHARS
     kind: property
@@ -39534,11 +39919,24 @@ objects:
       field: password_min_upper_case_chars
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 2
+      - 3
+      truth: password_min_upper_case_chars
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R02_PASSWORD_MIN_UPPER_CASE_CHARS PASSWORD_MIN_LENGTH
+          = 8 PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 2 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R02_PASSWORD_MIN_UPPER_CASE_CHARS SET PASSWORD_MIN_UPPER_CASE_CHARS
+          = 3
   - name: password_min_lower_case_chars
     sql: PASSWORD_MIN_LOWER_CASE_CHARS
     kind: property
@@ -39556,11 +39954,24 @@ objects:
       field: password_min_lower_case_chars
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 2
+      - 3
+      truth: password_min_lower_case_chars
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R03_PASSWORD_MIN_LOWER_CASE_CHARS PASSWORD_MIN_LENGTH
+          = 8 PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 2 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R03_PASSWORD_MIN_LOWER_CASE_CHARS SET PASSWORD_MIN_LOWER_CASE_CHARS
+          = 3
   - name: password_min_numeric_chars
     sql: PASSWORD_MIN_NUMERIC_CHARS
     kind: property
@@ -39578,11 +39989,24 @@ objects:
       field: password_min_numeric_chars
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 2
+      - 3
+      truth: password_min_numeric_chars
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R04_PASSWORD_MIN_NUMERIC_CHARS PASSWORD_MIN_LENGTH
+          = 8 PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 2 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R04_PASSWORD_MIN_NUMERIC_CHARS SET PASSWORD_MIN_NUMERIC_CHARS
+          = 3
   - name: password_min_special_chars
     sql: PASSWORD_MIN_SPECIAL_CHARS
     kind: property
@@ -39600,11 +40024,24 @@ objects:
       field: password_min_special_chars
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 1
+      - 2
+      truth: password_min_special_chars
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R05_PASSWORD_MIN_SPECIAL_CHARS PASSWORD_MIN_LENGTH
+          = 8 PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 1 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R05_PASSWORD_MIN_SPECIAL_CHARS SET PASSWORD_MIN_SPECIAL_CHARS
+          = 2
   - name: password_min_age_days
     sql: PASSWORD_MIN_AGE_DAYS
     kind: property
@@ -39622,11 +40059,24 @@ objects:
       field: password_min_age_days
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 1
+      - 2
+      truth: password_min_age_days
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R06_PASSWORD_MIN_AGE_DAYS PASSWORD_MIN_LENGTH =
+          8 PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 1 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R06_PASSWORD_MIN_AGE_DAYS SET PASSWORD_MIN_AGE_DAYS
+          = 2
   - name: password_max_age_days
     sql: PASSWORD_MAX_AGE_DAYS
     kind: property
@@ -39644,11 +40094,24 @@ objects:
       field: password_max_age_days
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 30
+      - 60
+      truth: password_max_age_days
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R07_PASSWORD_MAX_AGE_DAYS PASSWORD_MIN_LENGTH =
+          8 PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 30 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R07_PASSWORD_MAX_AGE_DAYS SET PASSWORD_MAX_AGE_DAYS
+          = 60
   - name: password_max_retries
     sql: PASSWORD_MAX_RETRIES
     kind: property
@@ -39666,11 +40129,24 @@ objects:
       field: password_max_retries
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 3
+      - 4
+      truth: password_max_retries
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R08_PASSWORD_MAX_RETRIES PASSWORD_MIN_LENGTH = 8
+          PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 3
+          PASSWORD_LOCKOUT_TIME_MINS = 15 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R08_PASSWORD_MAX_RETRIES SET PASSWORD_MAX_RETRIES
+          = 4
   - name: password_lockout_time_mins
     sql: PASSWORD_LOCKOUT_TIME_MINS
     kind: property
@@ -39688,11 +40164,24 @@ objects:
       field: password_lockout_time_mins
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 20
+      - 30
+      truth: password_lockout_time_mins
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R09_PASSWORD_LOCKOUT_TIME_MINS PASSWORD_MIN_LENGTH
+          = 8 PASSWORD_MAX_LENGTH = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS
+          = 1 PASSWORD_MIN_SPECIAL_CHARS = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5
+          PASSWORD_LOCKOUT_TIME_MINS = 20 PASSWORD_HISTORY = 0
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R09_PASSWORD_LOCKOUT_TIME_MINS SET PASSWORD_LOCKOUT_TIME_MINS
+          = 30
   - name: password_history
     sql: PASSWORD_HISTORY
     kind: property
@@ -39710,11 +40199,23 @@ objects:
       field: password_history
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 3
+      - 4
+      truth: password_history
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R10_PASSWORD_HISTORY PASSWORD_MIN_LENGTH = 8 PASSWORD_MAX_LENGTH
+          = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS = 1 PASSWORD_MIN_SPECIAL_CHARS
+          = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5 PASSWORD_LOCKOUT_TIME_MINS = 15
+          PASSWORD_HISTORY = 3
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R10_PASSWORD_HISTORY SET PASSWORD_HISTORY = 4
   - name: comment
     sql: COMMENT
     kind: property
@@ -39732,11 +40233,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R11_COMMENT PASSWORD_MIN_LENGTH = 8 PASSWORD_MAX_LENGTH
+          = 256 PASSWORD_MIN_UPPER_CASE_CHARS = 1 PASSWORD_MIN_LOWER_CASE_CHARS = 1 PASSWORD_MIN_NUMERIC_CHARS = 1 PASSWORD_MIN_SPECIAL_CHARS
+          = 0 PASSWORD_MIN_AGE_DAYS = 0 PASSWORD_MAX_AGE_DAYS = 90 PASSWORD_MAX_RETRIES = 5 PASSWORD_LOCKOUT_TIME_MINS = 15
+          PASSWORD_HISTORY = 0 COMMENT = $$a$$
+        L4_sql:
+        - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.R11_COMMENT SET COMMENT = $$b$$
   - name: tags
     sql: SET TAG / UNSET TAG
     kind: relationship
@@ -39803,8 +40316,32 @@ objects:
   excluded: []
   snowcap:
     class: PasswordPolicy
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - DESC PASSWORD POLICY {fqn}
+    combined:
+      fields:
+      - comment
+      - password_history
+      - password_lockout_time_mins
+      - password_max_age_days
+      - password_max_length
+      - password_max_retries
+      - password_min_age_days
+      - password_min_length
+      - password_min_lower_case_chars
+      - password_min_numeric_chars
+      - password_min_special_chars
+      - password_min_upper_case_chars
+      sql:
+      - ALTER PASSWORD POLICY COVERAGE_PASSWORD_POLICY_49571212.PUBLIC.COMBINED SET PASSWORD_MIN_LENGTH = 12 PASSWORD_MAX_LENGTH
+        = 120 PASSWORD_MIN_UPPER_CASE_CHARS = 3 PASSWORD_MIN_LOWER_CASE_CHARS = 3 PASSWORD_MIN_NUMERIC_CHARS = 3 PASSWORD_MIN_SPECIAL_CHARS
+        = 2 PASSWORD_MIN_AGE_DAYS = 2 PASSWORD_MAX_AGE_DAYS = 60 PASSWORD_MAX_RETRIES = 4 PASSWORD_LOCKOUT_TIME_MINS = 30
+        PASSWORD_HISTORY = 4 COMMENT = $$b$$
+      result: pass
+    tested_inputs: 5b28028f5c82
 - object: PIPE
   variant: null
   scope_level: schema
@@ -44369,15 +44906,38 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-row-access-policy#required-parameters
     notes: Change requires DROP and CREATE. A column cannot be in both a masking and a row access policy signature.
     snowcap:
-      field: args.name
+      field: args[].name
       note: '_RowAccessPolicy.args: list[Arg], and Arg has key name.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: V
+          data_type: VARCHAR
+        - name: W1
+          data_type: NUMBER
+      - - name: V
+          data_type: VARCHAR
+        - name: W2
+          data_type: NUMBER
+      truth: signature
+      expect:
+      - (V VARCHAR, W1 NUMBER)
+      - (V VARCHAR, W2 NUMBER)
+      evidence:
+        create_sql:
+        - CREATE ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R00_SIGNATURE___ARG_NAME AS (V VARCHAR, W1 NUMBER)
+          returns BOOLEAN -> V = 'A'
+        L4_sql:
+        - ALTER ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R00_SIGNATURE___ARG_NAME SET (V VARCHAR, W2 NUMBER)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          96 unexpected ''(''. on: ALTER ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R00_SIGNATURE___ARG_NAME
+          SET (V VARCHAR, W2 NUMBER)'
+        L5: fails because L4 fails
   - name: signature[].arg_type
     sql: <arg_type>
     kind: identity
@@ -44392,15 +44952,38 @@ objects:
     docs: https://docs.snowflake.com/en/sql-reference/sql/create-row-access-policy#required-parameters
     notes: CREATE OR ALTER cannot change argument types.
     snowcap:
-      field: args.data_type
+      field: args[].data_type
       note: '_RowAccessPolicy.args: list[Arg], and Arg has key data_type.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: V
+          data_type: VARCHAR
+        - name: W1
+          data_type: NUMBER
+      - - name: V
+          data_type: VARCHAR
+        - name: W1
+          data_type: VARCHAR
+      truth: signature
+      expect:
+      - (V VARCHAR, W1 NUMBER)
+      - (V VARCHAR, W1 VARCHAR)
+      evidence:
+        create_sql:
+        - CREATE ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R01_SIGNATURE___ARG_TYPE AS (V VARCHAR, W1 NUMBER)
+          returns BOOLEAN -> V = 'A'
+        L4_sql:
+        - ALTER ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R01_SIGNATURE___ARG_TYPE SET (V VARCHAR, W1 VARCHAR)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          96 unexpected ''(''. on: ALTER ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R01_SIGNATURE___ARG_TYPE
+          SET (V VARCHAR, W1 VARCHAR)'
+        L5: fails because L4 fails
   - name: return_type
     sql: RETURNS BOOLEAN
     kind: identity
@@ -44445,11 +45028,27 @@ objects:
       note: '_RowAccessPolicy.body: str, rendered by props body=QueryProp("->").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
-      candidates: []
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
+      candidates:
+      - 'L4: snowcap renders ["ALTER ROW ACCESS POLICY COVERAGE_STATIC.PUBLIC.P SET -> V = ''B''"], docs syntax is ''ALTER
+        ROW ACCESS POLICY [ IF EXISTS ] <name> SET BODY -> <expression_on_arg_name>'''
+      sample:
+      - V = 'A'
+      - V = 'B'
+      truth: body
+      evidence:
+        create_sql:
+        - CREATE ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R02_BODY AS (V VARCHAR) returns BOOLEAN -> V
+          = 'A'
+        L4_sql:
+        - ALTER ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R02_BODY SET -> V = 'B'
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          80 unexpected ''->''. on: ALTER ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R02_BODY SET -> V =
+          ''B'''
+        L5: fails because L4 fails
   - name: comment
     sql: COMMENT
     kind: property
@@ -44467,11 +45066,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R03_COMMENT AS (V VARCHAR) returns BOOLEAN ->
+          V = 'A' COMMENT = $$a$$
+        L4_sql:
+        - ALTER ROW ACCESS POLICY COVERAGE_ROW_ACCESS_POLICY_A41D8B6F.PUBLIC.R03_COMMENT SET COMMENT = $$b$$
   - name: tags
     sql: SET TAG / UNSET TAG
     kind: relationship
@@ -44538,8 +45147,20 @@ objects:
   excluded: []
   snowcap:
     class: RowAccessPolicy
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      args:
+      - name: V
+        data_type: VARCHAR
+      body: V = 'A'
+    truth:
+    - DESC ROW ACCESS POLICY {fqn}
+    - SHOW ROW ACCESS POLICIES LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 4b98eee9f684
 - object: SCHEMA
   variant: null
   scope_level: database
@@ -67001,13 +67622,13 @@ objects:
       truth: is_volatile
       evidence:
         create_sql:
-        - CREATE VOLATILE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R00_TEMPORARY (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID,
-          NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
-        L3: Snowflake reports is_volatile='true', snowcap fetches None
+        - CREATE VOLATILE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R00_TEMPORARY (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID,
+          NAME FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
+        L3: Snowflake reports is_volatile='true' (declared form True), snowcap fetches None
         L4_sql:
-        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R00_TEMPORARY SET
+        - ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R00_TEMPORARY SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          58 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R00_TEMPORARY SET'
+          58 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R00_TEMPORARY SET'
         L5: 'plan after create: ["update [''volatile'']"]; plan after change: []'
   - name: recursive
     sql: RECURSIVE
@@ -67040,13 +67661,13 @@ objects:
       truth: is_recursive
       evidence:
         create_sql:
-        - CREATE RECURSIVE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R01_RECURSIVE (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID,
-          NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
-        L3: Snowflake reports is_recursive='true', snowcap fetches None
+        - CREATE RECURSIVE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R01_RECURSIVE (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID,
+          NAME FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
+        L3: Snowflake reports is_recursive='true' (declared form True), snowcap fetches None
         L4_sql:
-        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R01_RECURSIVE SET
+        - ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R01_RECURSIVE SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          58 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R01_RECURSIVE SET'
+          58 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R01_RECURSIVE SET'
         L5: 'plan after create: ["update [''recursive'']"]; plan after change: []'
   - name: as
     sql: AS <select_statement>
@@ -67077,12 +67698,12 @@ objects:
       - SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T WHERE ID > 0
       evidence:
         create_sql:
-        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R02_AS (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        - CREATE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R02_AS (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
         L4_sql:
-        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R02_AS SET as SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        - ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R02_AS SET as SELECT ID, NAME FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
           WHERE ID > 0
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          52 unexpected ''as''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R02_AS SET as SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+          52 unexpected ''as''. on: ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R02_AS SET as SELECT ID, NAME FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
           WHERE ID > 0'
         L5: fails because L4 fails
   - name: secure
@@ -67115,12 +67736,12 @@ objects:
       truth: is_secure
       evidence:
         create_sql:
-        - CREATE SECURE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R03_SECURE (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME
-          FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        - CREATE SECURE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R03_SECURE (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME
+          FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
         L4_sql:
-        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R03_SECURE SET
+        - ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R03_SECURE SET
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          55 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R03_SECURE SET'
+          55 unexpected ''<EOF>''. on: ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R03_SECURE SET'
         L5: fails because L4 fails
   - name: change_tracking
     sql: CHANGE_TRACKING
@@ -67151,10 +67772,10 @@ objects:
       truth: change_tracking
       evidence:
         create_sql:
-        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R04_CHANGE_TRACKING (ID, NAME) CHANGE_TRACKING = TRUE as SELECT ID, NAME
-          FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        - CREATE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R04_CHANGE_TRACKING (ID, NAME) CHANGE_TRACKING = TRUE as SELECT ID, NAME
+          FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
         L4_sql:
-        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R04_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
+        - ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R04_CHANGE_TRACKING SET CHANGE_TRACKING = FALSE
   - name: comment
     sql: COMMENT
     kind: property
@@ -67183,10 +67804,10 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R05_COMMENT (ID, NAME) CHANGE_TRACKING = FALSE COMMENT = $$a$$ as SELECT
-          ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        - CREATE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R05_COMMENT (ID, NAME) CHANGE_TRACKING = FALSE COMMENT = $$a$$ as SELECT
+          ID, NAME FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
         L4_sql:
-        - ALTER VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
+        - ALTER VIEW COVERAGE_VIEW_6830E457.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -67269,8 +67890,8 @@ objects:
       - ID2
       evidence:
         create_sql:
-        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R06_COLUMNS___NAME (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME
-          FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        - CREATE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R06_COLUMNS___NAME (ID, NAME) CHANGE_TRACKING = FALSE as SELECT ID, NAME
+          FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
         L4: 'a change to [{''name'': ''ID2''}, {''name'': ''NAME''}] plans nothing'
         L5: fails because L4 fails
   - name: columns[].comment
@@ -67308,8 +67929,8 @@ objects:
       - b
       evidence:
         create_sql:
-        - CREATE VIEW COVERAGE_VIEW_8D82031F.PUBLIC.R07_COLUMNS___COMMENT (ID COMMENT 'a', NAME) CHANGE_TRACKING = FALSE as
-          SELECT ID, NAME FROM COVERAGE_VIEW_8D82031F.PUBLIC.COVERAGE_T
+        - CREATE VIEW COVERAGE_VIEW_6830E457.PUBLIC.R07_COLUMNS___COMMENT (ID COMMENT 'a', NAME) CHANGE_TRACKING = FALSE as
+          SELECT ID, NAME FROM COVERAGE_VIEW_6830E457.PUBLIC.COVERAGE_T
         L4: 'a change to [{''name'': ''ID'', ''comment'': ''b''}, {''name'': ''NAME''}] plans nothing'
         L5: fails because L4 fails
   - name: columns[]
@@ -67772,8 +68393,8 @@ objects:
       - b
       evidence:
         L2: 'create failed: ProgrammingError: 391806 (0A000): SQL compilation error: Invalid value VIEW for argument OBJECT_TYPE.
-          Please use object type TABLE for all kinds of table-like objects. on: SELECT * FROM table(COVERAGE_VIEW_8D82031F.information_schema.tag_references(
-          ''COVERAGE_VIEW_8D82031F.PUBLIC.R08_TAGS'', ''VIEW'' ))'
+          Please use object type TABLE for all kinds of table-like objects. on: SELECT * FROM table(COVERAGE_VIEW_6830E457.information_schema.tag_references(
+          ''COVERAGE_VIEW_6830E457.PUBLIC.R08_TAGS'', ''VIEW'' ))'
   - name: contacts
     sql: WITH CONTACT / SET CONTACT
     kind: relationship
