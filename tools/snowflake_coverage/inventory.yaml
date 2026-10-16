@@ -5208,11 +5208,21 @@ objects:
       field: warehouse
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_WH'
+      - STATIC_WAREHOUSE
+      truth: warehouse
+      evidence:
+        create_sql:
+        - CREATE ALERT COVERAGE_ALERT_C8584909.PUBLIC.R00_WAREHOUSE WAREHOUSE = $$COVERAGE_ALERT_C8584909_WH$$ SCHEDULE =
+          $$60 MINUTE$$ IF(EXISTS( SELECT 1 )) then SELECT 1
+        L4_sql:
+        - ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R00_WAREHOUSE SET WAREHOUSE = $$STATIC_WAREHOUSE$$
   - name: schedule
     sql: SCHEDULE
     kind: property
@@ -5231,11 +5241,21 @@ objects:
       field: schedule
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 60 MINUTE
+      - 120 MINUTE
+      truth: schedule
+      evidence:
+        create_sql:
+        - CREATE ALERT COVERAGE_ALERT_C8584909.PUBLIC.R01_SCHEDULE WAREHOUSE = $$COVERAGE_ALERT_C8584909_WH$$ SCHEDULE = $$60
+          MINUTE$$ IF(EXISTS( SELECT 1 )) then SELECT 1
+        L4_sql:
+        - ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R01_SCHEDULE SET SCHEDULE = $$120 MINUTE$$
   - name: comment
     sql: COMMENT
     kind: property
@@ -5253,11 +5273,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE ALERT COVERAGE_ALERT_C8584909.PUBLIC.R02_COMMENT WAREHOUSE = $$COVERAGE_ALERT_C8584909_WH$$ SCHEDULE = $$60
+          MINUTE$$ COMMENT = $$a$$ IF(EXISTS( SELECT 1 )) then SELECT 1
+        L4_sql:
+        - ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: config
     sql: CONFIG
     kind: property
@@ -5345,11 +5375,24 @@ objects:
       field: condition
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - SELECT 1
+      - SELECT 2
+      truth: condition
+      evidence:
+        create_sql:
+        - CREATE ALERT COVERAGE_ALERT_C8584909.PUBLIC.R03_CONDITION WAREHOUSE = $$COVERAGE_ALERT_C8584909_WH$$ SCHEDULE =
+          $$60 MINUTE$$ IF(EXISTS( SELECT 1 )) then SELECT 1
+        L4_sql:
+        - ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R03_CONDITION SET IF(EXISTS( SELECT 2 ))
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          63 unexpected ''(''. on: ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R03_CONDITION SET IF(EXISTS( SELECT 2 ))'
+        L5: fails because L4 fails
   - name: action
     sql: THEN <action>
     kind: property
@@ -5368,11 +5411,24 @@ objects:
       note: '_Alert.then: str holds the THEN <action> statement, rendered by QueryProp("then").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - SELECT 1
+      - SELECT 2
+      truth: action
+      evidence:
+        create_sql:
+        - CREATE ALERT COVERAGE_ALERT_C8584909.PUBLIC.R04_ACTION WAREHOUSE = $$COVERAGE_ALERT_C8584909_WH$$ SCHEDULE = $$60
+          MINUTE$$ IF(EXISTS( SELECT 1 )) then SELECT 1
+        L4_sql:
+        - ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R04_ACTION SET then SELECT 2
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          58 unexpected ''then''. on: ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R04_ACTION SET then SELECT 2'
+        L5: fails because L4 fails
   - name: from_template
     sql: FROM TEMPLATE
     kind: property
@@ -5475,16 +5531,58 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE ALERT COVERAGE_ALERT_C8584909.PUBLIC.R05_TAGS WAREHOUSE = $$COVERAGE_ALERT_C8584909_WH$$ SCHEDULE = $$60
+          MINUTE$$ IF(EXISTS( SELECT 1 )) then SELECT 1
+        - ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.R05_TAGS SET TAG COVERAGE_ALERT_C8584909.PUBLIC.COVERAGE_TAG='a'
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_ALERT_C8584909.PUBLIC.R05_TAGS?domain=ALERT SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_ALERT_C8584909''. on: ALTER TAG REFERENCE COVERAGE_ALERT_C8584909.PUBLIC.R05_TAGS?domain=ALERT
+          SET'
+        L5: fails because L4 fails
   excluded: []
   snowcap:
     class: Alert
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE WAREHOUSE {database}_WH WAREHOUSE_SIZE = XSMALL INITIALLY_SUSPENDED = TRUE AUTO_RESUME = FALSE
+    - USE WAREHOUSE STATIC_WAREHOUSE
+    teardown:
+    - DROP WAREHOUSE IF EXISTS {database}_WH
+    create_args:
+      warehouse: '{database}_WH'
+      schedule: 60 MINUTE
+      condition: SELECT 1
+      then: SELECT 1
+    truth:
+    - SHOW ALERTS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'alert') AS value
+    combined:
+      fields:
+      - comment
+      - schedule
+      - warehouse
+      sql:
+      - ALTER ALERT COVERAGE_ALERT_C8584909.PUBLIC.COMBINED SET WAREHOUSE = $$STATIC_WAREHOUSE$$ SCHEDULE = $$120 MINUTE$$
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: e35e5a447d52
 - object: API INTEGRATION
   variant: aws_api_gateway
   scope_level: account
@@ -24822,11 +24920,35 @@ objects:
       note: '_JavascriptUDF.args: list[Arg]; Arg has key name.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: X
+          data_type: VARCHAR
+        - name: C1
+          data_type: FLOAT
+      - - name: X
+          data_type: VARCHAR
+        - name: C2
+          data_type: FLOAT
+      truth: signature
+      expect:
+      - (X VARCHAR, C1 FLOAT)
+      - (X VARCHAR, C2 FLOAT)
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns
+          VARCHAR language JAVASCRIPT AS $$return X;$$
+        L4_sql:
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R00_ARGUMENTS___NAME(VARCHAR, FLOAT) SET (X VARCHAR,
+          C2 FLOAT)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          101 unexpected ''(''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R00_ARGUMENTS___NAME(VARCHAR,
+          FLOAT) SET (X VARCHAR, C2 FLOAT)'
+        L5: fails because L4 fails
   - name: arguments[].data_type
     sql: <arg_data_type>
     kind: identity
@@ -24845,11 +24967,34 @@ objects:
       note: '_JavascriptUDF.args: list[Arg]; Arg has key data_type.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - - name: X
+          data_type: VARCHAR
+        - name: C1
+          data_type: FLOAT
+      - - name: X
+          data_type: VARCHAR
+        - name: C1
+          data_type: VARCHAR
+      truth: signature
+      expect:
+      - (X VARCHAR, C1 FLOAT)
+      - (X VARCHAR, C1 VARCHAR)
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns
+          VARCHAR language JAVASCRIPT AS $$return X;$$
+        L4_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns
+          VARCHAR language JAVASCRIPT AS $$return X;$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L5: 'plan after create: []; plan after change: [''plan refuses: Exception: Found multiple functions matching COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR,
+          VARCHAR)'']'
   - name: arguments[].default
     sql: DEFAULT <default_value>
     kind: identity
@@ -24913,13 +25058,27 @@ objects:
       field: returns
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - VARCHAR
+      - FLOAT
+      truth: returns
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language JAVASCRIPT
+          AS $$return X;$$
+        L4_sql:
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R02_RETURNS(VARCHAR) SET returns FLOAT
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          93 unexpected ''FLOAT''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R02_RETURNS(VARCHAR) SET
+          returns FLOAT'
+        L5: fails because L4 fails
   - name: returns_table[]
     sql: RETURNS TABLE ( <col_name> <col_data_type> [ , ... ] )
     kind: property
@@ -24938,13 +25097,28 @@ objects:
       note: '_JavascriptUDF.returns: str uses ReturnsProp, which parses "RETURNS TABLE (...)".'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - TABLE (A VARCHAR)
+      - TABLE (A VARCHAR, B FLOAT)
+      truth: returns
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R03_RETURNS_TABLE__ (X VARCHAR) returns TABLE (A VARCHAR)
+          language JAVASCRIPT AS $$return X;$$
+        L4_sql:
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R03_RETURNS_TABLE__(VARCHAR) SET returns TABLE (A VARCHAR,
+          B FLOAT)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          101 unexpected ''TABLE''. syntax error line 1 at position 110 unexpected ''VARCHAR''. syntax error line 1 at position
+          121 unexpected ''FLOAT''. syntax error line 1 at position 126 unexpected '')''. on: ALTER FUNCTION COVERAGE_FUNCTION_JA'
+        L5: fails because L4 fails
   - name: return_not_null
     sql: '[ NOT ] NULL'
     kind: property
@@ -24986,14 +25160,30 @@ objects:
       field: null_handling
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''null_handling'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - RETURNS NULL ON NULL INPUT
+      - CALLED ON NULL INPUT
+      truth: null handling
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R04_NULL_HANDLING (X VARCHAR) returns VARCHAR language
+          JAVASCRIPT RETURNS NULL ON NULL INPUT AS $$return X;$$
+        L3: Snowflake reports null handling='RETURNS NULL ON NULL INPUT' (declared form 'RETURNS NULL ON NULL INPUT'), snowcap
+          fetches None
+        L4_sql:
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R04_NULL_HANDLING(VARCHAR) SET CALLED ON NULL INPUT
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          98 unexpected ''ON''. syntax error line 1 at position 111 unexpected ''<EOF>''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R04_NULL_HANDLING(VARCHAR)
+          SET CALLED ON NULL INPUT'
+        L5: 'plan after create: ["update [''null_handling'']"]; plan after change: []'
   - name: volatility
     sql: VOLATILE | IMMUTABLE
     kind: property
@@ -25011,13 +25201,27 @@ objects:
       field: volatility
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - IMMUTABLE
+      - VOLATILE
+      truth: volatility
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R05_VOLATILITY (X VARCHAR) returns VARCHAR language
+          JAVASCRIPT IMMUTABLE AS $$return X;$$
+        L4_sql:
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R05_VOLATILITY(VARCHAR) SET VOLATILE
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          96 unexpected ''<EOF>''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R05_VOLATILITY(VARCHAR)
+          SET VOLATILE'
+        L5: fails because L4 fails
   - name: body
     sql: AS '<function_definition>'
     kind: property
@@ -25036,13 +25240,27 @@ objects:
       field: as_
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - return X;
+      - return X + 'b';
+      truth: body
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R06_BODY (X VARCHAR) returns VARCHAR language JAVASCRIPT
+          AS $$return X;$$
+        L4_sql:
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R06_BODY(VARCHAR) SET AS $$return X + 'b';$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          82 unexpected ''AS''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R06_BODY(VARCHAR) SET AS $$return
+          X + ''b'';$$'
+        L5: fails because L4 fails
   - name: secure
     sql: SECURE
     kind: property
@@ -25060,11 +25278,19 @@ objects:
       field: secure
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - true
+      - false
+      truth: is_secure
+      evidence:
+        L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 72 unexpected
+          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R07_SECURE SECURE (X VARCHAR) returns
+          VARCHAR language JAVASCRIPT AS $$return X ...'
   - name: comment
     sql: COMMENT
     kind: property
@@ -25082,11 +25308,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: description
+      evidence:
+        create_sql:
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R08_COMMENT (X VARCHAR) returns VARCHAR language JAVASCRIPT
+          COMMENT = $$a$$ AS $$return X;$$
+        L4_sql:
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R08_COMMENT(VARCHAR) SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -25270,7 +25506,7 @@ objects:
   excluded: []
   snowcap:
     class: JavascriptUDF
-    test: untested
+    test: live
     field_notes:
       external_access_integrations: 'snowcap-only: Snowflake documents this clause for other UDF languages, not JavaScript,
         and JavascriptUDF props never render it.'
@@ -25285,6 +25521,20 @@ objects:
       secrets: 'snowcap-only: Snowflake documents SECRETS for other UDF languages, not JavaScript, and JavascriptUDF props
         never render it.'
     unmapped_fields: []
+    create_args:
+      args:
+      - name: X
+        data_type: VARCHAR
+      returns: VARCHAR
+      as_: return X;
+    truth:
+    - SHOW USER FUNCTIONS LIKE '{name}' IN SCHEMA {container}
+    - DESCRIBE FUNCTION {fqn}
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: db6e5da59ab2
 - object: FUNCTION
   variant: python
   scope_level: schema
@@ -25402,11 +25652,35 @@ objects:
       note: '_PythonUDF.args: list[Arg]; Arg has key name.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: X
+          data_type: VARCHAR
+        - name: C1
+          data_type: FLOAT
+      - - name: X
+          data_type: VARCHAR
+        - name: C2
+          data_type: FLOAT
+      truth: signature
+      expect:
+      - (X VARCHAR, C1 FLOAT)
+      - (X VARCHAR, C2 FLOAT)
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns VARCHAR\
+          \ language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: arguments[].data_type
     sql: <arg_data_type>
     kind: identity
@@ -25425,11 +25699,39 @@ objects:
       note: '_PythonUDF.args: list[Arg]; Arg has key data_type.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: pass
+        L5: fail
       candidates: []
+      sample:
+      - - name: X
+          data_type: VARCHAR
+        - name: C1
+          data_type: FLOAT
+      - - name: X
+          data_type: VARCHAR
+        - name: C1
+          data_type: VARCHAR
+      truth: signature
+      expect:
+      - (X VARCHAR, C1 FLOAT)
+      - (X VARCHAR, C1 VARCHAR)
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: [''plan refuses: Exception: Found multiple functions matching
+          COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR, VARCHAR)'']'
   - name: arguments[].default
     sql: DEFAULT <default_value>
     kind: identity
@@ -25516,13 +25818,28 @@ objects:
       field: returns
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - VARCHAR
+      - FLOAT
+      truth: returns
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: returns_table[]
     sql: RETURNS TABLE ( <col_name> <col_data_type> [ , ... ] )
     kind: property
@@ -25589,14 +25906,30 @@ objects:
       field: null_handling
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''null_handling'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - RETURNS NULL ON NULL INPUT
+      - CALLED ON NULL INPUT
+      truth: null handling
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R03_NULL_HANDLING (X VARCHAR) returns VARCHAR language\
+          \ PYTHON RETURNS NULL ON NULL INPUT RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS =\
+          \ (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1) AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return\
+          \ x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: volatility
     sql: VOLATILE | IMMUTABLE
     kind: property
@@ -25614,13 +25947,28 @@ objects:
       field: volatility
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - IMMUTABLE
+      - VOLATILE
+      truth: volatility
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R04_VOLATILITY (X VARCHAR) returns VARCHAR language PYTHON\
+          \ IMMUTABLE RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: runtime_version
     sql: RUNTIME_VERSION
     kind: property
@@ -25638,14 +25986,29 @@ objects:
       field: runtime_version
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''runtime_version'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - '3.11'
+      - '3.12'
+      truth: runtime_version
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R05_RUNTIME_VERSION (X VARCHAR) returns VARCHAR language\
+          \ PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: handler
     sql: HANDLER
     kind: property
@@ -25664,14 +26027,29 @@ objects:
       field: handler
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''handler'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - main
+      - main2
+      truth: handler
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R06_HANDLER (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: body
     sql: AS '<function_definition>'
     kind: property
@@ -25690,13 +26068,28 @@ objects:
       field: as_
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - "def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n"
+      - "def main(x, *rest):\n    return x + 'a'\n\ndef main2(x, *rest):\n    return x + 'b'\n"
+      truth: body
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R07_BODY (X VARCHAR) returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1) AS $$def\
+          \ main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: imports[]
     sql: IMPORTS
     kind: property
@@ -25714,14 +26107,33 @@ objects:
       field: imports
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''imports'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - - '@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py'
+      - - '@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_b.py'
+      truth: imports_list
+      expect:
+      - '[''@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py'']'
+      - '[''@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_b.py'']'
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R08_IMPORTS__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ IMPORTS = ($$@COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py$$)\
+          \ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1) AS $$def main(x, *rest):\n\
+          \    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: packages[]
     sql: PACKAGES
     kind: property
@@ -25740,14 +26152,33 @@ objects:
       field: packages
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''packages'''
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - - pyyaml
+      - - pyyaml
+        - numpy
+      truth: packages
+      expect:
+      - '[''pyyaml'']'
+      - '[''pyyaml'',''numpy'']'
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R09_PACKAGES__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$pyyaml$$) HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: artifact_repository
     sql: ARTIFACT_REPOSITORY
     kind: relationship
@@ -25789,12 +26220,30 @@ objects:
       field: external_access_integrations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L3: the fetch function does not return ''external_access_integrations'''
+      sample:
+      - - '{database}_EAI1'
+      - - '{database}_EAI2'
+      truth: external_access_integrations
+      expect:
+      - '["{database}_EAI1"]'
+      - '["{database}_EAI2"]'
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R10_EXTERNAL_ACCESS_INTEGRATIONS__ (X VARCHAR) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: secrets[]
     sql: SECRETS
     kind: relationship
@@ -25814,13 +26263,32 @@ objects:
       field: secrets
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: fail
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L2: neither PythonUDF.props nor the create handler renders ''secrets'', so CREATE omits it'
       - 'L3: the fetch function does not return ''secrets'''
+      sample:
+      - cred: '{database}.PUBLIC.COVERAGE_S1'
+      - cred: '{database}.PUBLIC.COVERAGE_S2'
+      truth: secrets
+      expect:
+      - '{"cred":"{database}.PUBLIC.COVERAGE_S1"}'
+      - '{"cred":"{database}.PUBLIC.COVERAGE_S2"}'
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R11_SECRETS__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L2: 'declared {''cred'': ''COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.COVERAGE_S1''}, Snowflake reports secrets=''{}'''
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: secure
     sql: SECURE
     kind: property
@@ -25838,11 +26306,19 @@ objects:
       field: secure
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - true
+      - false
+      truth: is_secure
+      evidence:
+        L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 68 unexpected
+          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R12_SECURE SECURE (X VARCHAR) returns VARCHAR
+          language PYTHON RUNTIME_VERSION = $$3 ...'
   - name: comment
     sql: COMMENT
     kind: property
@@ -25861,11 +26337,26 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - a
+      - b
+      truth: description
+      evidence:
+        create_sql:
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R13_COMMENT (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ COMMENT = $$a$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+          \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
+        L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
+          and ''handler'''
+        L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
+          ''runtime_version'' and ''handler''"]; plan after change: []'
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -26051,8 +26542,47 @@ objects:
     reason: deprecated
   snowcap:
     class: PythonUDF
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STAGE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_mod_a.py'
+      @{database}.PUBLIC.COVERAGE_STAGE AUTO_COMPRESS = FALSE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_mod_b.py'
+      @{database}.PUBLIC.COVERAGE_STAGE AUTO_COMPRESS = FALSE
+    - CREATE NETWORK RULE {database}.PUBLIC.COVERAGE_NR MODE = EGRESS TYPE = HOST_PORT VALUE_LIST = ('example.com')
+    - CREATE SECRET {database}.PUBLIC.COVERAGE_S1 TYPE = GENERIC_STRING SECRET_STRING = 'x'
+    - CREATE SECRET {database}.PUBLIC.COVERAGE_S2 TYPE = GENERIC_STRING SECRET_STRING = 'y'
+    - CREATE EXTERNAL ACCESS INTEGRATION {database}_EAI1 ALLOWED_NETWORK_RULES = ({database}.PUBLIC.COVERAGE_NR) ALLOWED_AUTHENTICATION_SECRETS
+      = ({database}.PUBLIC.COVERAGE_S1, {database}.PUBLIC.COVERAGE_S2) ENABLED = TRUE
+    - CREATE EXTERNAL ACCESS INTEGRATION {database}_EAI2 ALLOWED_NETWORK_RULES = ({database}.PUBLIC.COVERAGE_NR) ALLOWED_AUTHENTICATION_SECRETS
+      = ({database}.PUBLIC.COVERAGE_S1, {database}.PUBLIC.COVERAGE_S2) ENABLED = TRUE
+    teardown:
+    - DROP INTEGRATION IF EXISTS {database}_EAI1
+    - DROP INTEGRATION IF EXISTS {database}_EAI2
+    create_args:
+      args:
+      - name: X
+        data_type: VARCHAR
+      returns: VARCHAR
+      runtime_version: '3.11'
+      handler: main
+      as_: "def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n"
+      external_access_integrations:
+      - '{database}_EAI1'
+    truth:
+    - SHOW USER FUNCTIONS LIKE '{name}' IN SCHEMA {container}
+    - DESCRIBE FUNCTION {fqn}
+    - SELECT 'imports_list' AS key, '[''' || REPLACE(TRIM("value", '[]'), ', ', ''', ''') || ''']' AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+      WHERE "property" = 'imports'
+    combined:
+      fields:
+      - comment
+      - external_access_integrations
+      - secrets
+      result: fail
+      error: 'Crashed: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version'' and ''handler'''
+    tested_inputs: 4e972557626b
 - object: FUNCTION
   variant: scala
   scope_level: schema
@@ -63473,11 +64003,22 @@ objects:
       field: user_task_managed_initial_warehouse_size
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - SMALL
+      - LARGE
+      truth: user_task_managed_initial_warehouse_size
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R00_USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE user_task_managed_initial_warehouse_size
+          = SMALL ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R00_USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE SET user_task_managed_initial_warehouse_size
+          = LARGE
   - name: schedule
     sql: SCHEDULE
     kind: property
@@ -63497,11 +64038,21 @@ objects:
       field: schedule
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 5 MINUTE
+      - 10 MINUTE
+      truth: schedule
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R01_SCHEDULE user_task_managed_initial_warehouse_size = MEDIUM SCHEDULE
+          = $$5 MINUTE$$ ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R01_SCHEDULE SET SCHEDULE = $$10 MINUTE$$
   - name: config
     sql: CONFIG
     kind: property
@@ -63520,11 +64071,21 @@ objects:
       field: config
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{"a": 1}'
+      - '{"a": 2}'
+      truth: config
+      evidence:
+        create_sql:
+        - 'CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R02_CONFIG user_task_managed_initial_warehouse_size = MEDIUM CONFIG =
+          $${"a": 1}$$ ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 as SELECT 1'
+        L4_sql:
+        - 'ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R02_CONFIG SET CONFIG = $${"a": 2}$$'
   - name: overlap_policy
     sql: OVERLAP_POLICY
     kind: property
@@ -63589,11 +64150,22 @@ objects:
       field: user_task_timeout_ms
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 100000
+      - 200000
+      truth: user_task_timeout_ms
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R03_USER_TASK_TIMEOUT_MS user_task_managed_initial_warehouse_size = MEDIUM
+          ALLOW_OVERLAPPING_EXECUTION = FALSE USER_TASK_TIMEOUT_MS = 100000 SUSPEND_TASK_AFTER_NUM_FAILURES = 10 as SELECT
+          1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R03_USER_TASK_TIMEOUT_MS SET USER_TASK_TIMEOUT_MS = 200000
   - name: suspend_task_after_num_failures
     sql: SUSPEND_TASK_AFTER_NUM_FAILURES
     kind: parameter
@@ -63611,11 +64183,22 @@ objects:
       field: suspend_task_after_num_failures
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 3
+      - 5
+      truth: suspend_task_after_num_failures
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R04_SUSPEND_TASK_AFTER_NUM_FAILURES user_task_managed_initial_warehouse_size
+          = MEDIUM ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 3 as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R04_SUSPEND_TASK_AFTER_NUM_FAILURES SET SUSPEND_TASK_AFTER_NUM_FAILURES
+          = 5
   - name: error_integration
     sql: ERROR_INTEGRATION
     kind: relationship
@@ -63633,11 +64216,22 @@ objects:
       field: error_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_NI1'
+      - '{database}_NI2'
+      truth: error_integration
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R05_ERROR_INTEGRATION user_task_managed_initial_warehouse_size = MEDIUM
+          ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 ERROR_INTEGRATION = $$COVERAGE_TASK_A8E0413D_NI1$$
+          as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R05_ERROR_INTEGRATION SET ERROR_INTEGRATION = $$COVERAGE_TASK_A8E0413D_NI2$$
   - name: success_integration
     sql: SUCCESS_INTEGRATION
     kind: relationship
@@ -63655,11 +64249,22 @@ objects:
       field: success_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_NI1'
+      - '{database}_NI2'
+      truth: success_integration
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R06_SUCCESS_INTEGRATION user_task_managed_initial_warehouse_size = MEDIUM
+          ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 SUCCESS_INTEGRATION = $$COVERAGE_TASK_A8E0413D_NI1$$
+          as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R06_SUCCESS_INTEGRATION SET SUCCESS_INTEGRATION = $$COVERAGE_TASK_A8E0413D_NI2$$
   - name: log_level
     sql: LOG_LEVEL
     kind: parameter
@@ -63723,11 +64328,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R07_COMMENT user_task_managed_initial_warehouse_size = MEDIUM ALLOW_OVERLAPPING_EXECUTION
+          = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 COMMENT = $$a$$ as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R07_COMMENT SET COMMENT = $$b$$
   - name: finalize
     sql: FINALIZE
     kind: relationship
@@ -63746,11 +64361,19 @@ objects:
       field: finalize
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_ROOT1'
+      - '{database}.PUBLIC.COVERAGE_ROOT2'
+      truth: finalize
+      evidence:
+        L2: 'create failed: ProgrammingError: 091449 (55000): Cannot set parameter SUSPEND_TASK_AFTER_NUM_FAILURES on non-root
+          task R08_FINALIZE. Non-root tasks use the parameter setting from their root task. Please set this on the root task
+          for this task instead. on: CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R08_FINALIZE user_task_managed_init'
   - name: task_auto_retry_attempts
     sql: TASK_AUTO_RETRY_ATTEMPTS
     kind: parameter
@@ -63768,11 +64391,22 @@ objects:
       field: task_auto_retry_attempts
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 1
+      - 2
+      truth: task_auto_retry_attempts
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R09_TASK_AUTO_RETRY_ATTEMPTS user_task_managed_initial_warehouse_size
+          = MEDIUM ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 TASK_AUTO_RETRY_ATTEMPTS = 1 as
+          SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R09_TASK_AUTO_RETRY_ATTEMPTS SET TASK_AUTO_RETRY_ATTEMPTS = 2
   - name: user_task_minimum_trigger_interval_in_seconds
     sql: USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS
     kind: parameter
@@ -63790,11 +64424,23 @@ objects:
       field: user_task_minimum_trigger_interval_in_seconds
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 60
+      - 120
+      truth: user_task_minimum_trigger_interval_in_seconds
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R10_USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS user_task_managed_initial_warehouse_size
+          = MEDIUM ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS
+          = 60 as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R10_USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS SET USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS
+          = 120
   - name: target_completion_interval
     sql: TARGET_COMPLETION_INTERVAL
     kind: property
@@ -63813,11 +64459,22 @@ objects:
       field: target_completion_interval
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 10 MINUTE
+      - 20 MINUTE
+      truth: target_completion_interval
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R11_TARGET_COMPLETION_INTERVAL user_task_managed_initial_warehouse_size
+          = MEDIUM ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 TARGET_COMPLETION_INTERVAL = $$10
+          MINUTE$$ as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R11_TARGET_COMPLETION_INTERVAL SET TARGET_COMPLETION_INTERVAL = $$20 MINUTE$$
   - name: serverless_task_min_statement_size
     sql: SERVERLESS_TASK_MIN_STATEMENT_SIZE
     kind: parameter
@@ -63835,11 +64492,23 @@ objects:
       field: serverless_task_min_statement_size
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - SMALL
+      - XSMALL
+      truth: serverless_task_min_statement_size
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R12_SERVERLESS_TASK_MIN_STATEMENT_SIZE user_task_managed_initial_warehouse_size
+          = MEDIUM ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 serverless_task_min_statement_size
+          = SMALL as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R12_SERVERLESS_TASK_MIN_STATEMENT_SIZE SET serverless_task_min_statement_size
+          = XSMALL
   - name: serverless_task_max_statement_size
     sql: SERVERLESS_TASK_MAX_STATEMENT_SIZE
     kind: parameter
@@ -63857,11 +64526,23 @@ objects:
       field: serverless_task_max_statement_size
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - LARGE
+      - XLARGE
+      truth: serverless_task_max_statement_size
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R13_SERVERLESS_TASK_MAX_STATEMENT_SIZE user_task_managed_initial_warehouse_size
+          = MEDIUM ALLOW_OVERLAPPING_EXECUTION = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 serverless_task_max_statement_size
+          = LARGE as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R13_SERVERLESS_TASK_MAX_STATEMENT_SIZE SET serverless_task_max_statement_size
+          = XLARGE
   - name: after[]
     sql: AFTER
     kind: relationship
@@ -63880,11 +64561,29 @@ objects:
       field: after
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - '{database}.PUBLIC.COVERAGE_PRED1'
+      - - '{database}.PUBLIC.COVERAGE_PRED1'
+        - '{database}.PUBLIC.COVERAGE_PRED2'
+      truth: after_list
+      expect:
+      - '[''{database}.PUBLIC.COVERAGE_PRED1'']'
+      - '[''{database}.PUBLIC.COVERAGE_PRED1'', ''{database}.PUBLIC.COVERAGE_PRED2'']'
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R14_AFTER__ user_task_managed_initial_warehouse_size = MEDIUM ALLOW_OVERLAPPING_EXECUTION
+          = FALSE AFTER COVERAGE_TASK_A8E0413D.PUBLIC.COVERAGE_PRED1 as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R14_AFTER__ SET AFTER COVERAGE_TASK_A8E0413D.PUBLIC.COVERAGE_PRED1, COVERAGE_TASK_A8E0413D.PUBLIC.COVERAGE_PRED2
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          63 unexpected ''COVERAGE_TASK_A8E0413D''. syntax error line 1 at position 131 unexpected ''.''. syntax error line
+          1 at position 138 unexpected ''.''. syntax error line 1 at position 153 unexpected ''<EOF>''. on: ALTER TASK COVERAGE_TASK_'
+        L5: fails because L4 fails
   - name: execute_as_user
     sql: EXECUTE AS USER
     kind: relationship
@@ -63927,11 +64626,22 @@ objects:
       field: when
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - SYSTEM$STREAM_HAS_DATA('{database}.PUBLIC.COVERAGE_ST1')
+      - SYSTEM$STREAM_HAS_DATA('{database}.PUBLIC.COVERAGE_ST2')
+      truth: condition
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R15_WHEN user_task_managed_initial_warehouse_size = MEDIUM ALLOW_OVERLAPPING_EXECUTION
+          = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 when SYSTEM$STREAM_HAS_DATA('COVERAGE_TASK_A8E0413D.PUBLIC.COVERAGE_ST1')
+          as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R15_WHEN MODIFY WHEN SYSTEM$STREAM_HAS_DATA('COVERAGE_TASK_A8E0413D.PUBLIC.COVERAGE_ST2')
   - name: definition
     sql: AS <sql>
     kind: property
@@ -63949,11 +64659,21 @@ objects:
       field: as_
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - SELECT 1
+      - SELECT 2
+      truth: definition
+      evidence:
+        create_sql:
+        - CREATE TASK COVERAGE_TASK_A8E0413D.PUBLIC.R16_DEFINITION user_task_managed_initial_warehouse_size = MEDIUM ALLOW_OVERLAPPING_EXECUTION
+          = FALSE SUSPEND_TASK_AFTER_NUM_FAILURES = 10 as SELECT 1
+        L4_sql:
+        - ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.R16_DEFINITION MODIFY AS SELECT 2
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -64067,12 +64787,61 @@ objects:
     reason: deprecated
   snowcap:
     class: Task
-    test: untested
+    test: live
     field_notes:
       allow_overlapping_execution: 'No docs row: ALLOW_OVERLAPPING_EXECUTION, a deprecated parameter that the inventory lists
         under excluded.'
       copy_grants: 'snowcap-only: CREATE TASK documents no COPY GRANTS clause, but snowcap renders it as a create-time flag.'
     unmapped_fields: []
+    setup:
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T (ID INT)
+    - CREATE STREAM {database}.PUBLIC.COVERAGE_ST1 ON TABLE {database}.PUBLIC.COVERAGE_T
+    - CREATE STREAM {database}.PUBLIC.COVERAGE_ST2 ON TABLE {database}.PUBLIC.COVERAGE_T
+    - CREATE TASK {database}.PUBLIC.COVERAGE_PRED1 AS SELECT 1
+    - CREATE TASK {database}.PUBLIC.COVERAGE_PRED2 AS SELECT 1
+    - CREATE TASK {database}.PUBLIC.COVERAGE_ROOT1 AS SELECT 1
+    - CREATE TASK {database}.PUBLIC.COVERAGE_ROOT2 AS SELECT 1
+    - CREATE NOTIFICATION INTEGRATION {database}_NI1 TYPE = QUEUE DIRECTION = OUTBOUND NOTIFICATION_PROVIDER = AWS_SNS AWS_SNS_TOPIC_ARN
+      = 'arn:aws:sns:us-west-2:123456789012:coverage1' AWS_SNS_ROLE_ARN = 'arn:aws:iam::123456789012:role/coverage' ENABLED
+      = TRUE
+    - CREATE NOTIFICATION INTEGRATION {database}_NI2 TYPE = QUEUE DIRECTION = OUTBOUND NOTIFICATION_PROVIDER = AWS_SNS AWS_SNS_TOPIC_ARN
+      = 'arn:aws:sns:us-west-2:123456789012:coverage2' AWS_SNS_ROLE_ARN = 'arn:aws:iam::123456789012:role/coverage' ENABLED
+      = TRUE
+    teardown:
+    - DROP INTEGRATION IF EXISTS {database}_NI1
+    - DROP INTEGRATION IF EXISTS {database}_NI2
+    create_args:
+      as_: SELECT 1
+    truth:
+    - SHOW TASKS LIKE '{name}' IN SCHEMA {container}
+    - SHOW PARAMETERS IN TASK {fqn}
+    - DESCRIBE TASK {fqn}
+    - SELECT f.key AS key, f.value::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL FLATTEN(OBJECT_CONSTRUCT('after_list',
+      '[''' || ARRAY_TO_STRING(TRY_PARSE_JSON(r."predecessors"::STRING)::ARRAY, ''', ''') || ''']', 'finalize', TRY_PARSE_JSON(r."task_relations"::STRING):FinalizedRootTask::STRING))
+      f
+    combined:
+      fields:
+      - comment
+      - config
+      - error_integration
+      - schedule
+      - serverless_task_max_statement_size
+      - serverless_task_min_statement_size
+      - success_integration
+      - suspend_task_after_num_failures
+      - target_completion_interval
+      - task_auto_retry_attempts
+      - user_task_managed_initial_warehouse_size
+      - user_task_minimum_trigger_interval_in_seconds
+      - user_task_timeout_ms
+      sql:
+      - 'ALTER TASK COVERAGE_TASK_A8E0413D.PUBLIC.COMBINED SET user_task_managed_initial_warehouse_size = LARGE SCHEDULE =
+        $$10 MINUTE$$ CONFIG = $${"a": 2}$$ USER_TASK_TIMEOUT_MS = 200000 SUSPEND_TASK_AFTER_NUM_FAILURES = 5 ERROR_INTEGRATION
+        = $$COVERAGE_TASK_A8E0413D_NI2$$ SUCCESS_INTEGRATION = $$COVERAGE_TASK_A8E0413D_NI2$$ serverless_task_min_statement_size
+        = XSMALL serverless_task_max_statement_size = XLARGE TASK_AUTO_RETRY_ATTEMPTS = 2 USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS
+        = 120 TARGET_COMPLETION_INTERVAL = $$20 MINUTE$$ COMMENT = $$b$$'
+      result: pass
+    tested_inputs: a9e82796f97e
 - object: TYPE
   variant: null
   scope_level: schema
