@@ -5636,13 +5636,28 @@ objects:
       field: api_provider
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - AWS_API_GATEWAY
+      - AWS_PRIVATE_API_GATEWAY
+      truth: api_provider
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R00_API_PROVIDER api_provider = AWS_API_GATEWAY
+          API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ API_ALLOWED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$)
+          ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R00_API_PROVIDER SET api_provider = AWS_PRIVATE_API_GATEWAY
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''API_PROVIDER''
+          for ''INTEGRATION - EXTERNAL_API'' on: ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R00_API_PROVIDER
+          SET api_provider = AWS_PRIVATE_API_GATEWAY'
+        L5: fails because L4 fails
   - name: api_aws_role_arn
     sql: API_AWS_ROLE_ARN
     kind: property
@@ -5660,11 +5675,23 @@ objects:
       field: api_aws_role_arn
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - arn:aws:iam::123456789012:role/coverage
+      - arn:aws:iam::123456789012:role/coverage2
+      truth: api_aws_role_arn
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R01_API_AWS_ROLE_ARN api_provider = AWS_API_GATEWAY
+          API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ API_ALLOWED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$)
+          ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R01_API_AWS_ROLE_ARN SET API_AWS_ROLE_ARN
+          = $$arn:aws:iam::123456789012:role/coverage2$$
   - name: api_key
     sql: API_KEY
     kind: property
@@ -5683,10 +5710,21 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - coveragekey1
+      - coveragekey2
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R02_API_KEY api_provider = AWS_API_GATEWAY
+          API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ API_KEY = $$coveragekey1$$ API_ALLOWED_PREFIXES =
+          ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$) ENABLED = FALSE
+        L3: declared 'coveragekey1', snowcap fetches None
+        L4: a change to 'coveragekey2' plans nothing
+        L5: fails because L4 fails
   - name: api_allowed_prefixes
     sql: API_ALLOWED_PREFIXES
     kind: property
@@ -5704,11 +5742,24 @@ objects:
       field: api_allowed_prefixes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - https://abc123.execute-api.us-west-2.amazonaws.com/prod/
+      - - https://abc123.execute-api.us-west-2.amazonaws.com/prod/
+        - https://abc123.execute-api.us-west-2.amazonaws.com/dev/
+      truth: api_allowed_prefixes
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R03_API_ALLOWED_PREFIXES api_provider =
+          AWS_API_GATEWAY API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ API_ALLOWED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$)
+          ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R03_API_ALLOWED_PREFIXES SET API_ALLOWED_PREFIXES
+          = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$, $$https://abc123.execute-api.us-west-2.amazonaws.com/dev/$$)
   - name: api_blocked_prefixes
     sql: API_BLOCKED_PREFIXES
     kind: property
@@ -5726,11 +5777,24 @@ objects:
       field: api_blocked_prefixes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - https://abc123.execute-api.us-west-2.amazonaws.com/prod/x
+      - - https://abc123.execute-api.us-west-2.amazonaws.com/prod/x
+        - https://abc123.execute-api.us-west-2.amazonaws.com/prod/y
+      truth: api_blocked_prefixes
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R04_API_BLOCKED_PREFIXES api_provider =
+          AWS_API_GATEWAY API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ API_ALLOWED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$)
+          API_BLOCKED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/x$$) ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R04_API_BLOCKED_PREFIXES SET API_BLOCKED_PREFIXES
+          = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/x$$, $$https://abc123.execute-api.us-west-2.amazonaws.com/prod/y$$)
   - name: enabled
     sql: ENABLED
     kind: property
@@ -5748,11 +5812,22 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R05_ENABLED api_provider = AWS_API_GATEWAY
+          API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ API_ALLOWED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$)
+          ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R05_ENABLED SET ENABLED = TRUE
   - name: comment
     sql: COMMENT
     kind: property
@@ -5770,11 +5845,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R06_COMMENT api_provider = AWS_API_GATEWAY
+          API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage$$ API_ALLOWED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$)
+          ENABLED = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_R06_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -5842,12 +5928,40 @@ objects:
   excluded: []
   snowcap:
     class: APIIntegration
-    test: untested
+    test: live
     field_notes:
       azure_ad_application_id: 'Other variant: azure_api_management.'
       azure_tenant_id: 'Other variant: azure_api_management.'
       google_audience: 'Other variant: google_api_gateway.'
     unmapped_fields: []
+    create_args:
+      api_provider: AWS_API_GATEWAY
+      api_aws_role_arn: arn:aws:iam::123456789012:role/coverage
+      api_allowed_prefixes:
+      - https://abc123.execute-api.us-west-2.amazonaws.com/prod/
+      enabled: false
+    truth:
+    - DESCRIBE INTEGRATION {name}
+    - SELECT "property" AS key, CASE WHEN "property_type" IN ('List', 'Object') THEN CASE WHEN TRIM("property_value", '[]')
+      = '' THEN '[]' ELSE '[''' || REPLACE(REPLACE(TRIM("property_value", '[]'), ', ', ','), ',', ''', ''') || ''']' END ELSE
+      "property_value" END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - api_allowed_prefixes
+      - api_aws_role_arn
+      - api_blocked_prefixes
+      - api_key
+      - comment
+      - enabled
+      sql:
+      - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_AWS_API_GATEWAY_A266520A_COMBINED SET API_AWS_ROLE_ARN = $$arn:aws:iam::123456789012:role/coverage2$$
+        API_ALLOWED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/$$, $$https://abc123.execute-api.us-west-2.amazonaws.com/dev/$$)
+        API_BLOCKED_PREFIXES = ($$https://abc123.execute-api.us-west-2.amazonaws.com/prod/x$$, $$https://abc123.execute-api.us-west-2.amazonaws.com/prod/y$$)
+        ENABLED = TRUE COMMENT = $$b$$
+      result: fail
+      missed:
+      - api_key
+    tested_inputs: 401fe9b7c810
 - object: API INTEGRATION
   variant: azure_api_management
   scope_level: account
@@ -6128,11 +6242,14 @@ objects:
   excluded: []
   snowcap:
     class: APIIntegration
-    test: untested
+    test: docs_only
     field_notes:
       api_aws_role_arn: 'Other variant: aws_api_gateway.'
       google_audience: 'Other variant: google_api_gateway.'
     unmapped_fields: []
+    test_reason: 'CREATE validates the allowed prefix against a live Azure API Management host, so a placeholder fails: "URL
+      ''https://coverage.azure-api.net/a'' is invalid. Make sure the URL host is reachable and that the URL is for Azure API
+      Management service."'
 - object: API INTEGRATION
   variant: external_mcp
   scope_level: account
@@ -6511,13 +6628,27 @@ objects:
       field: api_provider
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - GIT_HTTPS_API
+      - AWS_API_GATEWAY
+      truth: api_provider
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R00_API_PROVIDER api_provider = GIT_HTTPS_API
+          API_ALLOWED_PREFIXES = ($$https://github.com/example/$$) ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R00_API_PROVIDER SET api_provider = AWS_API_GATEWAY
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''API_PROVIDER''
+          for ''INTEGRATION - EXTERNAL_API'' on: ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R00_API_PROVIDER
+          SET api_provider = AWS_API_GATEWAY'
+        L5: fails because L4 fails
   - name: api_allowed_prefixes
     sql: API_ALLOWED_PREFIXES
     kind: property
@@ -6535,11 +6666,23 @@ objects:
       field: api_allowed_prefixes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - https://github.com/example/
+      - - https://github.com/example/
+        - https://github.com/example2/
+      truth: api_allowed_prefixes
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R01_API_ALLOWED_PREFIXES api_provider = GIT_HTTPS_API
+          API_ALLOWED_PREFIXES = ($$https://github.com/example/$$) ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R01_API_ALLOWED_PREFIXES SET API_ALLOWED_PREFIXES
+          = ($$https://github.com/example/$$, $$https://github.com/example2/$$)
   - name: api_blocked_prefixes
     sql: API_BLOCKED_PREFIXES
     kind: property
@@ -6557,11 +6700,24 @@ objects:
       field: api_blocked_prefixes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - https://github.com/example/blocked1
+      - - https://github.com/example/blocked1
+        - https://github.com/example/blocked2
+      truth: api_blocked_prefixes
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R02_API_BLOCKED_PREFIXES api_provider = GIT_HTTPS_API
+          API_ALLOWED_PREFIXES = ($$https://github.com/example/$$) API_BLOCKED_PREFIXES = ($$https://github.com/example/blocked1$$)
+          ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R02_API_BLOCKED_PREFIXES SET API_BLOCKED_PREFIXES
+          = ($$https://github.com/example/blocked1$$, $$https://github.com/example/blocked2$$)
   - name: api_key
     sql: API_KEY
     kind: property
@@ -6879,11 +7035,21 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R03_ENABLED api_provider = GIT_HTTPS_API
+          API_ALLOWED_PREFIXES = ($$https://github.com/example/$$) ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R03_ENABLED SET ENABLED = TRUE
   - name: comment
     sql: COMMENT
     kind: property
@@ -6901,11 +7067,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R04_COMMENT api_provider = GIT_HTTPS_API
+          API_ALLOWED_PREFIXES = ($$https://github.com/example/$$) ENABLED = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_R04_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -6972,13 +7148,35 @@ objects:
   excluded: []
   snowcap:
     class: APIIntegration
-    test: untested
+    test: live
     field_notes:
       api_aws_role_arn: 'Other variant: aws_api_gateway.'
       azure_ad_application_id: 'Other variant: azure_api_management.'
       azure_tenant_id: 'Other variant: azure_api_management.'
       google_audience: 'Other variant: google_api_gateway.'
     unmapped_fields: []
+    create_args:
+      api_provider: GIT_HTTPS_API
+      api_allowed_prefixes:
+      - https://github.com/example/
+      enabled: false
+    truth:
+    - DESCRIBE INTEGRATION {name}
+    - SELECT "property" AS key, CASE WHEN "property_type" IN ('List', 'Object') THEN CASE WHEN TRIM("property_value", '[]')
+      = '' THEN '[]' ELSE '[''' || REPLACE(REPLACE(TRIM("property_value", '[]'), ', ', ','), ',', ''', ''') || ''']' END ELSE
+      "property_value" END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - api_allowed_prefixes
+      - api_blocked_prefixes
+      - comment
+      - enabled
+      sql:
+      - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GIT_HTTPS_API_767453A1_COMBINED SET API_ALLOWED_PREFIXES = ($$https://github.com/example/$$,
+        $$https://github.com/example2/$$) API_BLOCKED_PREFIXES = ($$https://github.com/example/blocked1$$, $$https://github.com/example/blocked2$$)
+        ENABLED = TRUE COMMENT = $$b$$
+      result: pass
+    tested_inputs: c7670032043f
 - object: API INTEGRATION
   variant: google_api_gateway
   scope_level: account
@@ -7030,13 +7228,28 @@ objects:
       field: api_provider
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - GOOGLE_API_GATEWAY
+      - AWS_API_GATEWAY
+      truth: api_provider
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R00_API_PROVIDER api_provider = GOOGLE_API_GATEWAY
+          GOOGLE_AUDIENCE = $$coverage-audience-1$$ API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$) ENABLED
+          = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R00_API_PROVIDER SET api_provider = AWS_API_GATEWAY
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''API_PROVIDER''
+          for ''INTEGRATION - EXTERNAL_API'' on: ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R00_API_PROVIDER
+          SET api_provider = AWS_API_GATEWAY'
+        L5: fails because L4 fails
   - name: google_audience
     sql: GOOGLE_AUDIENCE
     kind: property
@@ -7054,13 +7267,26 @@ objects:
       field: google_audience
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - coverage-audience-1
+      - coverage-audience-2
+      truth: google_audience
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R01_GOOGLE_AUDIENCE api_provider = GOOGLE_API_GATEWAY
+          GOOGLE_AUDIENCE = $$coverage-audience-1$$ API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$) ENABLED
+          = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R01_GOOGLE_AUDIENCE SET GOOGLE_AUDIENCE
+          = $$coverage-audience-2$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: api_key
     sql: API_KEY
     kind: property
@@ -7079,10 +7305,21 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - coveragekey1
+      - coveragekey2
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R02_API_KEY api_provider = GOOGLE_API_GATEWAY
+          GOOGLE_AUDIENCE = $$coverage-audience-1$$ API_KEY = $$coveragekey1$$ API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$)
+          ENABLED = FALSE
+        L3: declared 'coveragekey1', snowcap fetches None
+        L4: a change to 'coveragekey2' plans nothing
+        L5: fails because L4 fails
   - name: api_allowed_prefixes
     sql: API_ALLOWED_PREFIXES
     kind: property
@@ -7100,11 +7337,24 @@ objects:
       field: api_allowed_prefixes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - https://coverage-1.uc.gateway.dev/
+      - - https://coverage-1.uc.gateway.dev/
+        - https://coverage-2.uc.gateway.dev/
+      truth: api_allowed_prefixes
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R03_API_ALLOWED_PREFIXES api_provider
+          = GOOGLE_API_GATEWAY GOOGLE_AUDIENCE = $$coverage-audience-1$$ API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$)
+          ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R03_API_ALLOWED_PREFIXES SET API_ALLOWED_PREFIXES
+          = ($$https://coverage-1.uc.gateway.dev/$$, $$https://coverage-2.uc.gateway.dev/$$)
   - name: api_blocked_prefixes
     sql: API_BLOCKED_PREFIXES
     kind: property
@@ -7122,11 +7372,24 @@ objects:
       field: api_blocked_prefixes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - https://coverage-1.uc.gateway.dev/x
+      - - https://coverage-1.uc.gateway.dev/x
+        - https://coverage-1.uc.gateway.dev/y
+      truth: api_blocked_prefixes
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R04_API_BLOCKED_PREFIXES api_provider
+          = GOOGLE_API_GATEWAY GOOGLE_AUDIENCE = $$coverage-audience-1$$ API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$)
+          API_BLOCKED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/x$$) ENABLED = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R04_API_BLOCKED_PREFIXES SET API_BLOCKED_PREFIXES
+          = ($$https://coverage-1.uc.gateway.dev/x$$, $$https://coverage-1.uc.gateway.dev/y$$)
   - name: enabled
     sql: ENABLED
     kind: property
@@ -7144,11 +7407,22 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R05_ENABLED api_provider = GOOGLE_API_GATEWAY
+          GOOGLE_AUDIENCE = $$coverage-audience-1$$ API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$) ENABLED
+          = FALSE
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R05_ENABLED SET ENABLED = TRUE
   - name: comment
     sql: COMMENT
     kind: property
@@ -7166,11 +7440,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R06_COMMENT api_provider = GOOGLE_API_GATEWAY
+          GOOGLE_AUDIENCE = $$coverage-audience-1$$ API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$) ENABLED
+          = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_R06_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -7237,12 +7522,38 @@ objects:
   excluded: []
   snowcap:
     class: APIIntegration
-    test: untested
+    test: live
     field_notes:
       api_aws_role_arn: 'Other variant: aws_api_gateway.'
       azure_ad_application_id: 'Other variant: azure_api_management.'
       azure_tenant_id: 'Other variant: azure_api_management.'
     unmapped_fields: []
+    create_args:
+      api_provider: GOOGLE_API_GATEWAY
+      google_audience: coverage-audience-1
+      api_allowed_prefixes:
+      - https://coverage-1.uc.gateway.dev/
+      enabled: false
+    truth:
+    - DESCRIBE INTEGRATION {name}
+    - SELECT "property" AS key, CASE WHEN "property_type" IN ('List', 'Object') THEN CASE WHEN TRIM("property_value", '[]')
+      = '' THEN '[]' ELSE '[''' || REPLACE(REPLACE(TRIM("property_value", '[]'), ', ', ','), ',', ''', ''') || ''']' END ELSE
+      "property_value" END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - api_allowed_prefixes
+      - api_blocked_prefixes
+      - api_key
+      - comment
+      - enabled
+      sql:
+      - ALTER API INTEGRATION COVERAGE_API_INTEGRATION_GOOGLE_API_GATEWAY_98BF9182_COMBINED SET API_ALLOWED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/$$,
+        $$https://coverage-2.uc.gateway.dev/$$) API_BLOCKED_PREFIXES = ($$https://coverage-1.uc.gateway.dev/x$$, $$https://coverage-1.uc.gateway.dev/y$$)
+        ENABLED = TRUE COMMENT = $$b$$
+      result: fail
+      missed:
+      - api_key
+    tested_inputs: 6b050ba1f057
 - object: APPLICATION
   variant: null
   scope_level: account
@@ -18643,11 +18954,23 @@ objects:
       field: allowed_network_rules
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}.PUBLIC.COVERAGE_NR1'
+      - - '{database}.PUBLIC.COVERAGE_NR1'
+        - '{database}.PUBLIC.COVERAGE_NR2'
+      truth: allowed_network_rules
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R00_ALLOWED_NETWORK_RULES__ ALLOWED_NETWORK_RULES
+          = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR1) ENABLED = FALSE
+        L4_sql:
+        - ALTER EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R00_ALLOWED_NETWORK_RULES__ SET
+          ALLOWED_NETWORK_RULES = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR1, COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR2)
   - name: allowed_api_authentication_integrations[]
     sql: ALLOWED_API_AUTHENTICATION_INTEGRATIONS
     kind: relationship
@@ -18667,11 +18990,24 @@ objects:
       field: allowed_api_authentication_integrations
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}_SI1'
+      - - '{database}_SI1'
+        - '{database}_SI2'
+      truth: allowed_api_authentication_integrations
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R01_ALLOWED_API_AUTHENTICATION_INTEGRATIONS__
+          ALLOWED_NETWORK_RULES = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR1) ALLOWED_API_AUTHENTICATION_INTEGRATIONS
+          = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_SI1) ENABLED = FALSE
+        L4_sql:
+        - ALTER EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R01_ALLOWED_API_AUTHENTICATION_INTEGRATIONS__
+          SET ALLOWED_API_AUTHENTICATION_INTEGRATIONS = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_SI1, COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_SI2)
   - name: allowed_authentication_secrets[]
     sql: ALLOWED_AUTHENTICATION_SECRETS
     kind: relationship
@@ -18690,11 +19026,24 @@ objects:
       field: allowed_authentication_secrets
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}.PUBLIC.COVERAGE_S1'
+      - - '{database}.PUBLIC.COVERAGE_S1'
+        - '{database}.PUBLIC.COVERAGE_S2'
+      truth: allowed_authentication_secrets
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R02_ALLOWED_AUTHENTICATION_SECRETS__
+          ALLOWED_NETWORK_RULES = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR1) ALLOWED_AUTHENTICATION_SECRETS
+          = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_S1) ENABLED = FALSE
+        L4_sql:
+        - ALTER EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R02_ALLOWED_AUTHENTICATION_SECRETS__
+          SET ALLOWED_AUTHENTICATION_SECRETS = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_S1, COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_S2)
   - name: enabled
     sql: ENABLED
     kind: property
@@ -18712,11 +19061,21 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R03_ENABLED ALLOWED_NETWORK_RULES
+          = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR1) ENABLED = FALSE
+        L4_sql:
+        - ALTER EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R03_ENABLED SET ENABLED = TRUE
   - name: comment
     sql: COMMENT
     kind: property
@@ -18734,11 +19093,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R04_COMMENT ALLOWED_NETWORK_RULES
+          = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR1) ENABLED = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_R04_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -18807,8 +19176,44 @@ objects:
   excluded: []
   snowcap:
     class: ExternalAccessIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE NETWORK RULE {database}.PUBLIC.COVERAGE_NR1 MODE = EGRESS TYPE = HOST_PORT VALUE_LIST = ('example.com')
+    - CREATE NETWORK RULE {database}.PUBLIC.COVERAGE_NR2 MODE = EGRESS TYPE = HOST_PORT VALUE_LIST = ('example.org')
+    - CREATE SECRET {database}.PUBLIC.COVERAGE_S1 TYPE = GENERIC_STRING SECRET_STRING = 'coverage1'
+    - CREATE SECRET {database}.PUBLIC.COVERAGE_S2 TYPE = GENERIC_STRING SECRET_STRING = 'coverage2'
+    - CREATE SECURITY INTEGRATION {database}_SI1 TYPE = API_AUTHENTICATION AUTH_TYPE = OAUTH2 OAUTH_CLIENT_ID = 'coverage'
+      OAUTH_CLIENT_SECRET = 'coverage' OAUTH_TOKEN_ENDPOINT = 'https://example.com/token' ENABLED = FALSE
+    - CREATE SECURITY INTEGRATION {database}_SI2 TYPE = API_AUTHENTICATION AUTH_TYPE = OAUTH2 OAUTH_CLIENT_ID = 'coverage'
+      OAUTH_CLIENT_SECRET = 'coverage' OAUTH_TOKEN_ENDPOINT = 'https://example.com/token' ENABLED = FALSE
+    teardown:
+    - DROP INTEGRATION IF EXISTS {database}_SI1
+    - DROP INTEGRATION IF EXISTS {database}_SI2
+    create_args:
+      allowed_network_rules:
+      - '{database}.PUBLIC.COVERAGE_NR1'
+      enabled: false
+    truth:
+    - DESCRIBE INTEGRATION {name}
+    - SELECT "property" AS key, CASE WHEN "property_type" IN ('List', 'Object') THEN CASE WHEN TRIM("property_value", '[]')
+      = '' THEN '[]' ELSE '[''' || REPLACE(REPLACE(TRIM("property_value", '[]'), ', ', ','), ',', ''', ''') || ''']' END ELSE
+      "property_value" END AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - allowed_api_authentication_integrations
+      - allowed_authentication_secrets
+      - allowed_network_rules
+      - comment
+      - enabled
+      sql:
+      - ALTER EXTERNAL ACCESS INTEGRATION COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_COMBINED SET ALLOWED_NETWORK_RULES
+        = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR1, COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_NR2)
+        ALLOWED_API_AUTHENTICATION_INTEGRATIONS = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_SI1, COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F_SI2)
+        ALLOWED_AUTHENTICATION_SECRETS = (COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_S1, COVERAGE_EXTERNAL_ACCESS_INTEGRATION_D0F14E2F.PUBLIC.COVERAGE_S2)
+        ENABLED = TRUE COMMENT = $$b$$
+      result: pass
+    tested_inputs: 2db00f562085
 - object: EXTERNAL AGENT
   variant: null
   scope_level: schema
