@@ -15803,13 +15803,27 @@ objects:
       field: as_
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T
+      - SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T WHERE ID > 0
+      evidence:
+        create_sql:
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R00_QUERY (ID, NAME) TARGET_LAG = $$DOWNSTREAM$$ WAREHOUSE
+          = STATIC_WAREHOUSE refresh_mode = AUTO initialize = ON_SCHEDULE as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R00_QUERY SET as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+          WHERE ID > 0
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          73 unexpected ''as''. on: ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R00_QUERY SET as SELECT ID,
+          NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVE ...'
+        L5: fails because L4 fails
   - name: refresh_using
     sql: REFRESH USING ( <dml_statement> )
     kind: property
@@ -15851,11 +15865,30 @@ objects:
       field: columns[].name
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+        - name: NAME
+      - - name: ID2
+        - name: NAME
+      truth: first_column
+      expect:
+      - ID
+      - ID2
+      evidence:
+        create_sql:
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R01_COLUMNS___NAME (ID, NAME) TARGET_LAG = $$DOWNSTREAM$$
+          WAREHOUSE = STATIC_WAREHOUSE refresh_mode = AUTO initialize = ON_SCHEDULE as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R01_COLUMNS___NAME SET (ID2, NAME)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          82 unexpected ''(''. on: ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R01_COLUMNS___NAME SET (ID2,
+          NAME)'
+        L5: fails because L4 fails
   - name: columns[].data_type
     sql: <col_type>
     kind: property
@@ -15897,11 +15930,33 @@ objects:
       field: columns[].comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          comment: a
+        - name: NAME
+      - - name: ID
+          comment: b
+        - name: NAME
+      truth: id_comment
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R02_COLUMNS___COMMENT (ID COMMENT 'a', NAME) TARGET_LAG
+          = $$DOWNSTREAM$$ WAREHOUSE = STATIC_WAREHOUSE refresh_mode = AUTO initialize = ON_SCHEDULE as SELECT ID, NAME FROM
+          COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R02_COLUMNS___COMMENT SET (ID COMMENT 'b', NAME)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          85 unexpected ''(''. on: ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R02_COLUMNS___COMMENT SET (ID
+          COMMENT ''b'', NAME)'
+        L5: fails because L4 fails
   - name: columns[].collate
     sql: COLLATE '<collation_specification>'
     kind: property
@@ -16041,11 +16096,21 @@ objects:
       field: target_lag
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - DOWNSTREAM
+      - 7 days
+      truth: target_lag
+      evidence:
+        create_sql:
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R03_TARGET_LAG (ID, NAME) TARGET_LAG = $$DOWNSTREAM$$
+          WAREHOUSE = STATIC_WAREHOUSE refresh_mode = AUTO initialize = ON_SCHEDULE as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R03_TARGET_LAG SET TARGET_LAG = $$7 days$$
   - name: scheduler
     sql: SCHEDULER
     kind: property
@@ -16087,11 +16152,21 @@ objects:
       field: warehouse
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - STATIC_WAREHOUSE
+      - '{database}_WH'
+      truth: warehouse
+      evidence:
+        create_sql:
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R04_WAREHOUSE (ID, NAME) TARGET_LAG = $$DOWNSTREAM$$
+          WAREHOUSE = STATIC_WAREHOUSE refresh_mode = AUTO initialize = ON_SCHEDULE as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R04_WAREHOUSE SET WAREHOUSE = COVERAGE_DYNAMIC_TABLE_DC9BC0E5_WH
   - name: initialization_warehouse
     sql: INITIALIZATION_WAREHOUSE
     kind: relationship
@@ -16134,13 +16209,27 @@ objects:
       field: refresh_mode
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - FULL
+      - INCREMENTAL
+      truth: refresh_mode
+      evidence:
+        create_sql:
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R05_REFRESH_MODE (ID, NAME) TARGET_LAG = $$DOWNSTREAM$$
+          WAREHOUSE = STATIC_WAREHOUSE refresh_mode = FULL initialize = ON_SCHEDULE as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R05_REFRESH_MODE SET refresh_mode = INCREMENTAL
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''refresh_mode''
+          for ''DYNAMIC_TABLE'' on: ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R05_REFRESH_MODE SET refresh_mode
+          = INCREMENTAL'
+        L5: fails because L4 fails
   - name: initialize
     sql: INITIALIZE
     kind: property
@@ -16435,11 +16524,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R06_COMMENT (ID, NAME) TARGET_LAG = $$DOWNSTREAM$$ WAREHOUSE
+          = STATIC_WAREHOUSE refresh_mode = AUTO initialize = ON_SCHEDULE COMMENT = $$a$$ as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R06_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -16580,11 +16679,29 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R07_TAGS SET TAG COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_TAG='a'
+        - CREATE DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R07_TAGS (ID, NAME) TARGET_LAG = $$DOWNSTREAM$$ WAREHOUSE
+          = STATIC_WAREHOUSE refresh_mode = AUTO initialize = ON_SCHEDULE as SELECT ID, NAME FROM COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R07_TAGS?domain=DYNAMIC TABLE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_DYNAMIC_TABLE_DC9BC0E5''. on: ALTER TAG REFERENCE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.R07_TAGS?domain=DYNAMIC
+          TABLE SET'
+        L5: fails because L4 fails
   - name: contacts
     sql: WITH CONTACT / SET CONTACT
     kind: relationship
@@ -16867,8 +16984,38 @@ objects:
     reason: deprecated
   snowcap:
     class: DynamicTable
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T (ID NUMBER(38,0), NAME VARCHAR(16777216))
+    - CREATE WAREHOUSE {database}_WH WAREHOUSE_SIZE = XSMALL INITIALLY_SUSPENDED = TRUE AUTO_RESUME = FALSE AUTO_SUSPEND =
+      60
+    - USE WAREHOUSE STATIC_WAREHOUSE
+    teardown:
+    - DROP WAREHOUSE IF EXISTS {database}_WH
+    create_args:
+      columns:
+      - name: ID
+      - name: NAME
+      target_lag: DOWNSTREAM
+      warehouse: STATIC_WAREHOUSE
+      initialize: ON_SCHEDULE
+      as_: SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T
+    truth:
+    - SHOW DYNAMIC TABLES LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
+    - SELECT 'first_column' AS key, column_name AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'PUBLIC'
+      AND table_name = '{name}' AND ordinal_position = 1 UNION ALL SELECT 'id_comment', comment FROM {database}.INFORMATION_SCHEMA.COLUMNS
+      WHERE table_schema = 'PUBLIC' AND table_name = '{name}' AND column_name = 'ID'
+    combined:
+      fields:
+      - target_lag
+      - warehouse
+      sql:
+      - ALTER DYNAMIC TABLE COVERAGE_DYNAMIC_TABLE_DC9BC0E5.PUBLIC.COMBINED SET TARGET_LAG = $$7 days$$ WAREHOUSE = COVERAGE_DYNAMIC_TABLE_DC9BC0E5_WH
+      result: pass
+    tested_inputs: f13adcbf04dd
 - object: DYNAMIC TABLE
   variant: iceberg
   scope_level: schema
@@ -34120,13 +34267,26 @@ objects:
       field: as_
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T
+      - SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T WHERE ID > 0
+      evidence:
+        create_sql:
+        - CREATE MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R00_AS as SELECT ID, NAME FROM COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R00_AS SET as SELECT ID, NAME FROM COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_T
+          WHERE ID > 0
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          78 unexpected ''as''. on: ALTER MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R00_AS SET as SELECT
+          ID, NAME FROM COVERAGE_MATERIALIZED_VIEW_4B154FDC.PU ...'
+        L5: fails because L4 fails
   - name: secure
     sql: SECURE
     kind: property
@@ -34144,11 +34304,19 @@ objects:
       field: secure
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - true
+      - false
+      truth: is_secure
+      evidence:
+        L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 86 unexpected
+          ''as''. on: CREATE MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R01_SECURE SECURE as SELECT ID,
+          NAME FROM COVERAGE_MATERIALIZED_VIEW_4B1 ...'
   - name: comment
     sql: COMMENT
     kind: property
@@ -34166,11 +34334,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R02_COMMENT COMMENT = $$a$$ as SELECT ID, NAME
+          FROM COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -34213,11 +34391,31 @@ objects:
       field: columns[].name
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID2
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      truth: first_column
+      expect:
+      - ID
+      - ID2
+      evidence:
+        create_sql:
+        - CREATE MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R03_COLUMNS___NAME (ID, NAME) as SELECT ID,
+          NAME FROM COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_T
+        L4: 'a change to [{''name'': ''ID2'', ''data_type'': ''NUMBER(38,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)''}]
+          plans nothing'
+        L5: fails because L4 fails
   - name: columns[].masking_policy
     sql: <col> [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1> , <cond_col1> , ... ) ]
     kind: relationship
@@ -34308,11 +34506,38 @@ objects:
       field: columns[].tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
-        L4: untested
-        L5: untested
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': a
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': b
+        - name: NAME
+          data_type: VARCHAR(16777216)
+      truth: id_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R04_COLUMNS___TAGS (ID, NAME) as SELECT ID,
+          NAME FROM COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_T
+        L2: 'declared [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)'', ''tags'': {''COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_TAG'':
+          ''a''}}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)''}], Snowflake reports id_tag=None'
+        L3: CREATE did not write the value, so the read-back of the path has no reference
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(38,0)'', ''tags'': {''COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_TAG'':
+          ''a''}}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(16777216)''}] plans nothing'
+        L5: fails because L4 fails
   - name: row_access_policy
     sql: '[ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , ... ] )'
     kind: relationship
@@ -34379,11 +34604,28 @@ objects:
       field: cluster_by
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - ID
+      - - NAME
+      truth: cluster_by
+      expect:
+      - LINEAR(ID)
+      - LINEAR(NAME)
+      evidence:
+        create_sql:
+        - CREATE MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R05_CLUSTER_BY CLUSTER BY (ID) as SELECT ID,
+          NAME FROM COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.COVERAGE_T
+        L4_sql:
+        - ALTER MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R05_CLUSTER_BY SET CLUSTER BY (NAME)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          86 unexpected ''CLUSTER''. on: ALTER MATERIALIZED VIEW COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLIC.R05_CLUSTER_BY
+          SET CLUSTER BY (NAME)'
+        L5: fails because L4 fails
   - name: recluster
     sql: '{ SUSPEND | RESUME } RECLUSTER'
     kind: property
@@ -34520,11 +34762,22 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: ProgrammingError: 391806 (0A000): SQL compilation error: Invalid value MATERIALIZED_VIEW for argument
+          OBJECT_TYPE. Please use object type TABLE for all kinds of table-like objects. on: SELECT * FROM table(COVERAGE_MATERIALIZED_VIEW_4B154FDC.information_schema.tag_references(
+          ''COVERAGE_MATERIALIZED_VIEW_4B154FDC.PUBLI'
   - name: contacts
     sql: WITH CONTACT / SET CONTACT
     kind: relationship
@@ -34592,8 +34845,24 @@ objects:
     reason: deprecated
   snowcap:
     class: MaterializedView
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T (ID NUMBER(38,0), NAME VARCHAR(16777216))
+    create_args:
+      as_: SELECT ID, NAME FROM {database}.PUBLIC.COVERAGE_T
+    truth:
+    - SHOW MATERIALIZED VIEWS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
+    - SELECT 'id_tag' AS key, tag_value AS value FROM TABLE({database}.INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS('{fqn}',
+      'table')) WHERE column_name = 'ID' AND tag_name = 'COVERAGE_TAG'
+    - SELECT 'first_column' AS key, column_name AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'PUBLIC'
+      AND table_name = '{name}' AND ordinal_position = 1
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 05bd3a3b75e4
 - object: MCP SERVER
   variant: null
   scope_level: schema
@@ -59672,11 +59941,22 @@ objects:
       field: on_stage
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_STG1'
+      - '{database}.PUBLIC.COVERAGE_STG2'
+      truth: table_name
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_DIRECTORY_TABLE_30E1736B.PUBLIC.R00_ON_STAGE ON STAGE COVERAGE_STREAM_DIRECTORY_TABLE_30E1736B.PUBLIC.COVERAGE_STG1
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:stream/COVERAGE_STREAM_DIRECTORY_TABLE_30E1736B.PUBLIC.R00_ON_STAGE:
+          changing ''on_stage'' requires replacing the resource, which snowcap does not do. Snowflake''s ALTER STREAM cannot
+          change a stream''s source. Replacing the stream resets its offset, so any unread changes are'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: comment
     sql: COMMENT
     kind: property
@@ -59695,11 +59975,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_DIRECTORY_TABLE_30E1736B.PUBLIC.R01_COMMENT ON STAGE COVERAGE_STREAM_DIRECTORY_TABLE_30E1736B.PUBLIC.COVERAGE_STG1
+          COMMENT = $$a$$
+        L4_sql:
+        - ALTER STREAM COVERAGE_STREAM_DIRECTORY_TABLE_30E1736B.PUBLIC.R01_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -59791,8 +60081,19 @@ objects:
   excluded: []
   snowcap:
     class: StageStream
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG1 DIRECTORY = (ENABLE = TRUE)
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG2 DIRECTORY = (ENABLE = TRUE)
+    create_args:
+      on_stage: '{database}.PUBLIC.COVERAGE_STG1'
+    truth:
+    - SHOW STREAMS LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: 84f896fc639a
 - object: STREAM
   variant: dynamic_table
   scope_level: schema
@@ -59879,11 +60180,23 @@ objects:
       field: on_dynamic_table
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_DT1'
+      - '{database}.PUBLIC.COVERAGE_DT2'
+      truth: table_name
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_DYNAMIC_TABLE_B30DCB25.PUBLIC.R00_ON_DYNAMIC_TABLE ON DYNAMIC TABLE COVERAGE_STREAM_DYNAMIC_TABLE_B30DCB25.PUBLIC.COVERAGE_DT1
+          APPEND_ONLY = FALSE
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:stream/COVERAGE_STREAM_DYNAMIC_TABLE_B30DCB25.PUBLIC.R00_ON_DYNAMIC_TABLE:
+          changing ''on_dynamic_table'' requires replacing the resource, which snowcap does not do. Snowflake''s ALTER STREAM
+          cannot change a stream''s source. Replacing the stream resets its offset, so any unre'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: comment
     sql: COMMENT
     kind: property
@@ -59902,11 +60215,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STREAM COVERAGE_STREAM_DYNAMIC_TABLE_B30DCB25.PUBLIC.R01_COMMENT ON DYNAMIC TABLE COVERAGE_STREAM_DYNAMIC_TABLE_B30DCB25.PUBLIC.COVERAGE_DT1
+          APPEND_ONLY = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER STREAM COVERAGE_STREAM_DYNAMIC_TABLE_B30DCB25.PUBLIC.R01_COMMENT SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -59997,13 +60320,27 @@ objects:
   excluded: []
   snowcap:
     class: DynamicTableStream
-    test: untested
+    test: live
     field_notes:
       append_only: 'snowcap-only: CREATE STREAM ... ON DYNAMIC TABLE has no APPEND_ONLY clause.'
       at: 'snowcap-only: CREATE STREAM ... ON DYNAMIC TABLE has no AT clause.'
       before: 'snowcap-only: CREATE STREAM ... ON DYNAMIC TABLE has no BEFORE clause.'
       show_initial_rows: 'snowcap-only: CREATE STREAM ... ON DYNAMIC TABLE has no SHOW_INITIAL_ROWS clause.'
     unmapped_fields: []
+    setup:
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T (ID NUMBER(38,0))
+    - CREATE DYNAMIC TABLE {database}.PUBLIC.COVERAGE_DT1 TARGET_LAG = DOWNSTREAM WAREHOUSE = STATIC_WAREHOUSE REFRESH_MODE
+      = INCREMENTAL INITIALIZE = ON_SCHEDULE AS SELECT ID FROM {database}.PUBLIC.COVERAGE_T
+    - CREATE DYNAMIC TABLE {database}.PUBLIC.COVERAGE_DT2 TARGET_LAG = DOWNSTREAM WAREHOUSE = STATIC_WAREHOUSE REFRESH_MODE
+      = INCREMENTAL INITIALIZE = ON_SCHEDULE AS SELECT ID FROM {database}.PUBLIC.COVERAGE_T
+    create_args:
+      on_dynamic_table: '{database}.PUBLIC.COVERAGE_DT1'
+    truth:
+    - SHOW STREAMS LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields: []
+      result: untested (needs two or more fields)
+    tested_inputs: a24e69570352
 - object: STREAM
   variant: event_table
   scope_level: schema
