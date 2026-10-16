@@ -21148,11 +21148,28 @@ objects:
       field: compression
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - GZIP
+      - BZ2
+      truth: compression
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R00_COMPRESSION type = CSV compression = GZIP RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R00_COMPRESSION SET compression = BZ2
   - name: record_delimiter
     sql: RECORD_DELIMITER = '<string>' | NONE
     kind: property
@@ -21170,11 +21187,26 @@ objects:
       field: record_delimiter
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '|'
+      - '#'
+      truth: record_delimiter
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R01_RECORD_DELIMITER type = CSV compression = AUTO
+          RECORD_DELIMITER = $$|$$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$
+          TRIM_SPACE = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R01_RECORD_DELIMITER SET RECORD_DELIMITER = $$#$$
   - name: field_delimiter
     sql: FIELD_DELIMITER = '<string>' | NONE
     kind: property
@@ -21192,11 +21224,28 @@ objects:
       field: field_delimiter
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - ;
+      - ':'
+      truth: field_delimiter
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R02_FIELD_DELIMITER type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$;$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R02_FIELD_DELIMITER SET FIELD_DELIMITER = $$:$$
   - name: multi_line
     sql: MULTI_LINE = TRUE | FALSE
     kind: property
@@ -21237,11 +21286,28 @@ objects:
       field: file_extension
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - .txt
+      - .dat
+      truth: file_extension
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R03_FILE_EXTENSION type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ FILE_EXTENSION = $$.txt$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE
+          DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD
+          = $$\$$ TRIM_SPACE = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R03_FILE_EXTENSION SET FILE_EXTENSION = $$.dat$$
   - name: parse_header
     sql: PARSE_HEADER = TRUE | FALSE
     kind: property
@@ -21259,11 +21325,28 @@ objects:
       field: parse_header
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: parse_header
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R04_PARSE_HEADER type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = TRUE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$ TIME_FORMAT
+          = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE = FALSE NULL_IF
+          = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R04_PARSE_HEADER SET PARSE_HEADER = FALSE
   - name: skip_header
     sql: SKIP_HEADER = <integer>
     kind: property
@@ -21281,11 +21364,28 @@ objects:
       field: skip_header
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 0
+      - 1
+      truth: skip_header
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R05_SKIP_HEADER type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R05_SKIP_HEADER SET SKIP_HEADER = 1
   - name: skip_blank_lines
     sql: SKIP_BLANK_LINES = TRUE | FALSE
     kind: property
@@ -21303,11 +21403,28 @@ objects:
       field: skip_blank_lines
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: skip_blank_lines
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R06_SKIP_BLANK_LINES type = CSV compression = AUTO
+          RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = TRUE DATE_FORMAT = $$AUTO$$ TIME_FORMAT
+          = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE = FALSE NULL_IF
+          = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R06_SKIP_BLANK_LINES SET SKIP_BLANK_LINES = FALSE
   - name: date_format
     sql: DATE_FORMAT = '<string>' | AUTO
     kind: property
@@ -21325,11 +21442,28 @@ objects:
       field: date_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - YYYY-MM-DD
+      - DD/MM/YYYY
+      truth: date_format
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R07_DATE_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$YYYY-MM-DD$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R07_DATE_FORMAT SET DATE_FORMAT = $$DD/MM/YYYY$$
   - name: time_format
     sql: TIME_FORMAT = '<string>' | AUTO
     kind: property
@@ -21347,11 +21481,28 @@ objects:
       field: time_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - HH24:MI
+      - HH24:MI:SS
+      truth: time_format
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R08_TIME_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$HH24:MI$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R08_TIME_FORMAT SET TIME_FORMAT = $$HH24:MI:SS$$
   - name: timestamp_format
     sql: TIMESTAMP_FORMAT = '<string>' | AUTO
     kind: property
@@ -21369,11 +21520,29 @@ objects:
       field: timestamp_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - YYYY-MM-DD HH24:MI
+      - YYYY-MM-DD HH24:MI:SS
+      truth: timestamp_format
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R09_TIMESTAMP_FORMAT type = CSV compression = AUTO
+          RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$YYYY-MM-DD HH24:MI$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$
+          TRIM_SPACE = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R09_TIMESTAMP_FORMAT SET TIMESTAMP_FORMAT = $$YYYY-MM-DD
+          HH24:MI:SS$$
   - name: binary_format
     sql: BINARY_FORMAT = HEX | BASE64 | UTF8
     kind: property
@@ -21391,11 +21560,28 @@ objects:
       field: binary_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - BASE64
+      - UTF8
+      truth: binary_format
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R10_BINARY_FORMAT type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = BASE64 ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R10_BINARY_FORMAT SET binary_format = UTF8
   - name: escape
     sql: ESCAPE = '<character>' | NONE
     kind: property
@@ -21413,11 +21599,28 @@ objects:
       field: escape
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - ^
+      - '~'
+      truth: escape
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R11_ESCAPE type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE = $$^$$ ESCAPE_UNENCLOSED_FIELD =
+          $$\$$ TRIM_SPACE = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R11_ESCAPE SET ESCAPE = $$~$$
   - name: escape_unenclosed_field
     sql: ESCAPE_UNENCLOSED_FIELD = '<character>' | NONE
     kind: property
@@ -21435,11 +21638,29 @@ objects:
       field: escape_unenclosed_field
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '!'
+      - '%'
+      truth: escape_unenclosed_field
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R12_ESCAPE_UNENCLOSED_FIELD type = CSV compression
+          = AUTO RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$!$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R12_ESCAPE_UNENCLOSED_FIELD SET ESCAPE_UNENCLOSED_FIELD
+          = $$%$$
   - name: trim_space
     sql: TRIM_SPACE = TRUE | FALSE
     kind: property
@@ -21457,11 +21678,28 @@ objects:
       field: trim_space
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: trim_space
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R13_TRIM_SPACE type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = TRUE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R13_TRIM_SPACE SET TRIM_SPACE = FALSE
   - name: field_optionally_enclosed_by
     sql: FIELD_OPTIONALLY_ENCLOSED_BY = '<character>' | NONE
     kind: property
@@ -21479,11 +21717,32 @@ objects:
       field: field_optionally_enclosed_by
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - ''''
+      - '"'
+      truth: field_optionally_enclosed_by
+      expect:
+      - ''''
+      - \"
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R14_FIELD_OPTIONALLY_ENCLOSED_BY type = CSV compression
+          = AUTO RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE FIELD_OPTIONALLY_ENCLOSED_BY = $$''$$ NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R14_FIELD_OPTIONALLY_ENCLOSED_BY SET FIELD_OPTIONALLY_ENCLOSED_BY
+          = $$"$$
   - name: null_if[]
     sql: NULL_IF = ( '<string>' [ , '<string>' ... ] )
     kind: property
@@ -21501,11 +21760,30 @@ objects:
       field: null_if
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - a
+        - b
+      - - c
+      truth: null_if_list
+      expect:
+      - '[''a'', ''b'']'
+      - '[''c'']'
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R15_NULL_IF__ type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$a$$, $$b$$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL
+          = TRUE SKIP_BYTE_ORDER_MARK = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R15_NULL_IF__ SET NULL_IF = ($$c$$)
   - name: error_on_column_count_mismatch
     sql: ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE | FALSE
     kind: property
@@ -21523,11 +21801,29 @@ objects:
       field: error_on_column_count_mismatch
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: error_on_column_count_mismatch
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R16_ERROR_ON_COLUMN_COUNT_MISMATCH type = CSV compression
+          = AUTO RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R16_ERROR_ON_COLUMN_COUNT_MISMATCH SET ERROR_ON_COLUMN_COUNT_MISMATCH
+          = TRUE
   - name: replace_invalid_characters
     sql: REPLACE_INVALID_CHARACTERS = TRUE | FALSE
     kind: parameter
@@ -21545,11 +21841,29 @@ objects:
       field: replace_invalid_characters
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: replace_invalid_characters
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R17_REPLACE_INVALID_CHARACTERS type = CSV compression
+          = AUTO RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = TRUE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R17_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
+          = FALSE
   - name: empty_field_as_null
     sql: EMPTY_FIELD_AS_NULL = TRUE | FALSE
     kind: property
@@ -21567,11 +21881,28 @@ objects:
       field: empty_field_as_null
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: empty_field_as_null
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R18_EMPTY_FIELD_AS_NULL type = CSV compression = AUTO
+          RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = FALSE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R18_EMPTY_FIELD_AS_NULL SET EMPTY_FIELD_AS_NULL = TRUE
   - name: skip_byte_order_mark
     sql: SKIP_BYTE_ORDER_MARK = TRUE | FALSE
     kind: property
@@ -21589,11 +21920,28 @@ objects:
       field: skip_byte_order_mark
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: skip_byte_order_mark
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R19_SKIP_BYTE_ORDER_MARK type = CSV compression = AUTO
+          RECORD_DELIMITER = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = FALSE ENCODING = $$UTF8$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R19_SKIP_BYTE_ORDER_MARK SET SKIP_BYTE_ORDER_MARK = TRUE
   - name: encoding
     sql: ENCODING = '<string>' | UTF8
     kind: property
@@ -21611,11 +21959,28 @@ objects:
       field: encoding
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - UTF16
+      - UTF32
+      truth: encoding
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R20_ENCODING type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF16$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R20_ENCODING SET ENCODING = $$UTF32$$
   - name: comment
     sql: COMMENT
     kind: property
@@ -21633,11 +21998,28 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - 'CREATE FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R21_COMMENT type = CSV compression = AUTO RECORD_DELIMITER
+          = $$
+
+          $$ FIELD_DELIMITER = $$,$$ PARSE_HEADER = FALSE SKIP_HEADER = 0 SKIP_BLANK_LINES = FALSE DATE_FORMAT = $$AUTO$$
+          TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX ESCAPE_UNENCLOSED_FIELD = $$\$$ TRIM_SPACE
+          = FALSE NULL_IF = ($$
+
+          $$) ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+          = TRUE ENCODING = $$UTF8$$ COMMENT = $$a$$'
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.R21_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -21679,8 +22061,48 @@ objects:
   excluded: []
   snowcap:
     class: CSVFileFormat
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - SHOW FILE FORMATS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'null_if_list' AS key, '[''' || ARRAY_TO_STRING(PARSE_JSON("format_options"):NULL_IF::ARRAY, ''', ''') || ''']'
+      AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    - DESCRIBE FILE FORMAT {fqn}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - binary_format
+      - comment
+      - compression
+      - date_format
+      - empty_field_as_null
+      - encoding
+      - error_on_column_count_mismatch
+      - escape
+      - escape_unenclosed_field
+      - field_delimiter
+      - field_optionally_enclosed_by
+      - file_extension
+      - null_if
+      - parse_header
+      - record_delimiter
+      - replace_invalid_characters
+      - skip_blank_lines
+      - skip_byte_order_mark
+      - skip_header
+      - time_format
+      - timestamp_format
+      - trim_space
+      sql:
+      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_CSV_2C137812.PUBLIC.COMBINED SET compression = BZ2 RECORD_DELIMITER = $$#$$
+        FIELD_DELIMITER = $$:$$ FILE_EXTENSION = $$.dat$$ PARSE_HEADER = FALSE SKIP_HEADER = 1 SKIP_BLANK_LINES = FALSE DATE_FORMAT
+        = $$DD/MM/YYYY$$ TIME_FORMAT = $$HH24:MI:SS$$ TIMESTAMP_FORMAT = $$YYYY-MM-DD HH24:MI:SS$$ binary_format = UTF8 ESCAPE
+        = $$~$$ ESCAPE_UNENCLOSED_FIELD = $$%$$ TRIM_SPACE = FALSE FIELD_OPTIONALLY_ENCLOSED_BY = $$"$$ NULL_IF = ($$c$$)
+        ERROR_ON_COLUMN_COUNT_MISMATCH = TRUE REPLACE_INVALID_CHARACTERS = FALSE EMPTY_FIELD_AS_NULL = TRUE SKIP_BYTE_ORDER_MARK
+        = TRUE ENCODING = $$UTF32$$ COMMENT = $$b$$
+      result: pass
+    tested_inputs: 7e83f3b61b36
 - object: FILE FORMAT
   variant: json
   scope_level: schema
@@ -21815,11 +22237,23 @@ objects:
       field: compression
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - GZIP
+      - BZ2
+      truth: compression
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R00_COMPRESSION type = JSON compression = GZIP DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
+          = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R00_COMPRESSION SET compression = BZ2
   - name: date_format
     sql: DATE_FORMAT = '<string>' | AUTO
     kind: property
@@ -21837,11 +22271,23 @@ objects:
       field: date_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - YYYY-MM-DD
+      - DD/MM/YYYY
+      truth: date_format
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R01_DATE_FORMAT type = JSON compression = AUTO DATE_FORMAT
+          = $$YYYY-MM-DD$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
+          = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R01_DATE_FORMAT SET DATE_FORMAT = $$DD/MM/YYYY$$
   - name: time_format
     sql: TIME_FORMAT = '<string>' | AUTO
     kind: property
@@ -21859,11 +22305,23 @@ objects:
       field: time_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - HH24:MI
+      - HH24:MI:SS
+      truth: time_format
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R02_TIME_FORMAT type = JSON compression = AUTO DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$HH24:MI$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
+          = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R02_TIME_FORMAT SET TIME_FORMAT = $$HH24:MI:SS$$
   - name: timestamp_format
     sql: TIMESTAMP_FORMAT = '<string>' | AUTO
     kind: property
@@ -21881,11 +22339,24 @@ objects:
       field: timestamp_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - YYYY-MM-DD HH24:MI
+      - YYYY-MM-DD HH24:MI:SS
+      truth: timestamp_format
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R03_TIMESTAMP_FORMAT type = JSON compression = AUTO
+          DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$YYYY-MM-DD HH24:MI$$ binary_format = HEX TRIM_SPACE
+          = FALSE FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
+          = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R03_TIMESTAMP_FORMAT SET TIMESTAMP_FORMAT = $$YYYY-MM-DD
+          HH24:MI:SS$$
   - name: binary_format
     sql: BINARY_FORMAT = HEX | BASE64 | UTF8
     kind: property
@@ -21903,11 +22374,23 @@ objects:
       field: binary_format
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - BASE64
+      - UTF8
+      truth: binary_format
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R04_BINARY_FORMAT type = JSON compression = AUTO DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = BASE64 TRIM_SPACE = FALSE FILE_EXTENSION
+          = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R04_BINARY_FORMAT SET binary_format = UTF8
   - name: trim_space
     sql: TRIM_SPACE = TRUE | FALSE
     kind: property
@@ -21925,11 +22408,23 @@ objects:
       field: trim_space
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: trim_space
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R05_TRIM_SPACE type = JSON compression = AUTO DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = TRUE FILE_EXTENSION
+          = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R05_TRIM_SPACE SET TRIM_SPACE = FALSE
   - name: multi_line
     sql: MULTI_LINE = TRUE | FALSE
     kind: property
@@ -21970,11 +22465,27 @@ objects:
       field: null_if
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - a
+        - b
+      - - c
+      truth: null_if_list
+      expect:
+      - '[''a'', ''b'']'
+      - '[''c'']'
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R06_NULL_IF__ type = JSON compression = AUTO DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE NULL_IF = ($$a$$,
+          $$b$$) FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
+          = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R06_NULL_IF__ SET NULL_IF = ($$c$$)
   - name: file_extension
     sql: FILE_EXTENSION = '<string>' | NONE
     kind: property
@@ -21992,11 +22503,23 @@ objects:
       field: file_extension
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - .txt
+      - .dat
+      truth: file_extension
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R07_FILE_EXTENSION type = JSON compression = AUTO DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
+          = $$.txt$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R07_FILE_EXTENSION SET FILE_EXTENSION = $$.dat$$
   - name: enable_octal
     sql: ENABLE_OCTAL = TRUE | FALSE
     kind: property
@@ -22014,11 +22537,23 @@ objects:
       field: enable_octal
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: enable_octal
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R08_ENABLE_OCTAL type = JSON compression = AUTO DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
+          = $$json$$ ENABLE_OCTAL = TRUE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R08_ENABLE_OCTAL SET ENABLE_OCTAL = FALSE
   - name: allow_duplicate
     sql: ALLOW_DUPLICATE = TRUE | FALSE
     kind: property
@@ -22036,11 +22571,23 @@ objects:
       field: allow_duplicate
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: allow_duplicate
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R09_ALLOW_DUPLICATE type = JSON compression = AUTO
+          DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
+          FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = TRUE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
+          = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R09_ALLOW_DUPLICATE SET ALLOW_DUPLICATE = FALSE
   - name: strip_outer_array
     sql: STRIP_OUTER_ARRAY = TRUE | FALSE
     kind: property
@@ -22058,11 +22605,23 @@ objects:
       field: strip_outer_array
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: strip_outer_array
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R10_STRIP_OUTER_ARRAY type = JSON compression = AUTO
+          DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
+          FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = TRUE STRIP_NULL_VALUES
+          = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R10_STRIP_OUTER_ARRAY SET STRIP_OUTER_ARRAY = FALSE
   - name: strip_null_values
     sql: STRIP_NULL_VALUES = TRUE | FALSE
     kind: property
@@ -22080,11 +22639,23 @@ objects:
       field: strip_null_values
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: strip_null_values
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R11_STRIP_NULL_VALUES type = JSON compression = AUTO
+          DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
+          FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
+          = TRUE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R11_STRIP_NULL_VALUES SET STRIP_NULL_VALUES = FALSE
   - name: replace_invalid_characters
     sql: REPLACE_INVALID_CHARACTERS = TRUE | FALSE
     kind: parameter
@@ -22102,11 +22673,24 @@ objects:
       field: replace_invalid_characters
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: replace_invalid_characters
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R12_REPLACE_INVALID_CHARACTERS type = JSON compression
+          = AUTO DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE
+          = FALSE FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
+          = FALSE REPLACE_INVALID_CHARACTERS = TRUE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R12_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
+          = FALSE
   - name: ignore_utf8_errors
     sql: IGNORE_UTF8_ERRORS = TRUE | FALSE
     kind: property
@@ -22124,11 +22708,23 @@ objects:
       field: ignore_utf8_errors
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: ignore_utf8_errors
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R13_IGNORE_UTF8_ERRORS type = JSON compression = AUTO
+          DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE
+          FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
+          = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R13_IGNORE_UTF8_ERRORS SET IGNORE_UTF8_ERRORS = TRUE
   - name: skip_byte_order_mark
     sql: SKIP_BYTE_ORDER_MARK = TRUE | FALSE
     kind: property
@@ -22146,11 +22742,24 @@ objects:
       field: skip_byte_order_mark
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: skip_byte_order_mark
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R14_SKIP_BYTE_ORDER_MARK type = JSON compression =
+          AUTO DATE_FORMAT = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE =
+          FALSE FILE_EXTENSION = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES
+          = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = FALSE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R14_SKIP_BYTE_ORDER_MARK SET SKIP_BYTE_ORDER_MARK =
+          TRUE
   - name: comment
     sql: COMMENT
     kind: property
@@ -22168,11 +22777,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R15_COMMENT type = JSON compression = AUTO DATE_FORMAT
+          = $$AUTO$$ TIME_FORMAT = $$AUTO$$ TIMESTAMP_FORMAT = $$AUTO$$ binary_format = HEX TRIM_SPACE = FALSE FILE_EXTENSION
+          = $$json$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS
+          = FALSE IGNORE_UTF8_ERRORS = FALSE SKIP_BYTE_ORDER_MARK = TRUE COMMENT = $$a$$
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.R15_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -22214,8 +22835,41 @@ objects:
   excluded: []
   snowcap:
     class: JSONFileFormat
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - SHOW FILE FORMATS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'null_if_list' AS key, '[''' || ARRAY_TO_STRING(PARSE_JSON("format_options"):NULL_IF::ARRAY, ''', ''') || ''']'
+      AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    - DESCRIBE FILE FORMAT {fqn}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - allow_duplicate
+      - binary_format
+      - comment
+      - compression
+      - date_format
+      - enable_octal
+      - file_extension
+      - ignore_utf8_errors
+      - null_if
+      - replace_invalid_characters
+      - skip_byte_order_mark
+      - strip_null_values
+      - strip_outer_array
+      - time_format
+      - timestamp_format
+      - trim_space
+      sql:
+      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_JSON_02861F72.PUBLIC.COMBINED SET compression = BZ2 DATE_FORMAT = $$DD/MM/YYYY$$
+        TIME_FORMAT = $$HH24:MI:SS$$ TIMESTAMP_FORMAT = $$YYYY-MM-DD HH24:MI:SS$$ binary_format = UTF8 TRIM_SPACE = FALSE
+        NULL_IF = ($$c$$) FILE_EXTENSION = $$.dat$$ ENABLE_OCTAL = FALSE ALLOW_DUPLICATE = FALSE STRIP_OUTER_ARRAY = FALSE
+        STRIP_NULL_VALUES = FALSE REPLACE_INVALID_CHARACTERS = FALSE IGNORE_UTF8_ERRORS = TRUE SKIP_BYTE_ORDER_MARK = TRUE
+        COMMENT = $$b$$
+      result: pass
+    tested_inputs: 1cceab56e2c8
 - object: FILE FORMAT
   variant: orc
   scope_level: schema
@@ -22540,11 +23194,21 @@ objects:
       field: compression
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - SNAPPY
+      - LZO
+      truth: compression
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R00_COMPRESSION type = PARQUET compression = SNAPPY
+          BINARY_AS_TEXT = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R00_COMPRESSION SET compression = LZO
   - name: binary_as_text
     sql: BINARY_AS_TEXT = TRUE | FALSE
     kind: property
@@ -22562,11 +23226,21 @@ objects:
       field: binary_as_text
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: binary_as_text
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R01_BINARY_AS_TEXT type = PARQUET compression =
+          AUTO BINARY_AS_TEXT = FALSE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R01_BINARY_AS_TEXT SET BINARY_AS_TEXT = TRUE
   - name: use_logical_type
     sql: USE_LOGICAL_TYPE = TRUE | FALSE
     kind: property
@@ -22607,11 +23281,21 @@ objects:
       field: trim_space
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: trim_space
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R02_TRIM_SPACE type = PARQUET compression = AUTO
+          BINARY_AS_TEXT = TRUE TRIM_SPACE = TRUE REPLACE_INVALID_CHARACTERS = FALSE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R02_TRIM_SPACE SET TRIM_SPACE = FALSE
   - name: use_vectorized_scanner
     sql: USE_VECTORIZED_SCANNER = TRUE | FALSE
     kind: property
@@ -22652,11 +23336,22 @@ objects:
       field: replace_invalid_characters
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: replace_invalid_characters
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R03_REPLACE_INVALID_CHARACTERS type = PARQUET compression
+          = AUTO BINARY_AS_TEXT = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = TRUE
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R03_REPLACE_INVALID_CHARACTERS SET REPLACE_INVALID_CHARACTERS
+          = FALSE
   - name: null_if[]
     sql: NULL_IF = ( '<string>' [ , '<string>' ... ] )
     kind: property
@@ -22674,11 +23369,25 @@ objects:
       field: null_if
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - a
+        - b
+      - - c
+      truth: null_if_list
+      expect:
+      - '[''a'', ''b'']'
+      - '[''c'']'
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R04_NULL_IF__ type = PARQUET compression = AUTO
+          BINARY_AS_TEXT = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE NULL_IF = ($$a$$, $$b$$)
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R04_NULL_IF__ SET NULL_IF = ($$c$$)
   - name: comment
     sql: COMMENT
     kind: property
@@ -22696,11 +23405,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R05_COMMENT type = PARQUET compression = AUTO BINARY_AS_TEXT
+          = TRUE TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -22744,8 +23463,28 @@ objects:
     reason: 'deprecated: use COMPRESSION = SNAPPY instead'
   snowcap:
     class: ParquetFileFormat
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - SHOW FILE FORMATS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'null_if_list' AS key, '[''' || ARRAY_TO_STRING(PARSE_JSON("format_options"):NULL_IF::ARRAY, ''', ''') || ''']'
+      AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    - DESCRIBE FILE FORMAT {fqn}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - binary_as_text
+      - comment
+      - compression
+      - null_if
+      - replace_invalid_characters
+      - trim_space
+      sql:
+      - ALTER FILE FORMAT COVERAGE_FILE_FORMAT_PARQUET_772252C7.PUBLIC.COMBINED SET compression = LZO BINARY_AS_TEXT = TRUE
+        TRIM_SPACE = FALSE REPLACE_INVALID_CHARACTERS = FALSE NULL_IF = ($$c$$) COMMENT = $$b$$
+      result: pass
+    tested_inputs: 8541a4f06220
 - object: FILE FORMAT
   variant: xml
   scope_level: schema
@@ -44609,10 +45348,20 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - coverage_s1
+      - coverage_s2
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.R00_SECRET_STRING type = GENERIC_STRING SECRET_STRING
+          = $$coverage_s1$$
+        L3: declared 'coverage_s1', snowcap fetches None
+        L4: a change to 'coverage_s2' plans nothing
+        L5: fails because L4 fails
   - name: comment
     sql: COMMENT
     kind: property
@@ -44630,11 +45379,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.R01_COMMENT type = GENERIC_STRING SECRET_STRING = $$coverage_s0$$
+          COMMENT = $$a$$
+        L4_sql:
+        - ALTER SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.R01_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -44676,8 +45435,22 @@ objects:
   excluded: []
   snowcap:
     class: GenericSecret
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      secret_string: coverage_s0
+    truth:
+    - DESCRIBE SECRET {fqn}
+    combined:
+      fields:
+      - comment
+      - secret_string
+      sql:
+      - ALTER SECRET COVERAGE_SECRET_GENERIC_STRING_3939FD06.PUBLIC.COMBINED SET COMMENT = $$b$$
+      result: fail
+      missed:
+      - secret_string
+    tested_inputs: 4a08d8d3d730
 - object: SECRET
   variant: oauth2_authorization_code
   scope_level: schema
@@ -45212,11 +45985,21 @@ objects:
       field: username
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - coverage_u1
+      - coverage_u2
+      truth: username
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R00_USERNAME type = PASSWORD USERNAME = $$coverage_u1$$ PASSWORD
+          = $$coverage_p0$$
+        L4_sql:
+        - ALTER SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R00_USERNAME SET USERNAME = $$coverage_u2$$
   - name: password
     sql: PASSWORD
     kind: property
@@ -45235,10 +46018,20 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - coverage_p1
+      - coverage_p2
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R01_PASSWORD type = PASSWORD USERNAME = $$coverage_u0$$ PASSWORD
+          = $$coverage_p1$$
+        L3: declared 'coverage_p1', snowcap fetches None
+        L4: a change to 'coverage_p2' plans nothing
+        L5: fails because L4 fails
   - name: comment
     sql: COMMENT
     kind: property
@@ -45256,11 +46049,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R02_COMMENT type = PASSWORD USERNAME = $$coverage_u0$$ PASSWORD
+          = $$coverage_p0$$ COMMENT = $$a$$
+        L4_sql:
+        - ALTER SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -45302,8 +46105,24 @@ objects:
   excluded: []
   snowcap:
     class: PasswordSecret
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      username: coverage_u0
+      password: coverage_p0
+    truth:
+    - DESCRIBE SECRET {fqn}
+    combined:
+      fields:
+      - comment
+      - password
+      - username
+      sql:
+      - ALTER SECRET COVERAGE_SECRET_PASSWORD_DD4CA8EF.PUBLIC.COMBINED SET USERNAME = $$coverage_u2$$ COMMENT = $$b$$
+      result: fail
+      missed:
+      - password
+    tested_inputs: 34648156c6d4
 - object: SECRET
   variant: symmetric_key
   scope_level: schema
@@ -50796,13 +51615,25 @@ objects:
       field: start
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - 5
+      - 10
+      truth: next_value
+      evidence:
+        create_sql:
+        - CREATE SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R00_START START 5
+        L4_sql:
+        - ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R00_START SET START 10
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''SEQUENCE_START''
+          for ''SEQUENCE'' on: ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R00_START SET START 10'
+        L5: fails because L4 fails
   - name: increment
     sql: INCREMENT [ BY ] [ = ] <sequence_interval>
     kind: property
@@ -50821,11 +51652,20 @@ objects:
       field: increment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 2
+      - 3
+      truth: interval
+      evidence:
+        create_sql:
+        - CREATE SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R01_INCREMENT INCREMENT 2
+        L4_sql:
+        - ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R01_INCREMENT SET INCREMENT 3
   - name: order
     sql: '{ ORDER | NOORDER }'
     kind: property
@@ -50866,11 +51706,20 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R02_COMMENT COMMENT = $$a$$
+        L4_sql:
+        - ALTER SEQUENCE COVERAGE_SEQUENCE_32E7A4DB.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -50912,8 +51761,16 @@ objects:
   excluded: []
   snowcap:
     class: Sequence
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args: {}
+    truth:
+    - SHOW SEQUENCES LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: 427665a4f613
 - object: SERVICE
   variant: null
   scope_level: schema
@@ -54887,11 +55744,25 @@ objects:
       note: InternalStage props encryption PropSet has type=EnumProp("type", [SNOWFLAKE_FULL, SNOWFLAKE_SSE]).
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: SNOWFLAKE_SSE
+      - type: SNOWFLAKE_FULL
+      truth: type
+      expect:
+      - INTERNAL NO CSE
+      - INTERNAL
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R00_ENCRYPTION_TYPE encryption = (type = 'SNOWFLAKE_SSE') directory
+          = (ENABLE = FALSE)
+        L3: 'declared {''type'': ''SNOWFLAKE_SSE''}, snowcap fetches None'
+        L4: 'a change to {''type'': ''SNOWFLAKE_FULL''} plans nothing'
+        L5: fails because L4 fails
   - name: directory.enable
     sql: DIRECTORY = ( ENABLE = { TRUE | FALSE } )
     kind: property
@@ -54910,11 +55781,23 @@ objects:
       note: InternalStage props directory PropSet has enable=BoolProp("ENABLE").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - enable: true
+      - enable: false
+      truth: directory_enabled
+      expect:
+      - true
+      - false
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R01_DIRECTORY_ENABLE directory = (ENABLE = TRUE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R01_DIRECTORY_ENABLE SET directory = (ENABLE = FALSE)
   - name: directory.auto_refresh
     sql: DIRECTORY = ( AUTO_REFRESH = { TRUE | FALSE } )
     kind: property
@@ -55066,11 +55949,20 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R02_COMMENT directory = (ENABLE = FALSE) COMMENT = $$a$$
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -55149,18 +56041,46 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS directory = (ENABLE = FALSE)
+        - ALTER STAGE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS SET TAG COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.COVERAGE_TAG='a'
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS?domain=STAGE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_STAGE_INTERNAL_076AC006''. on: ALTER TAG REFERENCE COVERAGE_STAGE_INTERNAL_076AC006.PUBLIC.R03_TAGS?domain=STAGE
+          SET'
+        L5: fails because L4 fails
   excluded: []
   snowcap:
     class: InternalStage
-    test: untested
+    test: live
     field_notes:
       type: 'snowcap-only: discriminator that picks InternalStage or ExternalStage, not a Snowflake property.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    create_args: {}
+    truth:
+    - SHOW STAGES LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'stage') AS value
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: f4919ab4f732
 - object: STORAGE INTEGRATION
   variant: azure
   scope_level: account
@@ -60361,11 +61281,25 @@ objects:
       field: allowed_values
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - a
+        - b
+      - - a
+        - c
+      truth: allowed_values_list
+      expect:
+      - '[''a'', ''b'']'
+      - '[''a'', ''c'']'
+      evidence:
+        create_sql:
+        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R00_ALLOWED_VALUES__ ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY
+        L4_sql:
+        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R00_ALLOWED_VALUES__ SET ALLOWED_VALUES $$a$$, $$c$$
   - name: add_allowed_values
     sql: ADD ALLOWED_VALUES
     kind: property
@@ -60384,11 +61318,26 @@ objects:
       note: ADD ALLOWED_VALUES edits the list that _Tag.allowed_values declares in full.
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - a
+        - b
+      - - a
+        - b
+        - c
+      truth: allowed_values_list
+      expect:
+      - '[''a'', ''b'']'
+      - '[''a'', ''b'', ''c'']'
+      evidence:
+        create_sql:
+        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R01_ADD_ALLOWED_VALUES ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY
+        L4_sql:
+        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R01_ADD_ALLOWED_VALUES SET ALLOWED_VALUES $$a$$, $$b$$, $$c$$
   - name: drop_allowed_values
     sql: DROP ALLOWED_VALUES
     kind: property
@@ -60408,11 +61357,26 @@ objects:
       note: DROP ALLOWED_VALUES edits the list that _Tag.allowed_values declares in full.
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - a
+        - b
+        - c
+      - - a
+        - b
+      truth: allowed_values_list
+      expect:
+      - '[''a'', ''b'', ''c'']'
+      - '[''a'', ''b'']'
+      evidence:
+        create_sql:
+        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R02_DROP_ALLOWED_VALUES ALLOWED_VALUES $$a$$, $$b$$, $$c$$ propagate = ON_DEPENDENCY
+        L4_sql:
+        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R02_DROP_ALLOWED_VALUES SET ALLOWED_VALUES $$a$$, $$b$$
   - name: multi_value
     sql: MULTI_VALUE
     kind: property
@@ -60454,11 +61418,20 @@ objects:
       field: propagate
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - ON_DATA_MOVEMENT
+      - ON_DEPENDENCY_AND_DATA_MOVEMENT
+      truth: propagate
+      evidence:
+        create_sql:
+        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R03_PROPAGATE ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DATA_MOVEMENT
+        L4_sql:
+        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R03_PROPAGATE SET propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
   - name: on_conflict
     sql: ON_CONFLICT
     kind: property
@@ -60477,11 +61450,21 @@ objects:
       field: on_conflict
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - ALLOWED_VALUES_SEQUENCE
+      - a
+      truth: on_conflict
+      evidence:
+        create_sql:
+        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R04_ON_CONFLICT ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY ON_CONFLICT
+          = ALLOWED_VALUES_SEQUENCE
+        L4_sql:
+        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R04_ON_CONFLICT SET ON_CONFLICT = $$a$$
   - name: comment
     sql: COMMENT
     kind: property
@@ -60500,11 +61483,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R05_COMMENT ALLOWED_VALUES $$a$$, $$b$$ propagate = ON_DEPENDENCY COMMENT
+          = $$a$$
+        L4_sql:
+        - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.R05_COMMENT SET COMMENT = $$b$$
   - name: data_movement_policy
     sql: SET DATA MOVEMENT POLICY
     kind: relationship
@@ -60612,8 +61605,31 @@ objects:
   excluded: []
   snowcap:
     class: Tag
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      allowed_values:
+      - a
+      - b
+      propagate: ON_DEPENDENCY
+    truth:
+    - SHOW TAGS LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'allowed_values_list' AS key, '[''' || ARRAY_TO_STRING(PARSE_JSON("allowed_values")::ARRAY, ''', ''') || ''']'
+      AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - allowed_values
+      - comment
+      - on_conflict
+      - propagate
+      sql:
+      - ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.COMBINED SET ALLOWED_VALUES $$a$$, $$c$$ propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
+        ON_CONFLICT = $$a$$ COMMENT = $$b$$
+      result: fail
+      error: 'ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 80 unexpected ''propagate''.
+        on: ALTER TAG COVERAGE_TAG_B6BF00A2.PUBLIC.COMBINED SET ALLOWED_VALUES $$a$$, $$c$$ propagate = ON_DEPENDENCY_AND_DATA_MOVEMENT
+        ON_CONFLICT = $$ ...'
+    tested_inputs: c4659f9103fe
 - object: TASK
   variant: null
   scope_level: schema
