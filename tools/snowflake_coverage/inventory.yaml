@@ -28167,12 +28167,33 @@ objects:
       field: columns[].name
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME2
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+      truth: second_column
+      expect:
+      - NAME
+      - NAME2
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: columns[]
     sql: ADD COLUMN / DROP COLUMN
     kind: property
@@ -28191,12 +28212,35 @@ objects:
       field: columns
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+        - name: EXTRA
+          data_type: NUMBER(38,0)
+      truth: column_count
+      expect:
+      - '3'
+      - '4'
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: columns[].type
     sql: <col_type>
     kind: property
@@ -28216,12 +28260,33 @@ objects:
       note: '_Column.data_type: str; create_hybrid_table renders column["data_type"] after the name.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(200)
+        - name: VAL
+          data_type: NUMBER(38,0)
+      truth: name_type
+      expect:
+      - VARCHAR(100)
+      - VARCHAR(200)
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: columns[].default
     sql: DEFAULT <expr>
     kind: property
@@ -28241,12 +28306,35 @@ objects:
       field: columns[].default
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+          default: '{database}.PUBLIC.COVERAGE_SEQ1.NEXTVAL'
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+          default: '{database}.PUBLIC.COVERAGE_SEQ2.NEXTVAL'
+      truth: val_default
+      expect:
+      - '{database}.PUBLIC.COVERAGE_SEQ1.NEXTVAL'
+      - '{database}.PUBLIC.COVERAGE_SEQ2.NEXTVAL'
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: columns[].autoincrement
     sql: '{ AUTOINCREMENT | IDENTITY } [ ( <start_num> , <step_num> ) | START <num> INCREMENT <num> ] [ ORDER | NOORDER ]'
     kind: property
@@ -28288,12 +28376,35 @@ objects:
       field: columns[].not_null
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          not_null: true
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          not_null: false
+        - name: VAL
+          data_type: NUMBER(38,0)
+      truth: name_null
+      expect:
+      - N
+      - Y
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: columns[].collate
     sql: COLLATE '<collation_specification>'
     kind: property
@@ -28311,12 +28422,35 @@ objects:
       field: columns[].collate
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          collate: en-ci
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          collate: en-cs
+        - name: VAL
+          data_type: NUMBER(38,0)
+      truth: name_type
+      expect:
+      - VARCHAR(100) COLLATE 'en-ci'
+      - VARCHAR(100) COLLATE 'en-cs'
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: columns[].comment
     sql: COMMENT '<string_literal>'
     kind: property
@@ -28334,12 +28468,35 @@ objects:
       field: columns[].comment
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          comment: a
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          comment: b
+        - name: VAL
+          data_type: NUMBER(38,0)
+      truth: name_comment
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: columns[].masking_policy
     sql: MASKING POLICY
     kind: relationship
@@ -28407,12 +28564,37 @@ objects:
       field: columns[].tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': a
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': b
+        - name: VAL
+          data_type: NUMBER(38,0)
+      truth: name_tag
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: primary_key
     sql: '[ CONSTRAINT <constraint_name> ] PRIMARY KEY [ ( <col_name> [ , ... ] ) ]'
     kind: property
@@ -28433,12 +28615,33 @@ objects:
         KEY".'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: ID
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+      - - name: ID
+          data_type: NUMBER(38,0)
+        - name: NAME
+          data_type: VARCHAR(100)
+        - name: VAL
+          data_type: NUMBER(38,0)
+          constraint: PRIMARY KEY
+      truth: id_pk
+      expect:
+      - Y
+      - N
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: unique_constraints[]
     sql: '[ CONSTRAINT <constraint_name> ] UNIQUE [ ( <col_name> [ , ... ] ) ]'
     kind: property
@@ -28460,13 +28663,22 @@ objects:
         it.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L2: neither HybridTable.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - UNIQUE (NAME)
+      - - UNIQUE (NAME, VAL)
+      truth: unique_columns
+      expect:
+      - NAME
+      - NAME,VAL
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: foreign_keys[]
     sql: '[ CONSTRAINT <constraint_name> ] [ FOREIGN KEY ] [ ( <col_name> [ , ... ] ) ] REFERENCES <ref_table_name> [ ( <ref_col_name>
       [ , ... ] ) ]'
@@ -28490,13 +28702,22 @@ objects:
         create_hybrid_table never renders it.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L2: neither HybridTable.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - FOREIGN KEY (VAL) REFERENCES {database}.PUBLIC.COVERAGE_PARENT1 (ID)
+      - - FOREIGN KEY (VAL) REFERENCES {database}.PUBLIC.COVERAGE_PARENT2 (ID)
+      truth: fk_parent
+      expect:
+      - COVERAGE_PARENT1
+      - COVERAGE_PARENT2
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: check_constraints[]
     sql: '[ CONSTRAINT <constraint_name> ] CHECK ( <expr> )'
     kind: property
@@ -28517,13 +28738,22 @@ objects:
         it.'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L2: neither HybridTable.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - CHECK (ID > 0)
+      - - CHECK (ID > 1)
+      truth: id_check
+      expect:
+      - ID > 0
+      - ID > 1
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: constraints[].name
     sql: RENAME CONSTRAINT
     kind: property
@@ -28542,13 +28772,22 @@ objects:
       note: 'A CONSTRAINT <name> clause can only live inside a raw string in _HybridTable.constraints: list[str].'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L2: neither HybridTable.props nor the create handler renders ''constraints'', so CREATE omits it'
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - CONSTRAINT COVERAGE_UQ1 UNIQUE (NAME)
+      - - CONSTRAINT COVERAGE_UQ2 UNIQUE (NAME)
+      truth: unique_names
+      expect:
+      - COVERAGE_UQ1
+      - COVERAGE_UQ2
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: constraints[].properties
     sql: '[ NOT ] ENFORCED | VALIDATE | NOVALIDATE | RELY | NORELY'
     kind: property
@@ -28568,7 +28807,7 @@ objects:
       note: 'ENFORCED or RELY options can only live inside a raw string in _HybridTable.constraints: list[str].'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
@@ -28577,6 +28816,15 @@ objects:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - - CONSTRAINT COVERAGE_UQ UNIQUE (NAME) RELY
+      - - CONSTRAINT COVERAGE_UQ UNIQUE (NAME) NORELY
+      truth: unique_rely
+      expect:
+      - 'true'
+      - 'false'
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: indexes[]
     sql: INDEX <index_name> ( <col_name> [ , ... ] )
     kind: property
@@ -28596,12 +28844,25 @@ objects:
       field: indexes
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: COVERAGE_IDX1
+          columns:
+          - NAME
+      - - name: COVERAGE_IDX2
+          columns:
+          - NAME
+      truth: index_names
+      expect:
+      - COVERAGE_IDX1
+      - COVERAGE_IDX2
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: indexes[].include
     sql: INCLUDE ( <col_name> [ , ... ] )
     kind: property
@@ -28620,12 +28881,29 @@ objects:
       note: '_HybridTable.indexes: list[dict]; create_hybrid_table renders idx.get("include") as INCLUDE (...).'
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - - name: COVERAGE_IDX
+          columns:
+          - NAME
+          include:
+          - VAL
+      - - name: COVERAGE_IDX
+          columns:
+          - NAME
+          include:
+          - ID
+      truth: index_include
+      expect:
+      - '[VAL]'
+      - '[ID]'
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: comment
     sql: COMMENT
     kind: property
@@ -28643,12 +28921,18 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L3: data_provider has no fetch_hybrid_table, so fetch_resource raises'
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: default_ddl_collation
     sql: DEFAULT_DDL_COLLATION
     kind: parameter
@@ -28786,11 +29070,20 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: Crashed: AttributeError: module ''snowcap.data_provider'' has no attribute ''fetch_hybrid_table'''
   - name: contacts
     sql: SET CONTACT
     kind: relationship
@@ -28857,10 +29150,51 @@ objects:
   excluded: []
   snowcap:
     class: HybridTable
-    test: untested
+    test: live
     field_notes:
       cluster_by: 'snowcap-only: Snowflake does not allow clustering keys on hybrid tables, so no CLUSTER BY row exists.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE SEQUENCE {database}.PUBLIC.COVERAGE_SEQ1
+    - CREATE SEQUENCE {database}.PUBLIC.COVERAGE_SEQ2
+    - CREATE HYBRID TABLE {database}.PUBLIC.COVERAGE_PARENT1 (ID NUMBER(38,0) PRIMARY KEY)
+    - CREATE HYBRID TABLE {database}.PUBLIC.COVERAGE_PARENT2 (ID NUMBER(38,0) PRIMARY KEY)
+    create_args:
+      columns:
+      - name: ID
+        data_type: NUMBER(38,0)
+        constraint: PRIMARY KEY
+      - name: NAME
+        data_type: VARCHAR(100)
+      - name: VAL
+        data_type: NUMBER(38,0)
+    truth:
+    - SHOW HYBRID TABLES LIKE '{name}' IN SCHEMA {container}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
+    - SELECT 'name_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}.NAME', 'column') AS value
+    - SELECT 'second_column' AS key, column_name AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema =
+      'PUBLIC' AND table_name = '{name}' AND ordinal_position = 2 UNION ALL SELECT 'column_count', COUNT(*)::STRING FROM {database}.INFORMATION_SCHEMA.COLUMNS
+      WHERE table_schema = 'PUBLIC' AND table_name = '{name}'
+    - DESCRIBE TABLE {fqn}
+    - SELECT LOWER(r."name") || '_' || f.key AS key, f.value::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r,
+      LATERAL FLATTEN(OBJECT_CONSTRUCT_KEEP_NULL('type', r."type", 'null', r."null?", 'default', r."default", 'comment', r."comment",
+      'pk', r."primary key", 'check', r."check")) f
+    - SHOW UNIQUE KEYS IN TABLE {fqn}
+    - SELECT f.key AS key, f.value::STRING AS value FROM (SELECT LISTAGG("column_name", ',') WITHIN GROUP (ORDER BY "key_sequence")
+      AS c, LISTAGG(DISTINCT "constraint_name", ',') AS n, LISTAGG(DISTINCT "rely", ',') AS r FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())))
+      a, LATERAL FLATTEN(OBJECT_CONSTRUCT('unique_columns', a.c, 'unique_names', a.n, 'unique_rely', a.r)) f
+    - SHOW IMPORTED KEYS IN TABLE {fqn}
+    - SELECT 'fk_parent' AS key, LISTAGG(DISTINCT "pk_table_name", ',') AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    - SHOW INDEXES IN TABLE {fqn}
+    - SELECT f.key AS key, f.value::STRING AS value FROM (SELECT LISTAGG("name", ',') AS n, LISTAGG("included_columns", ',')
+      AS i FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) WHERE "name" LIKE 'COVERAGE_IDX%') a, LATERAL FLATTEN(OBJECT_CONSTRUCT('index_names',
+      a.n, 'index_include', a.i)) f
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: cc4031d75c02
 - object: ICEBERG TABLE
   variant: aws_glue
   scope_level: schema
@@ -31109,13 +31443,20 @@ objects:
       field: external_volume
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - SNOWFLAKE_MANAGED
+      - COVERAGE_NO_SUCH_VOLUME
+      truth: external_volume_name
+      evidence:
+        L2: 'create failed: Refused: MissingResourceException: External Volume "SNOWFLAKE_MANAGED" not found. Referenced by:
+          iceberg table "COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R00_EXTERNAL_VOLUME"'
   - name: base_location
     sql: BASE_LOCATION = '<directory_for_table_files>'
     kind: property
@@ -31160,11 +31501,31 @@ objects:
       field: columns[].name
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME2
+          data_type: VARCHAR(134217728)
+      truth: second_column
+      expect:
+      - NAME
+      - NAME2
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R01_COLUMNS___NAME (ID NUMBER(10,0), NAME
+          VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)''}, {''name'': ''NAME2'', ''data_type'': ''VARCHAR(134217728)''}]
+          plans nothing'
+        L5: fails because L4 fails
   - name: columns[].type
     sql: <col_type>
     kind: property
@@ -31184,11 +31545,31 @@ objects:
       note: '_Column.data_type: str; SchemaProp renders it after the column name.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      - - name: ID
+          data_type: NUMBER(19,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      truth: id_type
+      expect:
+      - NUMBER(10,0)
+      - NUMBER(19,0)
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R02_COLUMNS___TYPE (ID NUMBER(10,0), NAME
+          VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(19,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(134217728)''}]
+          plans nothing'
+        L5: fails because L4 fails
   - name: columns[].structured_type
     sql: SET DATA TYPE <new_structured_type> [ RENAME FIELDS ]
     kind: property
@@ -31209,11 +31590,35 @@ objects:
       note: 'A structured column type is the column''s data type, held in _Column.data_type: str.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+        - name: O
+          data_type: OBJECT(A NUMBER(10,0))
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+        - name: O
+          data_type: OBJECT(A NUMBER(10,0), B NUMBER(10,0))
+      truth: o_type
+      expect:
+      - OBJECT(A NUMBER(10,0))
+      - OBJECT(A NUMBER(10,0), B NUMBER(10,0))
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R03_COLUMNS___STRUCTURED_TYPE (ID NUMBER(10,0),
+          NAME VARCHAR(134217728), O OBJECT(A NUMBER(10,0))) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(134217728)''},
+          {''name'': ''O'', ''data_type'': ''OBJECT(A NUMBER(10,0), B NUMBER(10,0))''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].default
     sql: DEFAULT <col_default>
     kind: property
@@ -31232,11 +31637,30 @@ objects:
       field: columns[].default
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+          default: '1'
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      - - name: ID
+          data_type: NUMBER(10,0)
+          default: '2'
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      truth: id_default
+      expect:
+      - '1'
+      - '2'
+      evidence:
+        L2: 'create failed: ProgrammingError: 002262 (22000): SQL compilation error: Default value data type does not match
+          data type for column ID on: CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R04_COLUMNS___DEFAULT
+          (ID NUMBER(10,0) DEFAULT ''1'', NAME VARCHAR(13421 ...'
   - name: columns[].not_null
     sql: NOT NULL
     kind: property
@@ -31255,11 +31679,33 @@ objects:
       field: columns[].not_null
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+          not_null: true
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      - - name: ID
+          data_type: NUMBER(10,0)
+          not_null: false
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      truth: id_null
+      expect:
+      - N
+      - Y
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R05_COLUMNS___NOT_NULL (ID NUMBER(10,0) NOT
+          NULL, NAME VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)'', ''not_null'': False}, {''name'': ''NAME'', ''data_type'':
+          ''VARCHAR(134217728)''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].comment
     sql: COMMENT '<string_literal>'
     kind: property
@@ -31278,11 +31724,33 @@ objects:
       field: columns[].comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+          comment: a
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      - - name: ID
+          data_type: NUMBER(10,0)
+          comment: b
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      truth: id_comment
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R06_COLUMNS___COMMENT (ID NUMBER(10,0) COMMENT
+          'a', NAME VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)'', ''comment'': ''b''}, {''name'': ''NAME'', ''data_type'':
+          ''VARCHAR(134217728)''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].collate
     sql: COLLATE '<collation_specification>'
     kind: property
@@ -31300,11 +31768,36 @@ objects:
       field: columns[].collate
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
-        L4: untested
-        L5: untested
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+          collate: en-ci
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+          collate: en-cs
+      truth: name_type
+      expect:
+      - VARCHAR(134217728) COLLATE 'en-ci'
+      - VARCHAR(134217728) COLLATE 'en-cs'
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R07_COLUMNS___COLLATE (ID NUMBER(10,0), NAME
+          VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L2: 'declared [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(134217728)'',
+          ''collate'': ''en-ci''}], Snowflake reports name_type=''VARCHAR(134217728)'''
+        L3: CREATE did not write the value, so the read-back of the path has no reference
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(134217728)'',
+          ''collate'': ''en-ci''}] plans nothing'
+        L5: fails because L4 fails
   - name: columns[].masking_policy
     sql: '[ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name> , <cond_col1> , ... ) ]'
     kind: relationship
@@ -31371,11 +31864,38 @@ objects:
       field: columns[].tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
-        L4: untested
-        L5: untested
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': a
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+          tags:
+            '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: name_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R08_COLUMNS___TAGS (ID NUMBER(10,0), NAME
+          VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L2: 'declared [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(134217728)'',
+          ''tags'': {''COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.COVERAGE_TAG'': ''a''}}], Snowflake reports name_tag=None'
+        L3: CREATE did not write the value, so the read-back of the path has no reference
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(134217728)'',
+          ''tags'': {''COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.COVERAGE_TAG'': ''a''}}] plans nothing'
+        L5: fails because L4 fails
   - name: constraints[]
     sql: '[ CONSTRAINT <name> ] { UNIQUE | PRIMARY KEY | [ FOREIGN KEY ] REFERENCES ... | CHECK ( ... ) }'
     kind: property
@@ -31395,11 +31915,33 @@ objects:
       note: '_Column.constraint: str; SchemaProp appends column[''constraint'']. Out-of-line constraints are not modeled.'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - name: ID
+          data_type: NUMBER(10,0)
+          constraint: PRIMARY KEY
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      - - name: ID
+          data_type: NUMBER(10,0)
+        - name: NAME
+          data_type: VARCHAR(134217728)
+      truth: id_pk
+      expect:
+      - Y
+      - N
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R09_CONSTRAINTS__ (ID NUMBER(10,0) PRIMARY
+          KEY, NAME VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L3: declared ['PRIMARY KEY', None], snowcap fetches [None, None]
+        L4: 'a change to [{''name'': ''ID'', ''data_type'': ''NUMBER(10,0)''}, {''name'': ''NAME'', ''data_type'': ''VARCHAR(134217728)''}]
+          plans nothing'
+        L5: fails because L4 fails
   - name: partition_by
     sql: PARTITION BY ( partitionExpression [ , ... ] )
     kind: property
@@ -31556,13 +32098,28 @@ objects:
       field: storage_serialization_policy
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - COMPATIBLE
+      - OPTIMIZED
+      truth: storage_serialization_policy
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R10_STORAGE_SERIALIZATION_POLICY (ID NUMBER(10,0),
+          NAME VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = COMPATIBLE
+        L4_sql:
+        - ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R10_STORAGE_SERIALIZATION_POLICY SET storage_serialization_policy
+          = OPTIMIZED
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 093657 (42601): SQL Compilation error: Storage serialization policy
+          is immutable once the Iceberg table is created. on: ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R10_STORAGE_SERIALIZATION_POLICY
+          SET storage_serialization_policy = OPT ...'
+        L5: fails because L4 fails
   - name: data_retention_time_in_days
     sql: DATA_RETENTION_TIME_IN_DAYS = <integer>
     kind: parameter
@@ -31580,11 +32137,23 @@ objects:
       field: data_retention_time_in_days
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 2
+      - 3
+      truth: data_retention_time_in_days
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R11_DATA_RETENTION_TIME_IN_DAYS (ID NUMBER(10,0),
+          NAME VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED DATA_RETENTION_TIME_IN_DAYS
+          = 2
+        L4_sql:
+        - ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R11_DATA_RETENTION_TIME_IN_DAYS SET DATA_RETENTION_TIME_IN_DAYS
+          = 3
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer>
     kind: parameter
@@ -31602,13 +32171,26 @@ objects:
       field: max_data_extension_time_in_days
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - 10
+      - 12
+      truth: max_data_extension_time_in_days
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R12_MAX_DATA_EXTENSION_TIME_IN_DAYS (ID NUMBER(10,0),
+          NAME VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED MAX_DATA_EXTENSION_TIME_IN_DAYS
+          = 10
+        L4_sql:
+        - ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R12_MAX_DATA_EXTENSION_TIME_IN_DAYS SET MAX_DATA_EXTENSION_TIME_IN_DAYS
+          = 12
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: change_tracking
     sql: CHANGE_TRACKING = { TRUE | FALSE }
     kind: property
@@ -31626,13 +32208,27 @@ objects:
       field: change_tracking
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - true
+      - false
+      truth: change_tracking
+      expect:
+      - 'ON'
+      - 'OFF'
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R13_CHANGE_TRACKING (ID NUMBER(10,0), NAME
+          VARCHAR(134217728)) CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED CHANGE_TRACKING = TRUE
+        L3: Snowflake reports change_tracking='ON' (declared form True), snowcap fetches None
+        L4: a change to False plans nothing
+        L5: fails because L4 fails
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -31720,13 +32316,24 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R14_COMMENT (ID NUMBER(10,0), NAME VARCHAR(134217728))
+          CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED COMMENT = $$a$$
+        L4_sql:
+        - ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R14_COMMENT SET COMMENT = $$b$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: iceberg_version
     sql: ICEBERG_VERSION = <integer>
     kind: parameter
@@ -31959,11 +32566,29 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        create_sql:
+        - ALTER ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R15_TAGS SET TAG COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.COVERAGE_TAG='a'
+        - CREATE ICEBERG TABLE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R15_TAGS (ID NUMBER(10,0), NAME VARCHAR(134217728))
+          CATALOG = $$SNOWFLAKE$$ storage_serialization_policy = OPTIMIZED
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R15_TAGS?domain=ICEBERG TABLE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44''. on: ALTER TAG REFERENCE COVERAGE_ICEBERG_TABLE_SNOWFLAKE_6132CF44.PUBLIC.R15_TAGS?domain=ICEBERG
+          TABLE SET'
+        L5: fails because L4 fails
   - name: contacts
     sql: WITH CONTACT ( <purpose> = <contact_name> [ , ... ] )
     kind: relationship
@@ -32031,11 +32656,36 @@ objects:
     reason: deprecated
   snowcap:
     class: SnowflakeIcebergTable
-    test: untested
+    test: live
     field_notes:
       default_ddl_collation: 'snowcap-only: CREATE ICEBERG TABLE (Snowflake catalog) has no DEFAULT_DDL_COLLATION clause,
         so no docs row exists.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    create_args:
+      columns:
+      - name: ID
+        data_type: NUMBER(10,0)
+      - name: NAME
+        data_type: VARCHAR(134217728)
+    truth:
+    - SHOW ICEBERG TABLES LIKE '{name}' IN SCHEMA {container}
+    - SHOW TABLES LIKE '{name}' IN SCHEMA {container}
+    - SHOW PARAMETERS IN TABLE {fqn}
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'table') AS value
+    - SELECT 'name_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}.NAME', 'column') AS value
+    - SELECT 'second_column' AS key, column_name AS value FROM {database}.INFORMATION_SCHEMA.COLUMNS WHERE table_schema =
+      'PUBLIC' AND table_name = '{name}' AND ordinal_position = 2
+    - DESC ICEBERG TABLE {fqn}
+    - SELECT LOWER(r."name") || '_' || f.key AS key, f.value::STRING AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r,
+      LATERAL FLATTEN(OBJECT_CONSTRUCT_KEEP_NULL('type', r."type", 'null', r."null?", 'default', r."default", 'comment', r."comment",
+      'pk', r."primary key")) f
+    combined:
+      fields:
+      - data_retention_time_in_days
+      result: untested (needs two or more fields)
+    tested_inputs: 7443a9b9d918
 - object: IMAGE REPOSITORY
   variant: null
   scope_level: schema
@@ -37083,13 +37733,25 @@ objects:
       field: from_
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - '@{database}.PUBLIC.COVERAGE_STG1'
+      - '@{database}.PUBLIC.COVERAGE_STG2'
+      truth: default_version_source_location_uri
+      evidence:
+        create_sql:
+        - CREATE NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R00_FROM FROM $$@COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COVERAGE_STG1$$
+          MAIN_FILE = $$coverage_nb_a.ipynb$$ QUERY_WAREHOUSE = STATIC_WAREHOUSE
+        L3: Snowflake reports default_version_source_location_uri='@COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COVERAGE_STG1' (declared
+          form '@COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COVERAGE_STG1'), snowcap fetches None
+        L4: a change to '@COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COVERAGE_STG2' plans nothing
+        L5: fails because L4 fails
   - name: main_file
     sql: MAIN_FILE
     kind: property
@@ -37107,13 +37769,24 @@ objects:
       field: main_file
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - coverage_nb_a.ipynb
+      - coverage_nb_b.ipynb
+      truth: main_file
+      evidence:
+        create_sql:
+        - CREATE NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R01_MAIN_FILE FROM $$@COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COVERAGE_STG1$$
+          MAIN_FILE = $$coverage_nb_a.ipynb$$ QUERY_WAREHOUSE = STATIC_WAREHOUSE
+        L4_sql:
+        - ALTER NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R01_MAIN_FILE SET MAIN_FILE = $$coverage_nb_b.ipynb$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: comment
     sql: COMMENT
     kind: property
@@ -37131,11 +37804,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R02_COMMENT FROM $$@COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COVERAGE_STG1$$
+          MAIN_FILE = $$coverage_nb_a.ipynb$$ COMMENT = $$a$$ QUERY_WAREHOUSE = STATIC_WAREHOUSE
+        L4_sql:
+        - ALTER NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: query_warehouse
     sql: QUERY_WAREHOUSE
     kind: relationship
@@ -37153,11 +37836,21 @@ objects:
       field: query_warehouse
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - STATIC_WAREHOUSE
+      - '{database}_WH'
+      truth: query_warehouse
+      evidence:
+        create_sql:
+        - CREATE NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R03_QUERY_WAREHOUSE FROM $$@COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COVERAGE_STG1$$
+          MAIN_FILE = $$coverage_nb_a.ipynb$$ QUERY_WAREHOUSE = STATIC_WAREHOUSE
+        L4_sql:
+        - ALTER NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.R03_QUERY_WAREHOUSE SET QUERY_WAREHOUSE = COVERAGE_NOTEBOOK_A54F6B46_WH
   - name: idle_auto_shutdown_time_seconds
     sql: IDLE_AUTO_SHUTDOWN_TIME_SECONDS
     kind: property
@@ -37333,11 +38026,39 @@ objects:
   excluded: []
   snowcap:
     class: Notebook
-    test: untested
+    test: live
     field_notes:
       default_version: 'snowcap-only: current CREATE and ALTER NOTEBOOK docs have no DEFAULT_VERSION clause, but props render
         one.'
     unmapped_fields: []
+    setup:
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG1
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG2
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_nb_a.ipynb'
+      @{database}.PUBLIC.COVERAGE_STG1 AUTO_COMPRESS = FALSE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_nb_b.ipynb'
+      @{database}.PUBLIC.COVERAGE_STG1 AUTO_COMPRESS = FALSE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_nb_a.ipynb'
+      @{database}.PUBLIC.COVERAGE_STG2 AUTO_COMPRESS = FALSE
+    - CREATE WAREHOUSE {database}_WH WAREHOUSE_SIZE = XSMALL INITIALLY_SUSPENDED = TRUE AUTO_RESUME = FALSE AUTO_SUSPEND =
+      60
+    teardown:
+    - DROP WAREHOUSE IF EXISTS {database}_WH
+    create_args:
+      from_: '@{database}.PUBLIC.COVERAGE_STG1'
+      main_file: coverage_nb_a.ipynb
+      query_warehouse: STATIC_WAREHOUSE
+    truth:
+    - SHOW NOTEBOOKS LIKE '{name}' IN SCHEMA {container}
+    - DESC NOTEBOOK {fqn}
+    combined:
+      fields:
+      - comment
+      - query_warehouse
+      sql:
+      - ALTER NOTEBOOK COVERAGE_NOTEBOOK_A54F6B46.PUBLIC.COMBINED SET COMMENT = $$b$$ QUERY_WAREHOUSE = COVERAGE_NOTEBOOK_A54F6B46_WH
+      result: pass
+    tested_inputs: c7533511f68f
 - object: NOTIFICATION INTEGRATION
   variant: email
   scope_level: account
@@ -41230,13 +41951,28 @@ objects:
       note: '_Pipe.as_: str holds the AS <copy_statement> body, rendered by QueryProp("as").'
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - COPY INTO {database}.PUBLIC.COVERAGE_T FROM @{database}.PUBLIC.COVERAGE_STG1
+      - COPY INTO {database}.PUBLIC.COVERAGE_T FROM @{database}.PUBLIC.COVERAGE_STG2
+      truth: definition
+      evidence:
+        create_sql:
+        - CREATE PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R00_COPY_STATEMENT AUTO_INGEST = FALSE as COPY INTO COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_T
+          FROM @COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_STG1
+        L4_sql:
+        - ALTER PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R00_COPY_STATEMENT SET as COPY INTO COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_T
+          FROM @COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_STG2
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          64 unexpected ''as''. on: ALTER PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R00_COPY_STATEMENT SET as COPY INTO COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_T
+          FROM @COVERAGE_PIPE_48 ...'
+        L5: fails because L4 fails
   - name: auto_ingest
     sql: AUTO_INGEST
     kind: property
@@ -41327,11 +42063,25 @@ objects:
       field: error_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - '{database}_NI1'
+      - '{database}_NI2'
+      truth: error_integration
+      evidence:
+        create_sql:
+        - CREATE PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R01_ERROR_INTEGRATION AUTO_INGEST = FALSE ERROR_INTEGRATION = $$COVERAGE_PIPE_48D719DC_NI1$$
+          as COPY INTO COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_T FROM @COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_STG1
+        L4_sql:
+        - ALTER PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R01_ERROR_INTEGRATION SET ERROR_INTEGRATION = $$COVERAGE_PIPE_48D719DC_NI2$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 091116 (0A000): Cannot reset ERROR_INTEGRATION property on Pipe
+          R01_ERROR_INTEGRATION. Please create a new one. on: ALTER PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R01_ERROR_INTEGRATION
+          SET ERROR_INTEGRATION = $$COVERAGE_PIPE_48D719DC_NI2$$'
+        L5: fails because L4 fails
   - name: pipe_execution_paused
     sql: PIPE_EXECUTION_PAUSED
     kind: parameter
@@ -41397,11 +42147,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R02_COMMENT AUTO_INGEST = FALSE COMMENT = $$a$$ as COPY INTO COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_T
+          FROM @COVERAGE_PIPE_48D719DC.PUBLIC.COVERAGE_STG1
+        L4_sql:
+        - ALTER PIPE COVERAGE_PIPE_48D719DC.PUBLIC.R02_COMMENT SET COMMENT = $$b$$
   - name: refresh
     sql: REFRESH
     kind: property
@@ -41484,8 +42244,38 @@ objects:
   excluded: []
   snowcap:
     class: Pipe
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE TABLE {database}.PUBLIC.COVERAGE_T (ID NUMBER(38,0))
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG1
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG2
+    - CREATE NOTIFICATION INTEGRATION {database}_NI1 TYPE = QUEUE DIRECTION = OUTBOUND NOTIFICATION_PROVIDER = AWS_SNS AWS_SNS_TOPIC_ARN
+      = 'arn:aws:sns:us-west-2:123456789012:coverage1' AWS_SNS_ROLE_ARN = 'arn:aws:iam::123456789012:role/coverage' ENABLED
+      = TRUE
+    - CREATE NOTIFICATION INTEGRATION {database}_NI2 TYPE = QUEUE DIRECTION = OUTBOUND NOTIFICATION_PROVIDER = AWS_SNS AWS_SNS_TOPIC_ARN
+      = 'arn:aws:sns:us-west-2:123456789012:coverage2' AWS_SNS_ROLE_ARN = 'arn:aws:iam::123456789012:role/coverage' ENABLED
+      = TRUE
+    teardown:
+    - DROP INTEGRATION IF EXISTS {database}_NI1
+    - DROP INTEGRATION IF EXISTS {database}_NI2
+    create_args:
+      as_: COPY INTO {database}.PUBLIC.COVERAGE_T FROM @{database}.PUBLIC.COVERAGE_STG1
+      auto_ingest: false
+    truth:
+    - SHOW PIPES LIKE '{name}' IN SCHEMA {container}
+    combined:
+      fields:
+      - comment
+      - error_integration
+      sql:
+      - ALTER PIPE COVERAGE_PIPE_48D719DC.PUBLIC.COMBINED SET ERROR_INTEGRATION = $$COVERAGE_PIPE_48D719DC_NI2$$ COMMENT =
+        $$b$$
+      result: fail
+      error: 'ProgrammingError: 091116 (0A000): Cannot reset ERROR_INTEGRATION property on Pipe COMBINED. Please create a
+        new one. on: ALTER PIPE COVERAGE_PIPE_48D719DC.PUBLIC.COMBINED SET ERROR_INTEGRATION = $$COVERAGE_PIPE_48D719DC_NI2$$
+        COMMENT = $$b$$'
+    tested_inputs: 2f6f16b7e298
 - object: POSTGRES INSTANCE
   variant: null
   scope_level: account
@@ -61513,13 +62303,21 @@ objects:
       field: from_
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - '@{database}.PUBLIC.COVERAGE_STG1'
+      - '@{database}.PUBLIC.COVERAGE_STG2'
+      truth: default_version_source_location_uri
+      evidence:
+        L2: 'create failed: ProgrammingError: 002003 (02000): SQL compilation error: COMPUTE_POOL ''SYSTEM_COMPUTE_POOL_CPU''
+          does not exist or not authorized.{2} on: CREATE STREAMLIT COVERAGE_STREAMLIT_5827ADBD.PUBLIC.R00_FROM FROM @COVERAGE_STREAMLIT_5827ADBD.PUBLIC.COVERAGE_STG1
+          MAIN_FILE = $$coverage_a ...'
   - name: root_location
     sql: ROOT_LOCATION
     kind: property
@@ -61562,11 +62360,19 @@ objects:
       field: main_file
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - coverage_app_a.py
+      - coverage_app_b.py
+      truth: main_file
+      evidence:
+        L2: 'create failed: ProgrammingError: 002003 (02000): SQL compilation error: COMPUTE_POOL ''SYSTEM_COMPUTE_POOL_CPU''
+          does not exist or not authorized.{2} on: CREATE STREAMLIT COVERAGE_STREAMLIT_5827ADBD.PUBLIC.R01_MAIN_FILE FROM
+          @COVERAGE_STREAMLIT_5827ADBD.PUBLIC.COVERAGE_STG1 MAIN_FILE = $$cover ...'
   - name: query_warehouse
     sql: QUERY_WAREHOUSE
     kind: relationship
@@ -61584,11 +62390,19 @@ objects:
       field: query_warehouse
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - STATIC_WAREHOUSE
+      - '{database}_WH'
+      truth: query_warehouse
+      evidence:
+        L2: 'create failed: ProgrammingError: 002003 (02000): SQL compilation error: COMPUTE_POOL ''SYSTEM_COMPUTE_POOL_CPU''
+          does not exist or not authorized.{2} on: CREATE STREAMLIT COVERAGE_STREAMLIT_5827ADBD.PUBLIC.R02_QUERY_WAREHOUSE
+          FROM @COVERAGE_STREAMLIT_5827ADBD.PUBLIC.COVERAGE_STG1 MAIN_FILE = $ ...'
   - name: runtime_name
     sql: RUNTIME_NAME
     kind: property
@@ -61653,11 +62467,19 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        L2: 'create failed: ProgrammingError: 002003 (02000): SQL compilation error: COMPUTE_POOL ''SYSTEM_COMPUTE_POOL_CPU''
+          does not exist or not authorized.{2} on: CREATE STREAMLIT COVERAGE_STREAMLIT_5827ADBD.PUBLIC.R03_COMMENT FROM @COVERAGE_STREAMLIT_5827ADBD.PUBLIC.COVERAGE_STG1
+          MAIN_FILE = $$coverag ...'
   - name: title
     sql: TITLE
     kind: property
@@ -61675,11 +62497,19 @@ objects:
       field: title
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - a
+      - b
+      truth: title
+      evidence:
+        L2: 'create failed: ProgrammingError: 002003 (02000): SQL compilation error: COMPUTE_POOL ''SYSTEM_COMPUTE_POOL_CPU''
+          does not exist or not authorized.{2} on: CREATE STREAMLIT COVERAGE_STREAMLIT_5827ADBD.PUBLIC.R04_TITLE FROM @COVERAGE_STREAMLIT_5827ADBD.PUBLIC.COVERAGE_STG1
+          MAIN_FILE = $$coverage_ ...'
   - name: imports[]
     sql: IMPORTS
     kind: property
@@ -61890,10 +62720,41 @@ objects:
   excluded: []
   snowcap:
     class: Streamlit
-    test: untested
+    test: live
     field_notes:
       version: 'snowcap-only: current CREATE STREAMLIT docs have no VERSION clause; a Git version is part of the FROM path.'
     unmapped_fields: []
+    setup:
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG1
+    - CREATE STAGE {database}.PUBLIC.COVERAGE_STG2
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_app_a.py'
+      @{database}.PUBLIC.COVERAGE_STG1 AUTO_COMPRESS = FALSE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_app_b.py'
+      @{database}.PUBLIC.COVERAGE_STG1 AUTO_COMPRESS = FALSE
+    - PUT 'file:///Users/gclunies/.worktrunk/worktrees/snowcap.snowcap-inventory/.flywheel/sessions/cb408fd21277/scratch/p3/files/coverage_app_a.py'
+      @{database}.PUBLIC.COVERAGE_STG2 AUTO_COMPRESS = FALSE
+    - CREATE WAREHOUSE {database}_WH WAREHOUSE_SIZE = XSMALL INITIALLY_SUSPENDED = TRUE AUTO_RESUME = FALSE AUTO_SUSPEND =
+      60
+    teardown:
+    - DROP WAREHOUSE IF EXISTS {database}_WH
+    create_args:
+      from_: '@{database}.PUBLIC.COVERAGE_STG1'
+      main_file: coverage_app_a.py
+      query_warehouse: STATIC_WAREHOUSE
+    truth:
+    - SHOW STREAMLITS LIKE '{name}' IN SCHEMA {container}
+    - DESC STREAMLIT {fqn}
+    combined:
+      fields:
+      - comment
+      - main_file
+      - query_warehouse
+      - title
+      result: fail
+      error: 'ProgrammingError: 002003 (02000): SQL compilation error: COMPUTE_POOL ''SYSTEM_COMPUTE_POOL_CPU'' does not exist
+        or not authorized.{2} on: CREATE STREAMLIT COVERAGE_STREAMLIT_5827ADBD.PUBLIC.COMBINED FROM @COVERAGE_STREAMLIT_5827ADBD.PUBLIC.COVERAGE_STG1
+        MAIN_FILE = $$coverage_a ...'
+    tested_inputs: a9bacd8a83d6
 - object: TABLE
   variant: null
   scope_level: schema
