@@ -27057,8 +27057,8 @@ objects:
       - (X VARCHAR, C2 FLOAT)
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns VARCHAR\
-          \ language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns VARCHAR\
+          \ language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27104,19 +27104,19 @@ objects:
       - (X VARCHAR, C1 VARCHAR)
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns\
-          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
         L4_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns\
-          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
         L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
           ''runtime_version'' and ''handler''"]; plan after change: [''plan crashes: Exception: Found multiple functions matching
-          COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR, VARCHAR)'']'
+          COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR, VARCHAR)'']'
   - name: arguments[].default
     sql: DEFAULT <default_value>
     kind: identity
@@ -27216,8 +27216,8 @@ objects:
       truth: returns
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27305,9 +27305,9 @@ objects:
       truth: null handling
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R03_NULL_HANDLING (X VARCHAR) returns VARCHAR language\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R03_NULL_HANDLING (X VARCHAR) returns VARCHAR language\
           \ PYTHON RETURNS NULL ON NULL INPUT RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS =\
-          \ (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1) AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return\
+          \ (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1) AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return\
           \ x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27345,8 +27345,8 @@ objects:
       truth: volatility
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R04_VOLATILITY (X VARCHAR) returns VARCHAR language PYTHON\
-          \ IMMUTABLE RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R04_VOLATILITY (X VARCHAR) returns VARCHAR language PYTHON\
+          \ IMMUTABLE RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27385,8 +27385,8 @@ objects:
       truth: runtime_version
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R05_RUNTIME_VERSION (X VARCHAR) returns VARCHAR language\
-          \ PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R05_RUNTIME_VERSION (X VARCHAR) returns VARCHAR language\
+          \ PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27426,8 +27426,8 @@ objects:
       truth: handler
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R06_HANDLER (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R06_HANDLER (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27466,8 +27466,8 @@ objects:
       truth: body
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R07_BODY (X VARCHAR) returns VARCHAR language PYTHON RUNTIME_VERSION\
-          \ = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1) AS $$def\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R07_BODY (X VARCHAR) returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1) AS $$def\
           \ main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27509,9 +27509,9 @@ objects:
       - '[''@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_b.py'']'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R08_IMPORTS__ (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ IMPORTS = ($$@COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py$$)\
-          \ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1) AS $$def main(x, *rest):\n\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R08_IMPORTS__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ IMPORTS = ($$@COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py$$)\
+          \ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1) AS $$def main(x, *rest):\n\
           \    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27555,8 +27555,8 @@ objects:
       - '[''pyyaml'',''numpy'']'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R09_PACKAGES__ (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$pyyaml$$) HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R09_PACKAGES__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$pyyaml$$) HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27620,8 +27620,8 @@ objects:
       - '["{database}_EAI2"]'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R10_EXTERNAL_ACCESS_INTEGRATIONS__ (X VARCHAR) returns\
-          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R10_EXTERNAL_ACCESS_INTEGRATIONS__ (X VARCHAR) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27664,10 +27664,10 @@ objects:
       - '{"cred":"{database}.PUBLIC.COVERAGE_S2"}'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R11_SECRETS__ (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R11_SECRETS__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
-        L2: 'declared {''cred'': ''COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.COVERAGE_S1''}, Snowflake reports secrets=''{}'''
+        L2: 'declared {''cred'': ''COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.COVERAGE_S1''}, Snowflake reports secrets=''{}'''
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
         L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
@@ -27702,7 +27702,7 @@ objects:
       truth: is_secure
       evidence:
         L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 68 unexpected
-          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R12_SECURE SECURE (X VARCHAR) returns VARCHAR
+          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R12_SECURE SECURE (X VARCHAR) returns VARCHAR
           language PYTHON RUNTIME_VERSION = $$3 ...'
   - name: comment
     sql: COMMENT
@@ -27733,8 +27733,8 @@ objects:
       truth: description
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R13_COMMENT (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ COMMENT = $$a$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_2B6574D9.PUBLIC.R13_COMMENT (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ COMMENT = $$a$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_2B6574D9_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -49915,10 +49915,21 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - coverage-refresh-1
+      - coverage-refresh-2
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_OAUTH2_AUTHORIZATION_CODE_9BCB4F22.PUBLIC.R00_OAUTH_REFRESH_TOKEN type = OAUTH2 API_AUTHENTICATION
+          = $$COVERAGE_SECRET_OAUTH2_AUTHORIZATION_CODE_9BCB4F22_OAUTH_AC$$ OAUTH_REFRESH_TOKEN = $$coverage-refresh-1$$ OAUTH_REFRESH_TOKEN_EXPIRY_TIME
+          = $$2049-01-06 20:00:00$$
+        L3: declared 'coverage-refresh-1', snowcap fetches None
+        L4: 'snowcap crashes: KeyError: ''oauth_scopes'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''oauth_scopes''"]; plan after change: []'
   - name: oauth_refresh_token_expiry_time
     sql: OAUTH_REFRESH_TOKEN_EXPIRY_TIME
     kind: property
@@ -49936,11 +49947,21 @@ objects:
       field: oauth_refresh_token_expiry_time
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - '2049-01-06 20:00:00'
+      - '2050-01-06 20:00:00'
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_OAUTH2_AUTHORIZATION_CODE_9BCB4F22.PUBLIC.R01_OAUTH_REFRESH_TOKEN_EXPIRY_TIME type
+          = OAUTH2 API_AUTHENTICATION = $$COVERAGE_SECRET_OAUTH2_AUTHORIZATION_CODE_9BCB4F22_OAUTH_AC$$ OAUTH_REFRESH_TOKEN
+          = $$coverage-refresh-0$$ OAUTH_REFRESH_TOKEN_EXPIRY_TIME = $$2049-01-06 20:00:00$$
+        L4: 'snowcap crashes: KeyError: ''oauth_scopes'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''oauth_scopes''"]; plan after change: []'
   - name: api_authentication
     sql: API_AUTHENTICATION
     kind: relationship
@@ -49982,11 +50003,22 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_OAUTH2_AUTHORIZATION_CODE_9BCB4F22.PUBLIC.R02_COMMENT type = OAUTH2 API_AUTHENTICATION
+          = $$COVERAGE_SECRET_OAUTH2_AUTHORIZATION_CODE_9BCB4F22_OAUTH_AC$$ OAUTH_REFRESH_TOKEN = $$coverage-refresh-0$$ OAUTH_REFRESH_TOKEN_EXPIRY_TIME
+          = $$2049-01-06 20:00:00$$ COMMENT = $$a$$
+        L4: 'snowcap crashes: KeyError: ''oauth_scopes'''
+        L5: 'plan after create: ["plan crashes: KeyError: ''oauth_scopes''"]; plan after change: []'
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -50028,13 +50060,30 @@ objects:
   excluded: []
   snowcap:
     class: OAuthSecret
-    test: docs_only
+    test: live
     field_notes:
       oauth_scopes: 'Other variant: oauth2_client_credentials.'
     unmapped_fields: []
-    test_reason: 'CREATE SECRET TYPE = OAUTH2 needs an enabled API_AUTHENTICATION integration, and this wave''s rules allow
-      only ENABLED = FALSE placeholder integrations; Snowflake rejects the CREATE with "003115 (42601): SQL compilation error:
-      Integration ''<name>'' is not enabled."'
+    setup:
+    - CREATE SECURITY INTEGRATION {database}_OAUTH_AC TYPE = API_AUTHENTICATION AUTH_TYPE = OAUTH2 OAUTH_GRANT = AUTHORIZATION_CODE
+      OAUTH_TOKEN_ENDPOINT = 'https://example.com/oauth/token' OAUTH_CLIENT_ID = 'coverage-client-1' OAUTH_CLIENT_SECRET =
+      'coverage-secret-1' ENABLED = TRUE
+    teardown:
+    - DROP SECURITY INTEGRATION IF EXISTS {database}_OAUTH_AC
+    create_args:
+      api_authentication: '{database}_OAUTH_AC'
+      oauth_refresh_token: coverage-refresh-0
+      oauth_refresh_token_expiry_time: '2049-01-06 20:00:00'
+    truth:
+    - DESCRIBE SECRET {fqn}
+    combined:
+      fields:
+      - comment
+      - oauth_refresh_token
+      - oauth_refresh_token_expiry_time
+      result: fail
+      error: 'Crashed: KeyError: ''oauth_scopes'''
+    tested_inputs: a70257e14bb9
 - object: SECRET
   variant: oauth2_client_credentials
   scope_level: schema
@@ -50141,13 +50190,25 @@ objects:
       field: api_authentication
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - '{database}_OAUTH_CC'
+      - '{database}_OAUTH_CC_B'
+      truth: integration_name
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_OAUTH2_CLIENT_CREDENTIALS_837773F6.PUBLIC.R00_API_AUTHENTICATION type = OAUTH2 API_AUTHENTICATION
+          = $$COVERAGE_SECRET_OAUTH2_CLIENT_CREDENTIALS_837773F6_OAUTH_CC$$ OAUTH_SCOPES = ($$read$$)
+        L3: 'snowcap fetch crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]'' instead'
+        L4: 'snowcap crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]'' instead'
+        L5: 'plan after create: ["plan crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]''
+          instead"]; plan after change: []'
   - name: oauth_scopes[]
     sql: OAUTH_SCOPES
     kind: property
@@ -50166,11 +50227,27 @@ objects:
       field: oauth_scopes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - read
+      - - read
+        - write
+      truth: oauth_scopes
+      expect:
+      - '[read]'
+      - '[read, write]'
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_OAUTH2_CLIENT_CREDENTIALS_837773F6.PUBLIC.R01_OAUTH_SCOPES__ type = OAUTH2 API_AUTHENTICATION
+          = $$COVERAGE_SECRET_OAUTH2_CLIENT_CREDENTIALS_837773F6_OAUTH_CC$$ OAUTH_SCOPES = ($$read$$)
+        L3: 'snowcap fetch crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]'' instead'
+        L4: 'snowcap crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]'' instead'
+        L5: 'plan after create: ["plan crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]''
+          instead"]; plan after change: []'
   - name: comment
     sql: COMMENT
     kind: property
@@ -50188,11 +50265,23 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECRET COVERAGE_SECRET_OAUTH2_CLIENT_CREDENTIALS_837773F6.PUBLIC.R02_COMMENT type = OAUTH2 API_AUTHENTICATION
+          = $$COVERAGE_SECRET_OAUTH2_CLIENT_CREDENTIALS_837773F6_OAUTH_CC$$ OAUTH_SCOPES = ($$read$$) COMMENT = $$a$$
+        L3: 'snowcap fetch crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]'' instead'
+        L4: 'snowcap crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]'' instead'
+        L5: 'plan after create: ["plan crashes: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]''
+          instead"]; plan after change: []'
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -50234,14 +50323,34 @@ objects:
   excluded: []
   snowcap:
     class: OAuthSecret
-    test: docs_only
+    test: live
     field_notes:
       oauth_refresh_token: 'Other variant: oauth2_authorization_code.'
       oauth_refresh_token_expiry_time: 'Other variant: oauth2_authorization_code.'
     unmapped_fields: []
-    test_reason: 'CREATE SECRET TYPE = OAUTH2 needs an enabled API_AUTHENTICATION integration, and this wave''s rules allow
-      only ENABLED = FALSE placeholder integrations; Snowflake rejects the CREATE with "003115 (42601): SQL compilation error:
-      Integration ''<name>'' is not enabled."'
+    setup:
+    - CREATE SECURITY INTEGRATION {database}_OAUTH_CC TYPE = API_AUTHENTICATION AUTH_TYPE = OAUTH2 OAUTH_GRANT = CLIENT_CREDENTIALS
+      OAUTH_TOKEN_ENDPOINT = 'https://example.com/oauth/token' OAUTH_CLIENT_ID = 'coverage-client-1' OAUTH_CLIENT_SECRET =
+      'coverage-secret-1' OAUTH_ALLOWED_SCOPES = ('read', 'write') ENABLED = TRUE
+    - CREATE SECURITY INTEGRATION {database}_OAUTH_CC_B TYPE = API_AUTHENTICATION AUTH_TYPE = OAUTH2 OAUTH_GRANT = CLIENT_CREDENTIALS
+      OAUTH_TOKEN_ENDPOINT = 'https://example.com/oauth/token' OAUTH_CLIENT_ID = 'coverage-client-1' OAUTH_CLIENT_SECRET =
+      'coverage-secret-1' OAUTH_ALLOWED_SCOPES = ('read', 'write') ENABLED = TRUE
+    teardown:
+    - DROP SECURITY INTEGRATION IF EXISTS {database}_OAUTH_CC
+    - DROP SECURITY INTEGRATION IF EXISTS {database}_OAUTH_CC_B
+    create_args:
+      api_authentication: '{database}_OAUTH_CC'
+      oauth_scopes:
+      - read
+    truth:
+    - DESCRIBE SECRET {fqn}
+    combined:
+      fields:
+      - comment
+      - oauth_scopes
+      result: fail
+      error: 'Crashed: TypeError: Expected OAuthSecret.oauth_scopes to be list[str], got ''[read]'' instead'
+    tested_inputs: 640583613ebf
 - object: SECRET
   variant: password
   scope_level: schema

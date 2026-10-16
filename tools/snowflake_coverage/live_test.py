@@ -22,9 +22,10 @@ and L3 compares the values the path names. A tags row tests the TagReference tha
 It also runs one combined test per object: every combinable SET property changes in one plan, and
 each value must land.
 
-Every object runs in its own throwaway database, which is dropped at the end, also on failure. The
-object's setup SQL runs in it first. Account-level test objects are dropped after each row and in the final
-cleanup, and then the object's teardown SQL drops the account-level prerequisites that setup created.
+Every object runs in its own throwaway database. The object's setup SQL runs in it first. Account-level test
+objects are dropped after each row. The final cleanup runs also on failure: it drops the remaining test objects,
+then the database, then runs the object's teardown SQL, which drops the account-level prerequisites that setup
+created.
 
 Usage: uv run python tools/snowflake_coverage/live_test.py [OBJECT[:variant] ...]
 """
@@ -515,10 +516,9 @@ def test_object(account: Account, obj: dict) -> None:
         # CREATE WAREHOUSE makes the new warehouse current, and the queries after its drop need a warehouse.
         if TEST_WAREHOUSE:
             account.cur.execute(f"USE WAREHOUSE {TEST_WAREHOUSE}")
-        try:
-            account.clean_up(fill(obj["snowcap"].get("teardown", []), database))
-        finally:
-            account.cur.execute(f"DROP DATABASE IF EXISTS {database}")
+        # Dependents go first. Database objects can hold setup's account-level prerequisites (an OAuth secret
+        # holds its security integration), and Snowflake drops a database whose objects an integration references.
+        account.clean_up([f"DROP DATABASE IF EXISTS {database}", *fill(obj["snowcap"].get("teardown", []), database)])
 
 
 def main(labels: list[str]) -> None:
