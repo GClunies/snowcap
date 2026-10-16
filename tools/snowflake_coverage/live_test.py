@@ -11,7 +11,8 @@ For each row the script creates one object with the first sample value, then:
 - L4 Updated: a change to the second sample value lands in Snowflake. When ALTER cannot change the
   property (docs `alter: none`), L4 passes only if snowcap refuses the change with an error before
   it sends SQL. A refusal is an error that snowcap raises on purpose: a bare Exception,
-  NotImplementedError, or a snowcap.exceptions class. Any other error is a crash and fails.
+  NotImplementedError, or a snowcap.exceptions class, raised outside snowcap's fetch code. Any other
+  error is a crash and fails.
 - L5 Round trip: plan shows no change after the create and after the change. When snowcap
   correctly refuses the change, nothing is applied, so L5 is n/a.
 
@@ -22,8 +23,8 @@ It also runs one combined test per object: every combinable SET property changes
 each value must land.
 
 Every object runs in its own throwaway database, which is dropped at the end, also on failure. The
-object's setup SQL runs in it first. Account-level test objects are dropped in the same cleanup, and then the
-object's teardown SQL drops the account-level prerequisites that setup created.
+object's setup SQL runs in it first. Account-level test objects are dropped after each row and in the final
+cleanup, and then the object's teardown SQL drops the account-level prerequisites that setup created.
 
 Usage: uv run python tools/snowflake_coverage/live_test.py [OBJECT[:variant] ...]
 """
@@ -34,6 +35,7 @@ import datetime
 import io
 import re
 import sys
+import traceback
 import uuid
 from pathlib import Path
 
@@ -82,9 +84,16 @@ class Crashed(Exception):
 
 
 def snowcap_error(err: Exception) -> Exception:
-    """Classify an error that snowcap raised while it planned or compiled a change."""
+    """Classify an error that snowcap raised while it planned or compiled a change.
+
+    A read failure is never a refusal: data_provider raises bare Exception for fetches it does not implement
+    (partner security integration oauth_client), and that must not pass L4.
+    """
     deliberate = type(err) in (Exception, NotImplementedError) or type(err).__module__ == "snowcap.exceptions"
-    return (Refused if deliberate else Crashed)(short(err))
+    reading = any(
+        frame.f_globals.get("__name__") == "snowcap.data_provider" for frame, _ in traceback.walk_tb(err.__traceback__)
+    )
+    return (Refused if deliberate and not reading else Crashed)(short(err))
 
 
 class NotPlanned(Exception):
@@ -493,10 +502,11 @@ def test_object(account: Account, obj: dict) -> None:
             account.cur.execute(statement)
         for index, row in enumerate(testable_rows(obj)):
             test_row(account, obj, row, database, index)
+            # Some account types allow one object per account (partner OAuth integrations), and others hold
+            # account-unique values (a user's login_name), so each row's account object must go before the next.
+            account.clean_up([])
             levels = row["snowcap"]["levels"]
             print(f"{label}.{row['name']}: " + " ".join(f"{k}={v}" for k, v in levels.items()), flush=True)
-        # Row objects can hold account-unique values, such as a user's login_name, that the combined object reuses.
-        account.clean_up([])
         obj["snowcap"]["combined"] = test_combined(account, obj, database)
         obj["snowcap"]["tested_inputs"] = live_inputs_digest(obj)
         print(f"{label} combined: {obj['snowcap']['combined']['result']}", flush=True)

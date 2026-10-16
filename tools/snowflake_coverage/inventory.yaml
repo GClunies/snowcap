@@ -25884,13 +25884,13 @@ objects:
       - (X VARCHAR, C2 FLOAT)
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns
           VARCHAR language JAVASCRIPT AS $$return X;$$
         L4_sql:
-        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R00_ARGUMENTS___NAME(VARCHAR, FLOAT) SET (X VARCHAR,
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R00_ARGUMENTS___NAME(VARCHAR, FLOAT) SET (X VARCHAR,
           C2 FLOAT)
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          101 unexpected ''(''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R00_ARGUMENTS___NAME(VARCHAR,
+          101 unexpected ''(''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R00_ARGUMENTS___NAME(VARCHAR,
           FLOAT) SET (X VARCHAR, C2 FLOAT)'
         L5: fails because L4 fails
   - name: arguments[].data_type
@@ -25931,13 +25931,13 @@ objects:
       - (X VARCHAR, C1 VARCHAR)
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns
           VARCHAR language JAVASCRIPT AS $$return X;$$
         L4_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns
           VARCHAR language JAVASCRIPT AS $$return X;$$
         L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
-        L5: 'plan after create: []; plan after change: [''plan refuses: Exception: Found multiple functions matching COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR,
+        L5: 'plan after create: []; plan after change: [''plan crashes: Exception: Found multiple functions matching COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR,
           VARCHAR)'']'
   - name: arguments[].default
     sql: DEFAULT <default_value>
@@ -26015,12 +26015,12 @@ objects:
       truth: returns
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language JAVASCRIPT
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language JAVASCRIPT
           AS $$return X;$$
         L4_sql:
-        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R02_RETURNS(VARCHAR) SET returns FLOAT
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R02_RETURNS(VARCHAR) SET returns FLOAT
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          93 unexpected ''FLOAT''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R02_RETURNS(VARCHAR) SET
+          93 unexpected ''FLOAT''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R02_RETURNS(VARCHAR) SET
           returns FLOAT'
         L5: fails because L4 fails
   - name: returns_table[]
@@ -26054,10 +26054,10 @@ objects:
       truth: returns
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R03_RETURNS_TABLE__ (X VARCHAR) returns TABLE (A VARCHAR)
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R03_RETURNS_TABLE__ (X VARCHAR) returns TABLE (A VARCHAR)
           language JAVASCRIPT AS $$return X;$$
         L4_sql:
-        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R03_RETURNS_TABLE__(VARCHAR) SET returns TABLE (A VARCHAR,
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R03_RETURNS_TABLE__(VARCHAR) SET returns TABLE (A VARCHAR,
           B FLOAT)
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
           101 unexpected ''TABLE''. syntax error line 1 at position 110 unexpected ''VARCHAR''. syntax error line 1 at position
@@ -26118,14 +26118,14 @@ objects:
       truth: null handling
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R04_NULL_HANDLING (X VARCHAR) returns VARCHAR language
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R04_NULL_HANDLING (X VARCHAR) returns VARCHAR language
           JAVASCRIPT RETURNS NULL ON NULL INPUT AS $$return X;$$
         L3: Snowflake reports null handling='RETURNS NULL ON NULL INPUT' (declared form 'RETURNS NULL ON NULL INPUT'), snowcap
           fetches None
         L4_sql:
-        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R04_NULL_HANDLING(VARCHAR) SET CALLED ON NULL INPUT
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R04_NULL_HANDLING(VARCHAR) SET CALLED ON NULL INPUT
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          98 unexpected ''ON''. syntax error line 1 at position 111 unexpected ''<EOF>''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R04_NULL_HANDLING(VARCHAR)
+          98 unexpected ''ON''. syntax error line 1 at position 111 unexpected ''<EOF>''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R04_NULL_HANDLING(VARCHAR)
           SET CALLED ON NULL INPUT'
         L5: 'plan after create: ["update [''null_handling'']"]; plan after change: []'
   - name: volatility
@@ -26158,12 +26158,12 @@ objects:
       truth: volatility
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R05_VOLATILITY (X VARCHAR) returns VARCHAR language
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R05_VOLATILITY (X VARCHAR) returns VARCHAR language
           JAVASCRIPT IMMUTABLE AS $$return X;$$
         L4_sql:
-        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R05_VOLATILITY(VARCHAR) SET VOLATILE
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R05_VOLATILITY(VARCHAR) SET VOLATILE
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          96 unexpected ''<EOF>''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R05_VOLATILITY(VARCHAR)
+          96 unexpected ''<EOF>''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R05_VOLATILITY(VARCHAR)
           SET VOLATILE'
         L5: fails because L4 fails
   - name: body
@@ -26197,12 +26197,12 @@ objects:
       truth: body
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R06_BODY (X VARCHAR) returns VARCHAR language JAVASCRIPT
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R06_BODY (X VARCHAR) returns VARCHAR language JAVASCRIPT
           AS $$return X;$$
         L4_sql:
-        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R06_BODY(VARCHAR) SET AS $$return X + 'b';$$
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R06_BODY(VARCHAR) SET AS $$return X + 'b';$$
         L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
-          82 unexpected ''AS''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R06_BODY(VARCHAR) SET AS $$return
+          82 unexpected ''AS''. on: ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R06_BODY(VARCHAR) SET AS $$return
           X + ''b'';$$'
         L5: fails because L4 fails
   - name: secure
@@ -26233,7 +26233,7 @@ objects:
       truth: is_secure
       evidence:
         L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 72 unexpected
-          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R07_SECURE SECURE (X VARCHAR) returns
+          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R07_SECURE SECURE (X VARCHAR) returns
           VARCHAR language JAVASCRIPT AS $$return X ...'
   - name: comment
     sql: COMMENT
@@ -26263,10 +26263,10 @@ objects:
       truth: description
       evidence:
         create_sql:
-        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R08_COMMENT (X VARCHAR) returns VARCHAR language JAVASCRIPT
+        - CREATE FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R08_COMMENT (X VARCHAR) returns VARCHAR language JAVASCRIPT
           COMMENT = $$a$$ AS $$return X;$$
         L4_sql:
-        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_D3247481.PUBLIC.R08_COMMENT(VARCHAR) SET COMMENT = $$b$$
+        - ALTER FUNCTION COVERAGE_FUNCTION_JAVASCRIPT_8BECD4EA.PUBLIC.R08_COMMENT(VARCHAR) SET COMMENT = $$b$$
   - name: copy_grants
     sql: COPY GRANTS
     kind: property
@@ -26616,8 +26616,8 @@ objects:
       - (X VARCHAR, C2 FLOAT)
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns VARCHAR\
-          \ language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R00_ARGUMENTS___NAME (X VARCHAR, C1 FLOAT) returns VARCHAR\
+          \ language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -26663,19 +26663,19 @@ objects:
       - (X VARCHAR, C1 VARCHAR)
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns\
-          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 FLOAT) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
         L4_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns\
-          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R01_ARGUMENTS___DATA_TYPE (X VARCHAR, C1 VARCHAR) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
         L5: 'plan after create: ["plan crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments:
-          ''runtime_version'' and ''handler''"]; plan after change: [''plan refuses: Exception: Found multiple functions matching
-          COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR, VARCHAR)'']'
+          ''runtime_version'' and ''handler''"]; plan after change: [''plan crashes: Exception: Found multiple functions matching
+          COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R01_ARGUMENTS___DATA_TYPE(VARCHAR, VARCHAR)'']'
   - name: arguments[].default
     sql: DEFAULT <default_value>
     kind: identity
@@ -26775,8 +26775,8 @@ objects:
       truth: returns
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R02_RETURNS (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -26864,9 +26864,9 @@ objects:
       truth: null handling
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R03_NULL_HANDLING (X VARCHAR) returns VARCHAR language\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R03_NULL_HANDLING (X VARCHAR) returns VARCHAR language\
           \ PYTHON RETURNS NULL ON NULL INPUT RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS =\
-          \ (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1) AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return\
+          \ (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1) AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return\
           \ x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -26904,8 +26904,8 @@ objects:
       truth: volatility
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R04_VOLATILITY (X VARCHAR) returns VARCHAR language PYTHON\
-          \ IMMUTABLE RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R04_VOLATILITY (X VARCHAR) returns VARCHAR language PYTHON\
+          \ IMMUTABLE RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -26944,8 +26944,8 @@ objects:
       truth: runtime_version
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R05_RUNTIME_VERSION (X VARCHAR) returns VARCHAR language\
-          \ PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R05_RUNTIME_VERSION (X VARCHAR) returns VARCHAR language\
+          \ PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -26985,8 +26985,8 @@ objects:
       truth: handler
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R06_HANDLER (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R06_HANDLER (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27025,8 +27025,8 @@ objects:
       truth: body
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R07_BODY (X VARCHAR) returns VARCHAR language PYTHON RUNTIME_VERSION\
-          \ = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1) AS $$def\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R07_BODY (X VARCHAR) returns VARCHAR language PYTHON RUNTIME_VERSION\
+          \ = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1) AS $$def\
           \ main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27068,9 +27068,9 @@ objects:
       - '[''@{database}.PUBLIC.COVERAGE_STAGE/coverage_mod_b.py'']'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R08_IMPORTS__ (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ IMPORTS = ($$@COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py$$)\
-          \ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1) AS $$def main(x, *rest):\n\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R08_IMPORTS__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ IMPORTS = ($$@COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.COVERAGE_STAGE/coverage_mod_a.py$$)\
+          \ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1) AS $$def main(x, *rest):\n\
           \    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27114,8 +27114,8 @@ objects:
       - '[''pyyaml'',''numpy'']'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R09_PACKAGES__ (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$pyyaml$$) HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R09_PACKAGES__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ PACKAGES = ($$pyyaml$$) HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27179,8 +27179,8 @@ objects:
       - '["{database}_EAI2"]'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R10_EXTERNAL_ACCESS_INTEGRATIONS__ (X VARCHAR) returns\
-          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R10_EXTERNAL_ACCESS_INTEGRATIONS__ (X VARCHAR) returns\
+          \ VARCHAR language PYTHON RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -27223,10 +27223,10 @@ objects:
       - '{"cred":"{database}.PUBLIC.COVERAGE_S2"}'
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R11_SECRETS__ (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R11_SECRETS__ (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
-        L2: 'declared {''cred'': ''COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.COVERAGE_S1''}, Snowflake reports secrets=''{}'''
+        L2: 'declared {''cred'': ''COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.COVERAGE_S1''}, Snowflake reports secrets=''{}'''
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
         L4: 'snowcap crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
@@ -27261,7 +27261,7 @@ objects:
       truth: is_secure
       evidence:
         L2: 'create failed: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position 68 unexpected
-          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R12_SECURE SECURE (X VARCHAR) returns VARCHAR
+          ''SECURE''. on: CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R12_SECURE SECURE (X VARCHAR) returns VARCHAR
           language PYTHON RUNTIME_VERSION = $$3 ...'
   - name: comment
     sql: COMMENT
@@ -27292,8 +27292,8 @@ objects:
       truth: description
       evidence:
         create_sql:
-        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_12692DB7.PUBLIC.R13_COMMENT (X VARCHAR) returns VARCHAR language PYTHON\
-          \ RUNTIME_VERSION = $$3.11$$ COMMENT = $$a$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_12692DB7_EAI1)\
+        - "CREATE FUNCTION COVERAGE_FUNCTION_PYTHON_02CF7B2F.PUBLIC.R13_COMMENT (X VARCHAR) returns VARCHAR language PYTHON\
+          \ RUNTIME_VERSION = $$3.11$$ COMMENT = $$a$$ HANDLER = $$main$$ EXTERNAL_ACCESS_INTEGRATIONS = (COVERAGE_FUNCTION_PYTHON_02CF7B2F_EAI1)\
           \ AS $$def main(x, *rest):\n    return x\n\ndef main2(x, *rest):\n    return x\n$$"
         L3: 'snowcap fetch crashes: TypeError: _PythonUDF.__init__() missing 2 required positional arguments: ''runtime_version''
           and ''handler'''
@@ -47866,7 +47866,7 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_66EC3355.R00_TRANSIENT
+        - CREATE TRANSIENT SCHEMA COVERAGE_SCHEMA_E2DA5489.R00_TRANSIENT
         L4: 'snowcap refuses: Exception: Cannot change transient property of schema'
         L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: swap_with
@@ -47912,9 +47912,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R01_MANAGED_ACCESS WITH MANAGED ACCESS
+        - CREATE SCHEMA COVERAGE_SCHEMA_E2DA5489.R01_MANAGED_ACCESS WITH MANAGED ACCESS
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
+        - ALTER SCHEMA COVERAGE_SCHEMA_E2DA5489.R01_MANAGED_ACCESS DISABLE MANAGED ACCESS
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -47943,9 +47943,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R02_OWNER
+        - CREATE SCHEMA COVERAGE_SCHEMA_E2DA5489.R02_OWNER
         L4_sql:
-        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_66EC3355.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON SCHEMA COVERAGE_SCHEMA_E2DA5489.R02_OWNER TO ROLE SYSADMIN COPY CURRENT GRANTS
   - name: tags
     sql: WITH TAG / SET TAG
     kind: relationship
@@ -48018,9 +48018,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
+        - CREATE SCHEMA COVERAGE_SCHEMA_E2DA5489.R03_DATA_RETENTION_TIME_IN_DAYS DATA_RETENTION_TIME_IN_DAYS = 3
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
+        - ALTER SCHEMA COVERAGE_SCHEMA_E2DA5489.R03_DATA_RETENTION_TIME_IN_DAYS SET data_retention_time_in_days = 5
   - name: max_data_extension_time_in_days
     sql: MAX_DATA_EXTENSION_TIME_IN_DAYS
     kind: parameter
@@ -48049,9 +48049,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
+        - CREATE SCHEMA COVERAGE_SCHEMA_E2DA5489.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS MAX_DATA_EXTENSION_TIME_IN_DAYS = 10
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
+        - ALTER SCHEMA COVERAGE_SCHEMA_E2DA5489.R04_MAX_DATA_EXTENSION_TIME_IN_DAYS SET max_data_extension_time_in_days =
           12
   - name: external_volume
     sql: EXTERNAL_VOLUME
@@ -48213,9 +48213,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_E2DA5489.R05_DEFAULT_DDL_COLLATION DEFAULT_DDL_COLLATION = $$en-ci$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
+        - ALTER SCHEMA COVERAGE_SCHEMA_E2DA5489.R05_DEFAULT_DDL_COLLATION SET default_ddl_collation = 'en-cs'
   - name: storage_serialization_policy
     sql: STORAGE_SERIALIZATION_POLICY
     kind: parameter
@@ -48288,9 +48288,9 @@ objects:
       candidates: []
       evidence:
         create_sql:
-        - CREATE SCHEMA COVERAGE_SCHEMA_66EC3355.R06_COMMENT COMMENT = $$a$$
+        - CREATE SCHEMA COVERAGE_SCHEMA_E2DA5489.R06_COMMENT COMMENT = $$a$$
         L4_sql:
-        - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.R06_COMMENT SET comment = 'b'
+        - ALTER SCHEMA COVERAGE_SCHEMA_E2DA5489.R06_COMMENT SET comment = 'b'
   - name: catalog_sync
     sql: CATALOG_SYNC
     kind: parameter
@@ -48929,7 +48929,7 @@ objects:
       - default_ddl_collation
       - max_data_extension_time_in_days
       sql:
-      - ALTER SCHEMA COVERAGE_SCHEMA_66EC3355.COMBINED SET comment = 'b'
+      - ALTER SCHEMA COVERAGE_SCHEMA_E2DA5489.COMBINED SET comment = 'b'
       result: fail
       missed:
       - data_retention_time_in_days
@@ -50329,11 +50329,24 @@ objects:
       field: oauth_grant
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - AUTHORIZATION_CODE
+      - CLIENT_CREDENTIALS
+      truth: oauth_grant
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R00_OAUTH_GRANT type
+          = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R00_OAUTH_GRANT SET
+          OAUTH_GRANT = $$CLIENT_CREDENTIALS$$
   - name: enabled
     sql: ENABLED
     kind: property
@@ -50351,11 +50364,24 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R01_ENABLED type
+          = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R01_ENABLED SET ENABLED
+          = TRUE
   - name: oauth_authorization_endpoint
     sql: OAUTH_AUTHORIZATION_ENDPOINT
     kind: property
@@ -50396,11 +50422,24 @@ objects:
       field: oauth_token_endpoint
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - https://example.com/oauth/token
+      - https://example.com/oauth/token2
+      truth: oauth_token_endpoint
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R02_OAUTH_TOKEN_ENDPOINT
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R02_OAUTH_TOKEN_ENDPOINT
+          SET OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token2$$
   - name: oauth_client_auth_method
     sql: OAUTH_CLIENT_AUTH_METHOD
     kind: property
@@ -50419,11 +50458,24 @@ objects:
       field: oauth_client_auth_method
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - CLIENT_SECRET_POST
+      - CLIENT_SECRET_BASIC
+      truth: oauth_client_auth_method
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R03_OAUTH_CLIENT_AUTH_METHOD
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R03_OAUTH_CLIENT_AUTH_METHOD
+          SET OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_BASIC$$
   - name: oauth_client_id
     sql: OAUTH_CLIENT_ID
     kind: property
@@ -50441,11 +50493,24 @@ objects:
       field: oauth_client_id
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - coverage-client-1
+      - coverage-client-2
+      truth: oauth_client_id
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R04_OAUTH_CLIENT_ID
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R04_OAUTH_CLIENT_ID
+          SET OAUTH_CLIENT_ID = $$coverage-client-2$$
   - name: oauth_client_secret
     sql: OAUTH_CLIENT_SECRET
     kind: property
@@ -50464,10 +50529,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - coverage-secret-1
+      - coverage-secret-2
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R05_OAUTH_CLIENT_SECRET
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L3: declared 'coverage-secret-1', snowcap fetches None
+        L4: a change to 'coverage-secret-2' plans nothing
+        L5: fails because L4 fails
   - name: oauth_access_token_validity
     sql: OAUTH_ACCESS_TOKEN_VALIDITY
     kind: property
@@ -50485,11 +50562,24 @@ objects:
       field: oauth_access_token_validity
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 3600
+      - 7200
+      truth: oauth_access_token_validity
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R06_OAUTH_ACCESS_TOKEN_VALIDITY
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 3600
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R06_OAUTH_ACCESS_TOKEN_VALIDITY
+          SET OAUTH_ACCESS_TOKEN_VALIDITY = 7200
   - name: oauth_refresh_token_validity
     sql: OAUTH_REFRESH_TOKEN_VALIDITY
     kind: property
@@ -50530,11 +50620,24 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R07_COMMENT type
+          = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$AUTHORIZATION_CODE$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0 COMMENT = $$a$$
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_R07_COMMENT SET COMMENT
+          = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -50602,10 +50705,39 @@ objects:
   excluded: []
   snowcap:
     class: APIAuthenticationSecurityIntegration
-    test: untested
+    test: live
     field_notes:
       oauth_allowed_scopes: 'Other variant: api_auth_client_credentials.'
     unmapped_fields: []
+    create_args:
+      enabled: false
+      oauth_grant: AUTHORIZATION_CODE
+      oauth_token_endpoint: https://example.com/oauth/token
+      oauth_client_id: coverage-client-1
+      oauth_client_secret: coverage-secret-1
+    truth:
+    - SHOW SECURITY INTEGRATIONS LIKE '{name}'
+    - DESCRIBE SECURITY INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - enabled
+      - oauth_access_token_validity
+      - oauth_client_auth_method
+      - oauth_client_id
+      - oauth_client_secret
+      - oauth_grant
+      - oauth_token_endpoint
+      sql:
+      - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_AUTHORIZATION_CODE_735AFA90_COMBINED SET ENABLED
+        = TRUE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token2$$ OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_BASIC$$
+        OAUTH_CLIENT_ID = $$coverage-client-2$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 7200 COMMENT
+        = $$b$$
+      result: fail
+      missed:
+      - oauth_client_secret
+    tested_inputs: b4478ca1a80a
 - object: SECURITY INTEGRATION
   variant: api_auth_client_credentials
   scope_level: account
@@ -50684,13 +50816,30 @@ objects:
       field: auth_type
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - OAUTH2
+      - WORKLOAD_IDENTITY_FEDERATION
+      truth: auth_type
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R00_AUTH_TYPE type
+          = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R00_AUTH_TYPE SET
+          AUTH_TYPE = $$WORKLOAD_IDENTITY_FEDERATION$$
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''AUTH_TYPE''
+          for ''INTEGRATION - API_AUTHENTICATION'' on: ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R00_AUTH_TYPE
+          SET AUTH_TYPE = $$WORKLOAD_IDENT ...'
+        L5: fails because L4 fails
   - name: oauth_grant
     sql: OAUTH_GRANT = 'CLIENT_CREDENTIALS'
     kind: identity
@@ -50709,11 +50858,24 @@ objects:
       field: oauth_grant
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - CLIENT_CREDENTIALS
+      - AUTHORIZATION_CODE
+      truth: oauth_grant
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R01_OAUTH_GRANT type
+          = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R01_OAUTH_GRANT SET
+          OAUTH_GRANT = $$AUTHORIZATION_CODE$$
   - name: enabled
     sql: ENABLED
     kind: property
@@ -50731,11 +50893,24 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R02_ENABLED type
+          = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R02_ENABLED SET ENABLED
+          = TRUE
   - name: oauth_token_endpoint
     sql: OAUTH_TOKEN_ENDPOINT
     kind: property
@@ -50753,11 +50928,24 @@ objects:
       field: oauth_token_endpoint
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - https://example.com/oauth/token
+      - https://example.com/oauth/token2
+      truth: oauth_token_endpoint
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R03_OAUTH_TOKEN_ENDPOINT
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R03_OAUTH_TOKEN_ENDPOINT
+          SET OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token2$$
   - name: oauth_client_auth_method
     sql: OAUTH_CLIENT_AUTH_METHOD
     kind: property
@@ -50776,11 +50964,24 @@ objects:
       field: oauth_client_auth_method
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - CLIENT_SECRET_POST
+      - CLIENT_SECRET_BASIC
+      truth: oauth_client_auth_method
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R04_OAUTH_CLIENT_AUTH_METHOD
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R04_OAUTH_CLIENT_AUTH_METHOD
+          SET OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_BASIC$$
   - name: oauth_client_id
     sql: OAUTH_CLIENT_ID
     kind: property
@@ -50798,11 +50999,24 @@ objects:
       field: oauth_client_id
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - coverage-client-1
+      - coverage-client-2
+      truth: oauth_client_id
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R05_OAUTH_CLIENT_ID
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R05_OAUTH_CLIENT_ID
+          SET OAUTH_CLIENT_ID = $$coverage-client-2$$
   - name: oauth_client_secret
     sql: OAUTH_CLIENT_SECRET
     kind: property
@@ -50821,10 +51035,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - coverage-secret-1
+      - coverage-secret-2
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R06_OAUTH_CLIENT_SECRET
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0
+        L3: declared 'coverage-secret-1', snowcap fetches None
+        L4: a change to 'coverage-secret-2' plans nothing
+        L5: fails because L4 fails
   - name: oauth_access_token_validity
     sql: OAUTH_ACCESS_TOKEN_VALIDITY
     kind: property
@@ -50842,11 +51068,24 @@ objects:
       field: oauth_access_token_validity
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 3600
+      - 7200
+      truth: oauth_access_token_validity
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R07_OAUTH_ACCESS_TOKEN_VALIDITY
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 3600
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R07_OAUTH_ACCESS_TOKEN_VALIDITY
+          SET OAUTH_ACCESS_TOKEN_VALIDITY = 7200
   - name: oauth_allowed_scopes
     sql: OAUTH_ALLOWED_SCOPES
     kind: property
@@ -50864,11 +51103,27 @@ objects:
       field: oauth_allowed_scopes
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - read
+        - write
+      - - read
+      truth: allowed_scopes_list
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R08_OAUTH_ALLOWED_SCOPES
+          type = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0 OAUTH_ALLOWED_SCOPES
+          = ($$read$$, $$write$$)
+        L3: 'snowcap fetch crashes: AttributeError: ''list'' object has no attribute ''strip'''
+        L4: 'snowcap crashes: AttributeError: ''list'' object has no attribute ''strip'''
+        L5: 'plan after create: ["plan crashes: AttributeError: ''list'' object has no attribute ''strip''"]; plan after change:
+          []'
   - name: comment
     sql: COMMENT
     kind: property
@@ -50886,11 +51141,24 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R09_COMMENT type
+          = API_AUTHENTICATION AUTH_TYPE = $$OAUTH2$$ ENABLED = FALSE OAUTH_TOKEN_ENDPOINT = $$https://example.com/oauth/token$$
+          OAUTH_CLIENT_AUTH_METHOD = $$CLIENT_SECRET_POST$$ OAUTH_CLIENT_ID = $$coverage-client-1$$ OAUTH_CLIENT_SECRET =
+          $$coverage-secret-1$$ OAUTH_GRANT = $$CLIENT_CREDENTIALS$$ OAUTH_ACCESS_TOKEN_VALIDITY = 0 COMMENT = $$a$$
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_CLIENT_CREDENTIALS_8057BB5F_R09_COMMENT SET COMMENT
+          = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -50958,8 +51226,34 @@ objects:
   excluded: []
   snowcap:
     class: APIAuthenticationSecurityIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      oauth_grant: CLIENT_CREDENTIALS
+      oauth_token_endpoint: https://example.com/oauth/token
+      oauth_client_id: coverage-client-1
+      oauth_client_secret: coverage-secret-1
+    truth:
+    - SHOW SECURITY INTEGRATIONS LIKE '{name}'
+    - DESCRIBE SECURITY INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) UNION ALL SELECT 'allowed_scopes_list',
+      '[' || LISTAGG('''' || TRIM(s.value) || '''', ', ') WITHIN GROUP (ORDER BY s.index) || ']' FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+      r, LATERAL SPLIT_TO_TABLE(TRIM(r."property_value", '[]'), ',') s WHERE r."property" = 'OAUTH_ALLOWED_SCOPES'
+    combined:
+      fields:
+      - comment
+      - enabled
+      - oauth_access_token_validity
+      - oauth_allowed_scopes
+      - oauth_client_auth_method
+      - oauth_client_id
+      - oauth_client_secret
+      - oauth_grant
+      - oauth_token_endpoint
+      result: fail
+      error: 'Crashed: AttributeError: ''list'' object has no attribute ''strip'''
+    tested_inputs: 4f1113c91e94
 - object: SECURITY INTEGRATION
   variant: api_auth_jwt_bearer
   scope_level: account
@@ -51062,11 +51356,19 @@ objects:
       field: oauth_grant
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - JWT_BEARER
+      - CLIENT_CREDENTIALS
+      truth: oauth_grant
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R00_OAUTH_GRANT type
+          = API_AUTHENTICATION AUTH_TYPE = ...'
   - name: oauth_assertion_issuer
     sql: OAUTH_ASSERTION_ISSUER
     kind: property
@@ -51107,11 +51409,19 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R01_ENABLED type = API_AUTHENTICATION
+          AUTH_TYPE = $$O ...'
   - name: oauth_authorization_endpoint
     sql: OAUTH_AUTHORIZATION_ENDPOINT
     kind: property
@@ -51152,11 +51462,19 @@ objects:
       field: oauth_token_endpoint
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - https://example.com/oauth/token
+      - https://example.com/oauth/token2
+      truth: oauth_token_endpoint
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R02_OAUTH_TOKEN_ENDPOINT
+          type = API_AUTHENTICATION AU ...'
   - name: oauth_client_auth_method
     sql: OAUTH_CLIENT_AUTH_METHOD
     kind: property
@@ -51175,11 +51493,19 @@ objects:
       field: oauth_client_auth_method
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - CLIENT_SECRET_POST
+      - CLIENT_SECRET_BASIC
+      truth: oauth_client_auth_method
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R03_OAUTH_CLIENT_AUTH_METHOD
+          type = API_AUTHENTICATIO ...'
   - name: oauth_client_id
     sql: OAUTH_CLIENT_ID
     kind: property
@@ -51197,11 +51523,19 @@ objects:
       field: oauth_client_id
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - coverage-client-1
+      - coverage-client-2
+      truth: oauth_client_id
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R04_OAUTH_CLIENT_ID type
+          = API_AUTHENTICATION AUTH_TY ...'
   - name: oauth_client_secret
     sql: OAUTH_CLIENT_SECRET
     kind: property
@@ -51219,11 +51553,18 @@ objects:
       field: oauth_client_secret
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - coverage-secret-1
+      - coverage-secret-2
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R05_OAUTH_CLIENT_SECRET
+          type = API_AUTHENTICATION AUT ...'
   - name: oauth_access_token_validity
     sql: OAUTH_ACCESS_TOKEN_VALIDITY
     kind: property
@@ -51241,11 +51582,19 @@ objects:
       field: oauth_access_token_validity
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - 3600
+      - 7200
+      truth: oauth_access_token_validity
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R06_OAUTH_ACCESS_TOKEN_VALIDITY
+          type = API_AUTHENTICA ...'
   - name: oauth_refresh_token_validity
     sql: OAUTH_REFRESH_TOKEN_VALIDITY
     kind: property
@@ -51286,11 +51635,19 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER]
+          on: CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_R07_COMMENT type = API_AUTHENTICATION
+          AUTH_TYPE = $$O ...'
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -51358,10 +51715,35 @@ objects:
   excluded: []
   snowcap:
     class: APIAuthenticationSecurityIntegration
-    test: untested
+    test: live
     field_notes:
       oauth_allowed_scopes: 'Other variant: api_auth_client_credentials.'
     unmapped_fields: []
+    create_args:
+      enabled: false
+      oauth_grant: JWT_BEARER
+      oauth_token_endpoint: https://example.com/oauth/token
+      oauth_client_id: coverage-client-1
+      oauth_client_secret: coverage-secret-1
+    truth:
+    - SHOW SECURITY INTEGRATIONS LIKE '{name}'
+    - DESCRIBE SECURITY INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - enabled
+      - oauth_access_token_validity
+      - oauth_client_auth_method
+      - oauth_client_id
+      - oauth_client_secret
+      - oauth_grant
+      - oauth_token_endpoint
+      result: fail
+      error: 'ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): [OAUTH_ASSERTION_ISSUER] on: CREATE
+        SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_API_AUTH_JWT_BEARER_909B379A_COMBINED type = API_AUTHENTICATION
+        AUTH_TYPE = $$OAUT ...'
+    tested_inputs: 0f5b72008951
 - object: SECURITY INTEGRATION
   variant: aws_iam
   scope_level: account
@@ -53648,11 +54030,26 @@ objects:
       field: oauth_client_type
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: n/a
       candidates: []
+      sample:
+      - CONFIDENTIAL
+      - PUBLIC
+      truth: oauth_client_type
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R00_OAUTH_CLIENT_TYPE
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4: 'snowcap refuses: MarkedForReplacementException: Cannot update urn::FOB52671:security_integration/COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R00_OAUTH_CLIENT_TYPE:
+          changing ''oauth_client_type'' requires replacing the resource, which snowcap does not do. Changing oauth_client_type
+          requires recreating the security integration, whic'
+        L5: 'no round trip: the property is immutable and snowcap correctly refuses the change'
   - name: oauth_redirect_uri
     sql: OAUTH_REDIRECT_URI
     kind: property
@@ -53670,11 +54067,25 @@ objects:
       field: oauth_redirect_uri
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - https://example.com/oauth/callback
+      - https://example.com/oauth/callback2
+      truth: oauth_redirect_uri
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R01_OAUTH_REDIRECT_URI
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R01_OAUTH_REDIRECT_URI
+          SET OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback2$$
   - name: enabled
     sql: ENABLED
     kind: property
@@ -53692,11 +54103,25 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R02_ENABLED type = OAUTH
+          ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R02_ENABLED SET ENABLED
+          = TRUE
   - name: oauth_allow_non_tls_redirect_uri
     sql: OAUTH_ALLOW_NON_TLS_REDIRECT_URI
     kind: property
@@ -53714,11 +54139,25 @@ objects:
       field: oauth_allow_non_tls_redirect_uri
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: oauth_allow_non_tls_redirect_uri
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R03_OAUTH_ALLOW_NON_TLS_REDIRECT_URI
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = TRUE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R03_OAUTH_ALLOW_NON_TLS_REDIRECT_URI
+          SET OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE
   - name: oauth_alternate_redirect_uris
     sql: OAUTH_ALTERNATE_REDIRECT_URIS
     kind: property
@@ -53736,11 +54175,26 @@ objects:
       field: oauth_alternate_redirect_uris
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - - https://example.com/oauth/alt1
+      - - https://example.com/oauth/alt2
+      truth: alternate_redirect_uris_list
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R04_OAUTH_ALTERNATE_REDIRECT_URIS
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ALTERNATE_REDIRECT_URIS = ($$https://example.com/oauth/alt1$$) OAUTH_ISSUE_REFRESH_TOKENS
+          = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000 OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles
+          = NONE oauth_any_role_mode = DISABLE OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L3: Snowflake reports alternate_redirect_uris_list="['https://example.com/oauth/alt1']" (declared form ['https://example.com/oauth/alt1']),
+          snowcap fetches None
+        L4: a change to ['https://example.com/oauth/alt2'] plans nothing
+        L5: fails because L4 fails
   - name: oauth_enforce_pkce
     sql: OAUTH_ENFORCE_PKCE
     kind: property
@@ -53758,11 +54212,25 @@ objects:
       field: oauth_enforce_pkce
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: oauth_enforce_pkce
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R05_OAUTH_ENFORCE_PKCE
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = TRUE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R05_OAUTH_ENFORCE_PKCE
+          SET OAUTH_ENFORCE_PKCE = FALSE
   - name: oauth_enable_role_selection
     sql: OAUTH_ENABLE_ROLE_SELECTION
     kind: property
@@ -53781,10 +54249,23 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - true
+      - false
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R06_OAUTH_ENABLE_ROLE_SELECTION
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = TRUE
+        L3: declared True, snowcap fetches False
+        L4: a change to False plans nothing
+        L5: fails because L4 fails
   - name: oauth_single_use_refresh_tokens_required
     sql: OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED
     kind: property
@@ -53802,11 +54283,25 @@ objects:
       field: oauth_single_use_refresh_tokens_required
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - true
+      - false
+      truth: oauth_single_use_refresh_tokens_required
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R07_OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = TRUE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE OAUTH_ENFORCE_PKCE
+          = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R07_OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED
+          SET OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE
   - name: oauth_use_secondary_roles
     sql: OAUTH_USE_SECONDARY_ROLES
     kind: property
@@ -53824,11 +54319,25 @@ objects:
       field: oauth_use_secondary_roles
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - IMPLICIT
+      - NONE
+      truth: oauth_use_secondary_roles
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R08_OAUTH_USE_SECONDARY_ROLES
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = IMPLICIT oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R08_OAUTH_USE_SECONDARY_ROLES
+          SET oauth_use_secondary_roles = NONE
   - name: pre_authorized_roles_list
     sql: PRE_AUTHORIZED_ROLES_LIST
     kind: property
@@ -53846,11 +54355,25 @@ objects:
       field: pre_authorized_roles_list
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}_R1'
+      - - '{database}_R2'
+      truth: pre_authorized_roles
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R09_PRE_AUTHORIZED_ROLES_LIST
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE PRE_AUTHORIZED_ROLES_LIST = ($$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R1$$)
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R09_PRE_AUTHORIZED_ROLES_LIST
+          SET PRE_AUTHORIZED_ROLES_LIST = ($$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R2$$)
   - name: allowed_roles_list
     sql: ALLOWED_ROLES_LIST
     kind: property
@@ -53891,11 +54414,25 @@ objects:
       field: blocked_roles_list
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - - '{database}_R1'
+      - - '{database}_R2'
+      truth: blocked_roles
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R10_BLOCKED_ROLES_LIST
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE BLOCKED_ROLES_LIST = ($$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R1$$)
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R10_BLOCKED_ROLES_LIST
+          SET BLOCKED_ROLES_LIST = ($$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R2$$)
   - name: oauth_any_role_mode
     sql: OAUTH_ANY_ROLE_MODE
     kind: property
@@ -53913,11 +54450,25 @@ objects:
       field: oauth_any_role_mode
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - ENABLE
+      - DISABLE
+      truth: oauth_any_role_mode
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R11_OAUTH_ANY_ROLE_MODE
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = ENABLE OAUTH_ENFORCE_PKCE
+          = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R11_OAUTH_ANY_ROLE_MODE
+          SET oauth_any_role_mode = DISABLE
   - name: oauth_issue_refresh_tokens
     sql: OAUTH_ISSUE_REFRESH_TOKENS
     kind: property
@@ -53935,11 +54486,25 @@ objects:
       field: oauth_issue_refresh_tokens
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - false
+      - true
+      truth: oauth_issue_refresh_tokens
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R12_OAUTH_ISSUE_REFRESH_TOKENS
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = FALSE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R12_OAUTH_ISSUE_REFRESH_TOKENS
+          SET OAUTH_ISSUE_REFRESH_TOKENS = TRUE
   - name: oauth_access_token_validity
     sql: OAUTH_ACCESS_TOKEN_VALIDITY
     kind: property
@@ -53980,11 +54545,25 @@ objects:
       field: oauth_refresh_token_validity
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - 86400
+      - 172800
+      truth: oauth_refresh_token_validity
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R13_OAUTH_REFRESH_TOKEN_VALIDITY
+          type = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 86400
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R13_OAUTH_REFRESH_TOKEN_VALIDITY
+          SET OAUTH_REFRESH_TOKEN_VALIDITY = 172800
   - name: network_policy
     sql: NETWORK_POLICY
     kind: relationship
@@ -54002,11 +54581,25 @@ objects:
       field: network_policy
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_NP1'
+      - '{database}_NP2'
+      truth: network_policy
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R14_NETWORK_POLICY type
+          = OAUTH ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE NETWORK_POLICY = $$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_NP1$$
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R14_NETWORK_POLICY SET
+          NETWORK_POLICY = $$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_NP2$$
   - name: oauth_client_rsa_public_key
     sql: OAUTH_CLIENT_RSA_PUBLIC_KEY
     kind: property
@@ -54133,11 +54726,25 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R15_COMMENT type = OAUTH
+          ENABLED = FALSE oauth_client = CUSTOM oauth_client_type = 'CONFIDENTIAL' OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback$$
+          OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 7776000
+          OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles = NONE oauth_any_role_mode = DISABLE
+          OAUTH_ENFORCE_PKCE = FALSE OAUTH_ENABLE_ROLE_SELECTION = FALSE COMMENT = $$a$$
+        L4_sql:
+        - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R15_COMMENT SET COMMENT
+          = $$b$$
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -54204,8 +54811,62 @@ objects:
   excluded: []
   snowcap:
     class: SnowflakeCustomOAuthSecurityIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    setup:
+    - CREATE ROLE {database}_R1
+    - CREATE ROLE {database}_R2
+    - CREATE NETWORK POLICY {database}_NP1 ALLOWED_IP_LIST = ('192.0.2.1')
+    - CREATE NETWORK POLICY {database}_NP2 ALLOWED_IP_LIST = ('192.0.2.2')
+    teardown:
+    - DROP NETWORK POLICY IF EXISTS {database}_NP1
+    - DROP NETWORK POLICY IF EXISTS {database}_NP2
+    - DROP ROLE IF EXISTS {database}_R1
+    - DROP ROLE IF EXISTS {database}_R2
+    create_args:
+      enabled: false
+      oauth_client_type: CONFIDENTIAL
+      oauth_redirect_uri: https://example.com/oauth/callback
+    truth:
+    - SHOW SECURITY INTEGRATIONS LIKE '{name}'
+    - DESCRIBE SECURITY INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) UNION ALL SELECT 'alternate_redirect_uris_list',
+      '[' || LISTAGG('''' || TRIM(s.value) || '''', ', ') WITHIN GROUP (ORDER BY s.index) || ']' FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+      r, LATERAL SPLIT_TO_TABLE(TRIM(r."property_value", '[]'), ',') s WHERE r."property" = 'OAUTH_ALTERNATE_REDIRECT_URIS'
+      UNION ALL SELECT 'pre_authorized_roles', '[' || LISTAGG('''' || TRIM(s.value) || '''', ', ') WITHIN GROUP (ORDER BY
+      TRIM(s.value)) || ']' FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL SPLIT_TO_TABLE(r."property_value", ',') s
+      WHERE r."property" = 'PRE_AUTHORIZED_ROLES_LIST' UNION ALL SELECT 'blocked_roles', '[' || LISTAGG('''' || TRIM(s.value)
+      || '''', ', ') WITHIN GROUP (ORDER BY TRIM(s.value)) || ']' FROM TABLE(RESULT_SCAN(LAST_QUERY_ID())) r, LATERAL SPLIT_TO_TABLE(r."property_value",
+      ',') s WHERE r."property" = 'BLOCKED_ROLES_LIST' AND TRIM(s.value) NOT IN ('ACCOUNTADMIN', 'ORGADMIN', 'GLOBALORGADMIN',
+      'SECURITYADMIN')
+    combined:
+      fields:
+      - blocked_roles_list
+      - comment
+      - enabled
+      - network_policy
+      - oauth_allow_non_tls_redirect_uri
+      - oauth_alternate_redirect_uris
+      - oauth_any_role_mode
+      - oauth_enable_role_selection
+      - oauth_enforce_pkce
+      - oauth_issue_refresh_tokens
+      - oauth_redirect_uri
+      - oauth_refresh_token_validity
+      - oauth_single_use_refresh_tokens_required
+      - oauth_use_secondary_roles
+      - pre_authorized_roles_list
+      sql:
+      - ALTER SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_COMBINED SET ENABLED = TRUE
+        OAUTH_REDIRECT_URI = $$https://example.com/oauth/callback2$$ OAUTH_ALLOW_NON_TLS_REDIRECT_URI = FALSE OAUTH_ISSUE_REFRESH_TOKENS
+        = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 172800 OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED = FALSE oauth_use_secondary_roles
+        = NONE oauth_any_role_mode = DISABLE OAUTH_ENFORCE_PKCE = FALSE NETWORK_POLICY = $$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_NP2$$
+        PRE_AUTHORIZED_ROLES_LIST = ($$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R2$$) BLOCKED_ROLES_LIST
+        = ($$COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_CUSTOM_1E9F6D83_R2$$) COMMENT = $$b$$
+      result: fail
+      missed:
+      - oauth_alternate_redirect_uris
+    tested_inputs: 2767724b520f
 - object: SECURITY INTEGRATION
   variant: snowflake_oauth_partner
   scope_level: account
@@ -54282,13 +54943,28 @@ objects:
       field: oauth_client
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - LOOKER
+      - TABLEAU_DESKTOP
+      truth: oauth_client
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R00_OAUTH_CLIENT type
+          = OAUTH ENABLED = FALSE oauth_client = LOOKER OAUTH_REDIRECT_URI = $$https://example.com/looker/callback$$ OAUTH_ISSUE_REFRESH_TOKENS
+          = TRUE
+        L3: 'snowcap fetch crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R00_OAUTH_CLIENT
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L4: 'snowcap crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R00_OAUTH_CLIENT
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L5: 'plan after create: [''plan crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R00_OAUTH_CLIENT
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'']; plan after change: []'
   - name: oauth_redirect_uri
     sql: OAUTH_REDIRECT_URI
     kind: property
@@ -54306,11 +54982,26 @@ objects:
       field: oauth_redirect_uri
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - https://example.com/looker/callback
+      - https://example.com/looker/callback2
+      truth: oauth_redirect_uri
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R01_OAUTH_REDIRECT_URI
+          type = OAUTH ENABLED = FALSE oauth_client = LOOKER OAUTH_REDIRECT_URI = $$https://example.com/looker/callback$$
+          OAUTH_ISSUE_REFRESH_TOKENS = TRUE
+        L3: 'snowcap fetch crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R01_OAUTH_REDIRECT_URI
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L4: 'snowcap crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R01_OAUTH_REDIRECT_URI
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L5: 'plan after create: [''plan crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R01_OAUTH_REDIRECT_URI
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'']; plan after change: []'
   - name: enabled
     sql: ENABLED
     kind: property
@@ -54328,11 +55019,26 @@ objects:
       field: enabled
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - false
+      - true
+      truth: enabled
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R02_ENABLED type = OAUTH
+          ENABLED = FALSE oauth_client = LOOKER OAUTH_REDIRECT_URI = $$https://example.com/looker/callback$$ OAUTH_ISSUE_REFRESH_TOKENS
+          = TRUE
+        L3: 'snowcap fetch crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R02_ENABLED
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L4: 'snowcap crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R02_ENABLED
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L5: 'plan after create: [''plan crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R02_ENABLED
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'']; plan after change: []'
   - name: oauth_issue_refresh_tokens
     sql: OAUTH_ISSUE_REFRESH_TOKENS
     kind: property
@@ -54350,11 +55056,26 @@ objects:
       field: oauth_issue_refresh_tokens
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - false
+      - true
+      truth: oauth_issue_refresh_tokens
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R03_OAUTH_ISSUE_REFRESH_TOKENS
+          type = OAUTH ENABLED = FALSE oauth_client = LOOKER OAUTH_REDIRECT_URI = $$https://example.com/looker/callback$$
+          OAUTH_ISSUE_REFRESH_TOKENS = FALSE
+        L3: 'snowcap fetch crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R03_OAUTH_ISSUE_REFRESH_TOKENS
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L4: 'snowcap crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R03_OAUTH_ISSUE_REFRESH_TOKENS
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L5: 'plan after create: [''plan crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R03_OAUTH_ISSUE_REFRESH_TOKENS
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'']; plan after change: []'
   - name: oauth_access_token_validity
     sql: OAUTH_ACCESS_TOKEN_VALIDITY
     kind: property
@@ -54396,11 +55117,26 @@ objects:
       field: oauth_refresh_token_validity
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - 86400
+      - 172800
+      truth: oauth_refresh_token_validity
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R04_OAUTH_REFRESH_TOKEN_VALIDITY
+          type = OAUTH ENABLED = FALSE oauth_client = LOOKER OAUTH_REDIRECT_URI = $$https://example.com/looker/callback$$
+          OAUTH_ISSUE_REFRESH_TOKENS = TRUE OAUTH_REFRESH_TOKEN_VALIDITY = 86400
+        L3: 'snowcap fetch crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R04_OAUTH_REFRESH_TOKEN_VALIDITY
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L4: 'snowcap crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R04_OAUTH_REFRESH_TOKEN_VALIDITY
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L5: 'plan after create: [''plan crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R04_OAUTH_REFRESH_TOKEN_VALIDITY
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'']; plan after change: []'
   - name: oauth_single_use_refresh_tokens_required
     sql: OAUTH_SINGLE_USE_REFRESH_TOKENS_REQUIRED
     kind: property
@@ -54579,11 +55315,26 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE SECURITY INTEGRATION COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R05_COMMENT type = OAUTH
+          ENABLED = FALSE oauth_client = LOOKER OAUTH_REDIRECT_URI = $$https://example.com/looker/callback$$ OAUTH_ISSUE_REFRESH_TOKENS
+          = TRUE COMMENT = $$a$$
+        L3: 'snowcap fetch crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R05_COMMENT
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L4: 'snowcap crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R05_COMMENT
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+        L5: 'plan after create: [''plan crashes: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_R05_COMMENT
+          (oauth_client=LOOKER): fetch is not implemented for partner OAuth'']; plan after change: []'
   - name: owner
     sql: OWNERSHIP
     kind: relationship
@@ -54650,8 +55401,28 @@ objects:
   excluded: []
   snowcap:
     class: SnowflakePartnerOAuthSecurityIntegration
-    test: untested
+    test: live
     unmapped_fields: []
+    create_args:
+      enabled: false
+      oauth_client: LOOKER
+      oauth_redirect_uri: https://example.com/looker/callback
+    truth:
+    - SHOW SECURITY INTEGRATIONS LIKE '{name}'
+    - SELECT 'oauth_client' AS key, SPLIT_PART("type", ' - ', 2) AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    - DESCRIBE SECURITY INTEGRATION {name}
+    - SELECT "property" AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    combined:
+      fields:
+      - comment
+      - enabled
+      - oauth_issue_refresh_tokens
+      - oauth_redirect_uri
+      - oauth_refresh_token_validity
+      result: fail
+      error: 'Crashed: Exception: snowcap cannot read back partner OAuth integration Resource:COVERAGE_SECURITY_INTEGRATION_SNOWFLAKE_OAUTH_PARTNER_6CD6312B_COMBINED
+        (oauth_client=LOOKER): fetch is not implemented for partner OAuth'
+    tested_inputs: 352a2211683f
 - object: SEMANTIC VIEW
   variant: null
   scope_level: schema
@@ -67563,11 +68334,11 @@ objects:
       truth: login_name
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R00_LOGIN_NAME LOGIN_NAME = $$COVERAGE_USER_1DEDD533_LA$$ DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R00_LOGIN_NAME$$
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R00_LOGIN_NAME LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_LA$$ DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R00_LOGIN_NAME$$
           MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R00_LOGIN_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R00_LOGIN_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R00_LOGIN_NAME SET LOGIN_NAME = $$COVERAGE_USER_1DEDD533_LB$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R00_LOGIN_NAME SET LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_LB$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: display_name
     sql: DISPLAY_NAME
@@ -67597,11 +68368,11 @@ objects:
       truth: display_name
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R01_DISPLAY_NAME LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R01_DISPLAY_NAME$$ DISPLAY_NAME
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R01_DISPLAY_NAME LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R01_DISPLAY_NAME$$ DISPLAY_NAME
           = $$a$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R01_DISPLAY_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R01_DISPLAY_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R01_DISPLAY_NAME SET DISPLAY_NAME = $$b$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R01_DISPLAY_NAME SET DISPLAY_NAME = $$b$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: first_name
     sql: FIRST_NAME
@@ -67631,12 +68402,12 @@ objects:
       truth: first_name
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R02_FIRST_NAME LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R02_FIRST_NAME$$ DISPLAY_NAME
-          = $$COVERAGE_USER_1DEDD533_R02_FIRST_NAME$$ FIRST_NAME = $$a$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R02_FIRST_NAME LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R02_FIRST_NAME$$ DISPLAY_NAME
+          = $$COVERAGE_USER_1A0B4F6A_R02_FIRST_NAME$$ FIRST_NAME = $$a$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type
           = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R02_FIRST_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R02_FIRST_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R02_FIRST_NAME SET FIRST_NAME = $$b$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R02_FIRST_NAME SET FIRST_NAME = $$b$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: middle_name
     sql: MIDDLE_NAME
@@ -67666,12 +68437,12 @@ objects:
       truth: middle_name
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R03_MIDDLE_NAME LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R03_MIDDLE_NAME$$ DISPLAY_NAME
-          = $$COVERAGE_USER_1DEDD533_R03_MIDDLE_NAME$$ MIDDLE_NAME = $$a$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R03_MIDDLE_NAME LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R03_MIDDLE_NAME$$ DISPLAY_NAME
+          = $$COVERAGE_USER_1A0B4F6A_R03_MIDDLE_NAME$$ MIDDLE_NAME = $$a$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type
           = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R03_MIDDLE_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R03_MIDDLE_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R03_MIDDLE_NAME SET MIDDLE_NAME = $$b$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R03_MIDDLE_NAME SET MIDDLE_NAME = $$b$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: last_name
     sql: LAST_NAME
@@ -67701,12 +68472,12 @@ objects:
       truth: last_name
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R04_LAST_NAME LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R04_LAST_NAME$$ DISPLAY_NAME
-          = $$COVERAGE_USER_1DEDD533_R04_LAST_NAME$$ LAST_NAME = $$a$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R04_LAST_NAME LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R04_LAST_NAME$$ DISPLAY_NAME
+          = $$COVERAGE_USER_1A0B4F6A_R04_LAST_NAME$$ LAST_NAME = $$a$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type
           = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R04_LAST_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R04_LAST_NAME TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R04_LAST_NAME SET LAST_NAME = $$b$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R04_LAST_NAME SET LAST_NAME = $$b$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: email
     sql: EMAIL
@@ -67736,11 +68507,11 @@ objects:
       truth: email
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R05_EMAIL LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R05_EMAIL$$ DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R05_EMAIL$$
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R05_EMAIL LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R05_EMAIL$$ DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R05_EMAIL$$
           EMAIL = $$a@example.com$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R05_EMAIL TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R05_EMAIL TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R05_EMAIL SET EMAIL = $$b@example.com$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R05_EMAIL SET EMAIL = $$b@example.com$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: must_change_password
     sql: MUST_CHANGE_PASSWORD
@@ -67792,11 +68563,11 @@ objects:
       truth: disabled
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R06_DISABLED LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R06_DISABLED$$ DISPLAY_NAME
-          = $$COVERAGE_USER_1DEDD533_R06_DISABLED$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = TRUE type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R06_DISABLED TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R06_DISABLED LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R06_DISABLED$$ DISPLAY_NAME
+          = $$COVERAGE_USER_1A0B4F6A_R06_DISABLED$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = TRUE type = NULL
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R06_DISABLED TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R06_DISABLED SET DISABLED = FALSE type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R06_DISABLED SET DISABLED = FALSE type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: allowed_interfaces[]
     sql: ALLOWED_INTERFACES
@@ -67828,13 +68599,13 @@ objects:
       truth: allowed_interfaces_list
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R07_ALLOWED_INTERFACES__ LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R07_ALLOWED_INTERFACES__$$
-          DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R07_ALLOWED_INTERFACES__$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R07_ALLOWED_INTERFACES__ LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R07_ALLOWED_INTERFACES__$$
+          DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R07_ALLOWED_INTERFACES__$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE
           ALLOWED_INTERFACES = ($$STREAMLIT$$) type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R07_ALLOWED_INTERFACES__ TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R07_ALLOWED_INTERFACES__ TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L3: Snowflake reports allowed_interfaces_list="['STREAMLIT']" (declared form ['STREAMLIT']), snowcap fetches None
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R07_ALLOWED_INTERFACES__ SET ALLOWED_INTERFACES = ($$SNOWFLAKE_INTELLIGENCE$$,
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R07_ALLOWED_INTERFACES__ SET ALLOWED_INTERFACES = ($$SNOWFLAKE_INTELLIGENCE$$,
           $$STREAMLIT$$) type = NULL
         L5: 'plan after create: ["update [''allowed_interfaces'', ''type'']"]; plan after change: ["update [''allowed_interfaces'',
           ''type'']"]'
@@ -67866,10 +68637,10 @@ objects:
       truth: days_to_expiry_ceil
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R08_DAYS_TO_EXPIRY LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R08_DAYS_TO_EXPIRY$$
-          DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R08_DAYS_TO_EXPIRY$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DAYS_TO_EXPIRY
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R08_DAYS_TO_EXPIRY LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R08_DAYS_TO_EXPIRY$$
+          DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R08_DAYS_TO_EXPIRY$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DAYS_TO_EXPIRY
           = 10 type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R08_DAYS_TO_EXPIRY TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R08_DAYS_TO_EXPIRY TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L3: Snowflake reports days_to_expiry_ceil='10' (declared form 10), snowcap fetches None
         L4: a change to 20 plans ["update ['type']"]
         L5: 'plan after create: ["update [''type'']"]; plan after change: []'
@@ -67901,10 +68672,10 @@ objects:
       truth: mins_to_unlock_ceil
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R09_MINS_TO_UNLOCK LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R09_MINS_TO_UNLOCK$$
-          DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R09_MINS_TO_UNLOCK$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE MINS_TO_UNLOCK
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R09_MINS_TO_UNLOCK LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R09_MINS_TO_UNLOCK$$
+          DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R09_MINS_TO_UNLOCK$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE MINS_TO_UNLOCK
           = 10 type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R09_MINS_TO_UNLOCK TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R09_MINS_TO_UNLOCK TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L3: Snowflake reports mins_to_unlock_ceil='10' (declared form 10), snowcap fetches None
         L4: a change to 20 plans ["update ['type']"]
         L5: 'plan after create: ["update [''type'']"]; plan after change: []'
@@ -67936,12 +68707,12 @@ objects:
       truth: default_warehouse
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R10_DEFAULT_WAREHOUSE LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R10_DEFAULT_WAREHOUSE$$
-          DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R10_DEFAULT_WAREHOUSE$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DEFAULT_WAREHOUSE
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R10_DEFAULT_WAREHOUSE LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R10_DEFAULT_WAREHOUSE$$
+          DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R10_DEFAULT_WAREHOUSE$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DEFAULT_WAREHOUSE
           = $$COVERAGE_WH_A$$ type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R10_DEFAULT_WAREHOUSE TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R10_DEFAULT_WAREHOUSE TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R10_DEFAULT_WAREHOUSE SET DEFAULT_WAREHOUSE = $$COVERAGE_WH_B$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R10_DEFAULT_WAREHOUSE SET DEFAULT_WAREHOUSE = $$COVERAGE_WH_B$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: default_namespace
     sql: DEFAULT_NAMESPACE
@@ -67971,12 +68742,12 @@ objects:
       truth: default_namespace
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R11_DEFAULT_NAMESPACE LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R11_DEFAULT_NAMESPACE$$
-          DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R11_DEFAULT_NAMESPACE$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DEFAULT_NAMESPACE
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R11_DEFAULT_NAMESPACE LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R11_DEFAULT_NAMESPACE$$
+          DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R11_DEFAULT_NAMESPACE$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DEFAULT_NAMESPACE
           = $$COVERAGE_DB_A.PUBLIC$$ type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R11_DEFAULT_NAMESPACE TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R11_DEFAULT_NAMESPACE TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R11_DEFAULT_NAMESPACE SET DEFAULT_NAMESPACE = $$COVERAGE_DB_B.PUBLIC$$ type =
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R11_DEFAULT_NAMESPACE SET DEFAULT_NAMESPACE = $$COVERAGE_DB_B.PUBLIC$$ type =
           NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: default_role
@@ -68007,12 +68778,12 @@ objects:
       truth: default_role
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R12_DEFAULT_ROLE LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R12_DEFAULT_ROLE$$ DISPLAY_NAME
-          = $$COVERAGE_USER_1DEDD533_R12_DEFAULT_ROLE$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DEFAULT_ROLE = $$COVERAGE_ROLE_A$$
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R12_DEFAULT_ROLE LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R12_DEFAULT_ROLE$$ DISPLAY_NAME
+          = $$COVERAGE_USER_1A0B4F6A_R12_DEFAULT_ROLE$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE DEFAULT_ROLE = $$COVERAGE_ROLE_A$$
           type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R12_DEFAULT_ROLE TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R12_DEFAULT_ROLE TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R12_DEFAULT_ROLE SET DEFAULT_ROLE = $$COVERAGE_ROLE_B$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R12_DEFAULT_ROLE SET DEFAULT_ROLE = $$COVERAGE_ROLE_B$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: default_secondary_roles
     sql: DEFAULT_SECONDARY_ROLES
@@ -68042,12 +68813,12 @@ objects:
       truth: secondary_roles_list
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R13_DEFAULT_SECONDARY_ROLES LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R13_DEFAULT_SECONDARY_ROLES$$
-          DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R13_DEFAULT_SECONDARY_ROLES$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R13_DEFAULT_SECONDARY_ROLES LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R13_DEFAULT_SECONDARY_ROLES$$
+          DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R13_DEFAULT_SECONDARY_ROLES$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE
           DEFAULT_SECONDARY_ROLES = () type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R13_DEFAULT_SECONDARY_ROLES TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R13_DEFAULT_SECONDARY_ROLES TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R13_DEFAULT_SECONDARY_ROLES SET DEFAULT_SECONDARY_ROLES = ($$ALL$$) type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R13_DEFAULT_SECONDARY_ROLES SET DEFAULT_SECONDARY_ROLES = ($$ALL$$) type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: mins_to_bypass_mfa
     sql: MINS_TO_BYPASS_MFA
@@ -68335,11 +69106,11 @@ objects:
       truth: comment
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R14_COMMENT LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R14_COMMENT$$ DISPLAY_NAME
-          = $$COVERAGE_USER_1DEDD533_R14_COMMENT$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE COMMENT = $$a$$ type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R14_COMMENT TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R14_COMMENT LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R14_COMMENT$$ DISPLAY_NAME
+          = $$COVERAGE_USER_1A0B4F6A_R14_COMMENT$$ MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE COMMENT = $$a$$ type = NULL
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R14_COMMENT TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R14_COMMENT SET COMMENT = $$b$$ type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R14_COMMENT SET COMMENT = $$b$$ type = NULL
         L5: 'plan after create: ["update [''type'']"]; plan after change: ["update [''type'']"]'
   - name: reset_password
     sql: RESET PASSWORD
@@ -68824,14 +69595,14 @@ objects:
       - b
       evidence:
         create_sql:
-        - CREATE USER COVERAGE_USER_1DEDD533_R15_TAGS LOGIN_NAME = $$COVERAGE_USER_1DEDD533_R15_TAGS$$ DISPLAY_NAME = $$COVERAGE_USER_1DEDD533_R15_TAGS$$
+        - CREATE USER COVERAGE_USER_1A0B4F6A_R15_TAGS LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_R15_TAGS$$ DISPLAY_NAME = $$COVERAGE_USER_1A0B4F6A_R15_TAGS$$
           MUST_CHANGE_PASSWORD = FALSE DISABLED = FALSE type = NULL
-        - GRANT OWNERSHIP ON USER COVERAGE_USER_1DEDD533_R15_TAGS TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
-        - ALTER USER COVERAGE_USER_1DEDD533_R15_TAGS SET TAG COVERAGE_USER_1DEDD533.PUBLIC.COVERAGE_TAG='a'
-        L3: 'declared {''COVERAGE_USER_1DEDD533.PUBLIC.COVERAGE_TAG'': ''a''}, snowcap fetches None'
+        - GRANT OWNERSHIP ON USER COVERAGE_USER_1A0B4F6A_R15_TAGS TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R15_TAGS SET TAG COVERAGE_USER_1A0B4F6A.PUBLIC.COVERAGE_TAG='a'
+        L3: 'declared {''COVERAGE_USER_1A0B4F6A.PUBLIC.COVERAGE_TAG'': ''a''}, snowcap fetches None'
         L4_sql:
-        - ALTER USER COVERAGE_USER_1DEDD533_R15_TAGS SET TAG COVERAGE_USER_1DEDD533.PUBLIC.COVERAGE_TAG='b'
-        - ALTER USER COVERAGE_USER_1DEDD533_R15_TAGS SET type = NULL
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R15_TAGS SET TAG COVERAGE_USER_1A0B4F6A.PUBLIC.COVERAGE_TAG='b'
+        - ALTER USER COVERAGE_USER_1A0B4F6A_R15_TAGS SET type = NULL
         L5: 'plan after create: ["update [''type'']", ''CreateResource'']; plan after change: ["update [''type'']", ''CreateResource'']'
   - name: owner
     sql: OWNERSHIP
@@ -70766,7 +71537,7 @@ objects:
       - middle_name
       - mins_to_unlock
       sql:
-      - ALTER USER COVERAGE_USER_1DEDD533_COMBINED SET LOGIN_NAME = $$COVERAGE_USER_1DEDD533_LB$$ DISPLAY_NAME = $$b$$ FIRST_NAME
+      - ALTER USER COVERAGE_USER_1A0B4F6A_COMBINED SET LOGIN_NAME = $$COVERAGE_USER_1A0B4F6A_LB$$ DISPLAY_NAME = $$b$$ FIRST_NAME
         = $$b$$ MIDDLE_NAME = $$b$$ LAST_NAME = $$b$$ EMAIL = $$b@example.com$$ DISABLED = FALSE DEFAULT_WAREHOUSE = $$COVERAGE_WH_B$$
         DEFAULT_NAMESPACE = $$COVERAGE_DB_B.PUBLIC$$ DEFAULT_ROLE = $$COVERAGE_ROLE_B$$ DEFAULT_SECONDARY_ROLES = ($$ALL$$)
         COMMENT = $$b$$ ALLOWED_INTERFACES = ($$SNOWFLAKE_INTELLIGENCE$$, $$STREAMLIT$$) type = NULL
