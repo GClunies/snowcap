@@ -57727,11 +57727,21 @@ objects:
       field: url
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - azure://coverageaudit.blob.core.windows.net/coverage-container/path/
+      - azure://coverageaudit.blob.core.windows.net/coverage-container/path2/
+      truth: url
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R00_URL URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R00_URL SET URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path2/$$
   - name: storage_integration
     sql: STORAGE_INTEGRATION = <integration_name>
     kind: relationship
@@ -57750,11 +57760,21 @@ objects:
       field: storage_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_AZ_A'
+      - '{database}_AZ_B'
+      truth: storage_integration
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R01_STORAGE_INTEGRATION URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6_AZ_A directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R01_STORAGE_INTEGRATION SET STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6_AZ_B
   - name: credentials.azure_sas_token
     sql: CREDENTIALS = ( AZURE_SAS_TOKEN = '<string>' )
     kind: property
@@ -57797,10 +57817,21 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: AZURE_CSE
+        master_key: MDEyMzQ1Njc4OWFiY2RlZg==
+      - type: NONE
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R02_ENCRYPTION_TYPE URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          encryption = (TYPE = $$AZURE_CSE$$ MASTER_KEY = $$MDEyMzQ1Njc4OWFiY2RlZg==$$) directory = (ENABLE = FALSE)
+        L3: declared 'AZURE_CSE', snowcap fetches None
+        L4: 'a change to {''type'': ''NONE''} plans nothing'
+        L5: fails because L4 fails
   - name: encryption.master_key
     sql: MASTER_KEY = '<string>'
     kind: property
@@ -57820,10 +57851,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: AZURE_CSE
+        master_key: MDEyMzQ1Njc4OWFiY2RlZg==
+      - type: AZURE_CSE
+        master_key: ZmVkY2JhOTg3NjU0MzIxMA==
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R03_ENCRYPTION_MASTER_KEY URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          encryption = (TYPE = $$AZURE_CSE$$ MASTER_KEY = $$MDEyMzQ1Njc4OWFiY2RlZg==$$) directory = (ENABLE = FALSE)
+        L3: declared 'MDEyMzQ1Njc4OWFiY2RlZg==', snowcap fetches None
+        L4: 'a change to {''type'': ''AZURE_CSE'', ''master_key'': ''ZmVkY2JhOTg3NjU0MzIxMA==''} plans nothing'
+        L5: fails because L4 fails
   - name: use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE }
     kind: property
@@ -57865,11 +57908,24 @@ objects:
       note: ExternalStage props directory PropSet has enable=BoolProp("ENABLE").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - enable: false
+      - enable: true
+      truth: directory_enabled
+      expect:
+      - false
+      - true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R04_DIRECTORY_ENABLE URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R04_DIRECTORY_ENABLE SET directory = (ENABLE = TRUE)
   - name: directory.refresh_on_create
     sql: DIRECTORY = ( REFRESH_ON_CREATE = { TRUE | FALSE } )
     kind: property
@@ -57890,10 +57946,27 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - enable: true
+        refresh_on_create: false
+      - enable: true
+        refresh_on_create: true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          directory = (ENABLE = TRUE REFRESH_ON_CREATE = FALSE)
+        L3: declared False, snowcap fetches None
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE SET directory = (ENABLE
+          = TRUE REFRESH_ON_CREATE = TRUE)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''true''
+          for ''REFRESH_ON_CREATE'' on: ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE
+          SET directory = (ENABLE = TRUE REFRESH_ON_CREATE = ...'
+        L5: 'plan after create: ["update [''directory'']"]; plan after change: []'
   - name: directory.auto_refresh
     sql: DIRECTORY = ( AUTO_REFRESH = { TRUE | FALSE } )
     kind: property
@@ -58068,11 +58141,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R06_COMMENT URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          directory = (ENABLE = FALSE) COMMENT = $$a$$
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R06_COMMENT SET COMMENT = $$b$$
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -58151,19 +58234,64 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample: &id001
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect: &id002
+      - a
+      - b
+      evidence:
+        create_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R07_TAGS SET TAG COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.COVERAGE_TAG='a'
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R07_TAGS URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path/$$
+          directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R07_TAGS?domain=STAGE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6''. on: ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.R07_TAGS?domain=STAGE
+          SET'
+        L5: fails because L4 fails
   excluded: []
   snowcap:
     class: ExternalStage
-    test: untested
+    test: live
     field_notes:
       credentials: 'Other variant: external_s3.'
       type: 'snowcap-only: discriminator that picks InternalStage or ExternalStage, not a Snowflake property.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE STORAGE INTEGRATION {database}_AZ_A TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'AZURE' ENABLED = TRUE AZURE_TENANT_ID
+      = '00000000-0000-0000-0000-000000000001' STORAGE_ALLOWED_LOCATIONS = ('azure://coverageaudit.blob.core.windows.net/coverage-container/')
+    - CREATE STORAGE INTEGRATION {database}_AZ_B TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'AZURE' ENABLED = TRUE AZURE_TENANT_ID
+      = '00000000-0000-0000-0000-000000000001' STORAGE_ALLOWED_LOCATIONS = ('azure://coverageaudit.blob.core.windows.net/coverage-container/')
+    teardown:
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_AZ_A
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_AZ_B
+    create_args:
+      url: azure://coverageaudit.blob.core.windows.net/coverage-container/path/
+    truth: &id003
+    - SHOW STAGES LIKE '{name}' IN SCHEMA {container}
+    - DESCRIBE STAGE {fqn}
+    - SELECT LOWER("parent_property") || '.' || LOWER("property") AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+      WHERE "parent_property" IN ('STAGE_CREDENTIALS', 'STAGE_INTEGRATION', 'DIRECTORY')
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'stage') AS value
+    combined:
+      fields:
+      - comment
+      - storage_integration
+      - url
+      sql:
+      - ALTER STAGE COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6.PUBLIC.COMBINED SET URL = $$azure://coverageaudit.blob.core.windows.net/coverage-container/path2/$$
+        STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_AZURE_7F4FD8E6_AZ_B COMMENT = $$b$$
+      result: pass
+    tested_inputs: 515ae6930f9a
 - object: STAGE
   variant: external_gcs
   scope_level: schema
@@ -58276,11 +58404,21 @@ objects:
       field: url
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - gcs://coverage-audit-bucket/path/
+      - gcs://coverage-audit-bucket/path2/
+      truth: url
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R00_URL URL = $$gcs://coverage-audit-bucket/path/$$ STORAGE_INTEGRATION
+          = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R00_URL SET URL = $$gcs://coverage-audit-bucket/path2/$$
   - name: storage_integration
     sql: STORAGE_INTEGRATION = <integration_name>
     kind: relationship
@@ -58298,11 +58436,21 @@ objects:
       field: storage_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_GCS_A'
+      - '{database}_GCS_B'
+      truth: storage_integration
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R01_STORAGE_INTEGRATION URL = $$gcs://coverage-audit-bucket/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R01_STORAGE_INTEGRATION SET STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_B
   - name: encryption.type
     sql: ENCRYPTION = ( TYPE = 'GCS_SSE_KMS' | 'NONE' )
     kind: property
@@ -58322,10 +58470,21 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: GCS_SSE_KMS
+      - type: NONE
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R02_ENCRYPTION_TYPE URL = $$gcs://coverage-audit-bucket/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A encryption = (TYPE = $$GCS_SSE_KMS$$) directory
+          = (ENABLE = FALSE)
+        L3: declared 'GCS_SSE_KMS', snowcap fetches None
+        L4: 'a change to {''type'': ''NONE''} plans nothing'
+        L5: fails because L4 fails
   - name: encryption.kms_key_id
     sql: KMS_KEY_ID = '<string>'
     kind: property
@@ -58345,10 +58504,23 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: GCS_SSE_KMS
+        kms_key_id: coverage-kms-key1
+      - type: GCS_SSE_KMS
+        kms_key_id: coverage-kms-key2
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R03_ENCRYPTION_KMS_KEY_ID URL = $$gcs://coverage-audit-bucket/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A encryption = (TYPE = $$GCS_SSE_KMS$$ KMS_KEY_ID
+          = $$coverage-kms-key1$$) directory = (ENABLE = FALSE)
+        L3: declared 'coverage-kms-key1', snowcap fetches None
+        L4: 'a change to {''type'': ''GCS_SSE_KMS'', ''kms_key_id'': ''coverage-kms-key2''} plans nothing'
+        L5: fails because L4 fails
   - name: use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE }
     kind: property
@@ -58391,11 +58563,24 @@ objects:
       note: ExternalStage props directory PropSet has enable=BoolProp("ENABLE").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - enable: false
+      - enable: true
+      truth: directory_enabled
+      expect:
+      - false
+      - true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R04_DIRECTORY_ENABLE URL = $$gcs://coverage-audit-bucket/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R04_DIRECTORY_ENABLE SET directory = (ENABLE = TRUE)
   - name: directory.refresh_on_create
     sql: DIRECTORY = ( REFRESH_ON_CREATE = { TRUE | FALSE } )
     kind: property
@@ -58416,10 +58601,28 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - enable: true
+        refresh_on_create: false
+      - enable: true
+        refresh_on_create: true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE URL = $$gcs://coverage-audit-bucket/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A directory = (ENABLE = TRUE REFRESH_ON_CREATE =
+          FALSE)
+        L3: declared False, snowcap fetches None
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE SET directory = (ENABLE
+          = TRUE REFRESH_ON_CREATE = TRUE)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''true''
+          for ''REFRESH_ON_CREATE'' on: ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE
+          SET directory = (ENABLE = TRUE REFRESH_ON_CREATE = T ...'
+        L5: 'plan after create: ["update [''directory'']"]; plan after change: []'
   - name: directory.auto_refresh
     sql: DIRECTORY = ( AUTO_REFRESH = { TRUE | FALSE } )
     kind: property
@@ -58594,11 +58797,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R06_COMMENT URL = $$gcs://coverage-audit-bucket/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A directory = (ENABLE = FALSE) COMMENT = $$a$$
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R06_COMMENT SET COMMENT = $$b$$
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -58677,19 +58890,65 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample: &id004
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect: &id005
+      - a
+      - b
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R07_TAGS URL = $$gcs://coverage-audit-bucket/path/$$ STORAGE_INTEGRATION
+          = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_A directory = (ENABLE = FALSE)
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R07_TAGS SET TAG COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.COVERAGE_TAG='a'
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R07_TAGS?domain=STAGE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23''. on: ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.R07_TAGS?domain=STAGE
+          SET'
+        L5: fails because L4 fails
   excluded: []
   snowcap:
     class: ExternalStage
-    test: untested
+    test: live
     field_notes:
       credentials: 'Other variant: external_s3.'
       type: 'snowcap-only: discriminator that picks InternalStage or ExternalStage, not a Snowflake property.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE STORAGE INTEGRATION {database}_GCS_A TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'GCS' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS
+      = ('gcs://coverage-audit-bucket/')
+    - CREATE STORAGE INTEGRATION {database}_GCS_B TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'GCS' ENABLED = TRUE STORAGE_ALLOWED_LOCATIONS
+      = ('gcs://coverage-audit-bucket/')
+    teardown:
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_GCS_A
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_GCS_B
+    create_args:
+      url: gcs://coverage-audit-bucket/path/
+      storage_integration: '{database}_GCS_A'
+    truth: &id006
+    - SHOW STAGES LIKE '{name}' IN SCHEMA {container}
+    - DESCRIBE STAGE {fqn}
+    - SELECT LOWER("parent_property") || '.' || LOWER("property") AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+      WHERE "parent_property" IN ('STAGE_CREDENTIALS', 'STAGE_INTEGRATION', 'DIRECTORY')
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'stage') AS value
+    combined:
+      fields:
+      - comment
+      - storage_integration
+      - url
+      sql:
+      - ALTER STAGE COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23.PUBLIC.COMBINED SET URL = $$gcs://coverage-audit-bucket/path2/$$
+        STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_GCS_ACCA6B23_GCS_B COMMENT = $$b$$
+      result: pass
+    tested_inputs: 8218c492385f
 - object: STAGE
   variant: external_onelake
   scope_level: schema
@@ -58801,13 +59060,24 @@ objects:
       field: url
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/
+      - azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path2/
+      truth: url
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R00_URL URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R00_URL SET URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path2/$$
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: storage_integration
     sql: STORAGE_INTEGRATION = <integration_name>
     kind: relationship
@@ -58826,13 +59096,24 @@ objects:
       field: storage_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - '{database}_OL_A'
+      - '{database}_OL_B'
+      truth: storage_integration
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R01_STORAGE_INTEGRATION URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009_OL_A directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R01_STORAGE_INTEGRATION SET STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009_OL_B
+        L4: the docs say ALTER cannot change it, but the ALTER ran and the change landed
   - name: credentials.azure_sas_token
     sql: CREDENTIALS = ( AZURE_SAS_TOKEN = '<string>' )
     kind: property
@@ -58876,10 +59157,21 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: AZURE_CSE
+        master_key: MDEyMzQ1Njc4OWFiY2RlZg==
+      - type: NONE
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R02_ENCRYPTION_TYPE URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          encryption = (TYPE = $$AZURE_CSE$$ MASTER_KEY = $$MDEyMzQ1Njc4OWFiY2RlZg==$$) directory = (ENABLE = FALSE)
+        L3: declared 'AZURE_CSE', snowcap fetches None
+        L4: 'a change to {''type'': ''NONE''} plans nothing'
+        L5: fails because L4 fails
   - name: encryption.master_key
     sql: MASTER_KEY = '<string>'
     kind: property
@@ -58899,10 +59191,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: AZURE_CSE
+        master_key: MDEyMzQ1Njc4OWFiY2RlZg==
+      - type: AZURE_CSE
+        master_key: ZmVkY2JhOTg3NjU0MzIxMA==
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R03_ENCRYPTION_MASTER_KEY URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          encryption = (TYPE = $$AZURE_CSE$$ MASTER_KEY = $$MDEyMzQ1Njc4OWFiY2RlZg==$$) directory = (ENABLE = FALSE)
+        L3: declared 'MDEyMzQ1Njc4OWFiY2RlZg==', snowcap fetches None
+        L4: 'a change to {''type'': ''AZURE_CSE'', ''master_key'': ''ZmVkY2JhOTg3NjU0MzIxMA==''} plans nothing'
+        L5: fails because L4 fails
   - name: directory.enable
     sql: DIRECTORY = ( ENABLE = { TRUE | FALSE } )
     kind: property
@@ -58921,11 +59225,24 @@ objects:
       note: ExternalStage props directory PropSet has enable=BoolProp("ENABLE").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - enable: false
+      - enable: true
+      truth: directory_enabled
+      expect:
+      - false
+      - true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R04_DIRECTORY_ENABLE URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R04_DIRECTORY_ENABLE SET directory = (ENABLE = TRUE)
   - name: directory.refresh_on_create
     sql: DIRECTORY = ( REFRESH_ON_CREATE = { TRUE | FALSE } )
     kind: property
@@ -58945,10 +59262,27 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - enable: true
+        refresh_on_create: false
+      - enable: true
+        refresh_on_create: true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          directory = (ENABLE = TRUE REFRESH_ON_CREATE = FALSE)
+        L3: declared False, snowcap fetches None
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE SET directory = (ENABLE
+          = TRUE REFRESH_ON_CREATE = TRUE)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''true''
+          for ''REFRESH_ON_CREATE'' on: ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R05_DIRECTORY_REFRESH_ON_CREATE
+          SET directory = (ENABLE = TRUE REFRESH_ON_CREATE ...'
+        L5: 'plan after create: ["update [''directory'']"]; plan after change: []'
   - name: directory.refresh
     sql: REFRESH
     kind: property
@@ -59074,11 +59408,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R06_COMMENT URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          directory = (ENABLE = FALSE) COMMENT = $$a$$
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R06_COMMENT SET COMMENT = $$b$$
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -59157,19 +59501,50 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample: *id001
+      truth: coverage_tag
+      expect: *id002
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R07_TAGS URL = $$azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/$$
+          directory = (ENABLE = FALSE)
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R07_TAGS SET TAG COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.COVERAGE_TAG='a'
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R07_TAGS?domain=STAGE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009''. on: ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_ONELAKE_C35A6009.PUBLIC.R07_TAGS?domain=STAGE
+          SET'
+        L5: fails because L4 fails
   excluded: []
   snowcap:
     class: ExternalStage
-    test: untested
+    test: live
     field_notes:
       credentials: 'Other variant: external_s3.'
       type: 'snowcap-only: discriminator that picks InternalStage or ExternalStage, not a Snowflake property.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE STORAGE INTEGRATION {database}_OL_A TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'AZURE' ENABLED = TRUE AZURE_TENANT_ID
+      = '00000000-0000-0000-0000-000000000001' STORAGE_ALLOWED_LOCATIONS = ('azure://onelake.blob.fabric.microsoft.com/coverage-workspace/')
+    - CREATE STORAGE INTEGRATION {database}_OL_B TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'AZURE' ENABLED = TRUE AZURE_TENANT_ID
+      = '00000000-0000-0000-0000-000000000001' STORAGE_ALLOWED_LOCATIONS = ('azure://onelake.blob.fabric.microsoft.com/coverage-workspace/')
+    teardown:
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_OL_A
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_OL_B
+    create_args:
+      url: azure://onelake.blob.fabric.microsoft.com/coverage-workspace/coverage.Lakehouse/Files/path/
+    truth: *id003
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: 2eb3b1515e64
 - object: STAGE
   variant: external_s3
   scope_level: schema
@@ -59282,11 +59657,21 @@ objects:
       field: url
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - s3://coverage-audit-bucket/path/
+      - s3://coverage-audit-bucket/path2/
+      truth: url
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R00_URL URL = $$s3://coverage-audit-bucket/path/$$ directory
+          = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R00_URL SET URL = $$s3://coverage-audit-bucket/path2/$$
   - name: aws_access_point_arn
     sql: AWS_ACCESS_POINT_ARN = '<string>'
     kind: property
@@ -59328,11 +59713,21 @@ objects:
       field: storage_integration
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - '{database}_S3_A'
+      - '{database}_S3_B'
+      truth: storage_integration
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R01_STORAGE_INTEGRATION URL = $$s3://coverage-audit-bucket/path/$$
+          STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_S3_603ECC77_S3_A directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R01_STORAGE_INTEGRATION SET STORAGE_INTEGRATION = COVERAGE_STAGE_EXTERNAL_S3_603ECC77_S3_B
   - name: credentials.aws_key_id
     sql: CREDENTIALS = ( AWS_KEY_ID = '<string>' AWS_SECRET_KEY = '<string>' [ AWS_TOKEN = '<string>' ] )
     kind: property
@@ -59352,11 +59747,29 @@ objects:
       note: ExternalStage props credentials PropSet has aws_key_id=StringProp("aws_key_id").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000001
+      - aws_key_id: AKIACOVERAGE00000002
+        aws_secret_key: coverageSecretKey0000000000000000000001
+      truth: stage_credentials.aws_key_id
+      expect:
+      - AKIACOVERAGE00000001
+      - AKIACOVERAGE00000002
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R02_CREDENTIALS_AWS_KEY_ID URL = $$s3://coverage-audit-bucket/path/$$
+          credentials = (AWS_KEY_ID = $$AKIACOVERAGE00000001$$ AWS_SECRET_KEY = $$coverageSecretKey0000000000000000000001$$)
+          directory = (ENABLE = FALSE)
+        L3: declared 'AKIACOVERAGE00000001', snowcap fetches None
+        L4: 'a change to {''aws_key_id'': ''AKIACOVERAGE00000002'', ''aws_secret_key'': ''coverageSecretKey0000000000000000000001''}
+          plans nothing'
+        L5: fails because L4 fails
   - name: credentials.aws_secret_key
     sql: AWS_SECRET_KEY = '<string>'
     kind: property
@@ -59376,10 +59789,24 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000001
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000002
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R03_CREDENTIALS_AWS_SECRET_KEY URL = $$s3://coverage-audit-bucket/path/$$
+          credentials = (AWS_KEY_ID = $$AKIACOVERAGE00000001$$ AWS_SECRET_KEY = $$coverageSecretKey0000000000000000000001$$)
+          directory = (ENABLE = FALSE)
+        L3: declared 'coverageSecretKey0000000000000000000001', snowcap fetches None
+        L4: 'a change to {''aws_key_id'': ''AKIACOVERAGE00000001'', ''aws_secret_key'': ''coverageSecretKey0000000000000000000002''}
+          plans nothing'
+        L5: fails because L4 fails
   - name: credentials.aws_token
     sql: AWS_TOKEN = '<string>'
     kind: property
@@ -59400,10 +59827,26 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000001
+        aws_token: coverageToken0001
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000001
+        aws_token: coverageToken0002
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R04_CREDENTIALS_AWS_TOKEN URL = $$s3://coverage-audit-bucket/path/$$
+          credentials = (AWS_KEY_ID = $$AKIACOVERAGE00000001$$ AWS_SECRET_KEY = $$coverageSecretKey0000000000000000000001$$
+          AWS_TOKEN = $$coverageToken0001$$) directory = (ENABLE = FALSE)
+        L3: declared 'coverageToken0001', snowcap fetches None
+        L4: 'a change to {''aws_key_id'': ''AKIACOVERAGE00000001'', ''aws_secret_key'': ''coverageSecretKey0000000000000000000001'',
+          ''aws_token'': ''coverageToken0002''} plans nothing'
+        L5: fails because L4 fails
   - name: credentials.aws_role
     sql: CREDENTIALS = ( AWS_ROLE = '<string>' )
     kind: property
@@ -59422,11 +59865,25 @@ objects:
       note: ExternalStage props credentials PropSet has aws_role=StringProp("aws_role").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - aws_role: arn:aws:iam::001234567890:role/coverage
+      - aws_role: arn:aws:iam::001234567890:role/coverage2
+      truth: stage_credentials.aws_role
+      expect:
+      - arn:aws:iam::001234567890:role/coverage
+      - arn:aws:iam::001234567890:role/coverage2
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R05_CREDENTIALS_AWS_ROLE URL = $$s3://coverage-audit-bucket/path/$$
+          credentials = (AWS_ROLE = $$arn:aws:iam::001234567890:role/coverage$$) directory = (ENABLE = FALSE)
+        L3: declared 'arn:aws:iam::001234567890:role/coverage', snowcap fetches None
+        L4: 'a change to {''aws_role'': ''arn:aws:iam::001234567890:role/coverage2''} plans nothing'
+        L5: fails because L4 fails
   - name: encryption.type
     sql: ENCRYPTION = ( TYPE = 'AWS_CSE' | 'AWS_SSE_S3' | 'AWS_SSE_KMS' | 'NONE' )
     kind: property
@@ -59448,10 +59905,20 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: AWS_SSE_S3
+      - type: NONE
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R06_ENCRYPTION_TYPE URL = $$s3://coverage-audit-bucket/path/$$
+          encryption = (TYPE = $$AWS_SSE_S3$$) directory = (ENABLE = FALSE)
+        L3: declared 'AWS_SSE_S3', snowcap fetches None
+        L4: 'a change to {''type'': ''NONE''} plans nothing'
+        L5: fails because L4 fails
   - name: encryption.master_key
     sql: MASTER_KEY = '<string>'
     kind: property
@@ -59471,10 +59938,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: AWS_CSE
+        master_key: MDEyMzQ1Njc4OWFiY2RlZg==
+      - type: AWS_CSE
+        master_key: ZmVkY2JhOTg3NjU0MzIxMA==
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R07_ENCRYPTION_MASTER_KEY URL = $$s3://coverage-audit-bucket/path/$$
+          encryption = (TYPE = $$AWS_CSE$$ MASTER_KEY = $$MDEyMzQ1Njc4OWFiY2RlZg==$$) directory = (ENABLE = FALSE)
+        L3: declared 'MDEyMzQ1Njc4OWFiY2RlZg==', snowcap fetches None
+        L4: 'a change to {''type'': ''AWS_CSE'', ''master_key'': ''ZmVkY2JhOTg3NjU0MzIxMA==''} plans nothing'
+        L5: fails because L4 fails
   - name: encryption.kms_key_id
     sql: KMS_KEY_ID = '<string>'
     kind: property
@@ -59494,10 +59973,22 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - type: AWS_SSE_KMS
+        kms_key_id: coverage-kms-key1
+      - type: AWS_SSE_KMS
+        kms_key_id: coverage-kms-key2
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R08_ENCRYPTION_KMS_KEY_ID URL = $$s3://coverage-audit-bucket/path/$$
+          encryption = (TYPE = $$AWS_SSE_KMS$$ KMS_KEY_ID = $$coverage-kms-key1$$) directory = (ENABLE = FALSE)
+        L3: declared 'coverage-kms-key1', snowcap fetches None
+        L4: 'a change to {''type'': ''AWS_SSE_KMS'', ''kms_key_id'': ''coverage-kms-key2''} plans nothing'
+        L5: fails because L4 fails
   - name: use_privatelink_endpoint
     sql: USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE }
     kind: property
@@ -59540,11 +60031,24 @@ objects:
       note: ExternalStage props directory PropSet has enable=BoolProp("ENABLE").
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - enable: false
+      - enable: true
+      truth: directory_enabled
+      expect:
+      - false
+      - true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R09_DIRECTORY_ENABLE URL = $$s3://coverage-audit-bucket/path/$$
+          directory = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R09_DIRECTORY_ENABLE SET directory = (ENABLE = TRUE)
   - name: directory.refresh_on_create
     sql: DIRECTORY = ( REFRESH_ON_CREATE = { TRUE | FALSE } )
     kind: property
@@ -59565,10 +60069,27 @@ objects:
       levels:
         L1: pass
         L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L3: fail
+        L4: fail
+        L5: fail
       candidates: []
+      sample:
+      - enable: true
+        refresh_on_create: false
+      - enable: true
+        refresh_on_create: true
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R10_DIRECTORY_REFRESH_ON_CREATE URL = $$s3://coverage-audit-bucket/path/$$
+          directory = (ENABLE = TRUE REFRESH_ON_CREATE = FALSE)
+        L3: declared False, snowcap fetches None
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R10_DIRECTORY_REFRESH_ON_CREATE SET directory = (ENABLE =
+          TRUE REFRESH_ON_CREATE = TRUE)
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001420 (22023): SQL compilation error: invalid property ''true''
+          for ''REFRESH_ON_CREATE'' on: ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R10_DIRECTORY_REFRESH_ON_CREATE
+          SET directory = (ENABLE = TRUE REFRESH_ON_CREATE = TR ...'
+        L5: 'plan after create: ["update [''directory'']"]; plan after change: []'
   - name: directory.auto_refresh
     sql: DIRECTORY = ( AUTO_REFRESH = { TRUE | FALSE } )
     kind: property
@@ -59743,11 +60264,21 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: pass
+        L5: pass
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        create_sql:
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R11_COMMENT URL = $$s3://coverage-audit-bucket/path/$$ directory
+          = (ENABLE = FALSE) COMMENT = $$a$$
+        L4_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R11_COMMENT SET COMMENT = $$b$$
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -59826,18 +60357,54 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
-        L3: untested
-        L4: untested
-        L5: untested
+        L2: pass
+        L3: pass
+        L4: fail
+        L5: fail
       candidates: []
+      sample: *id004
+      truth: coverage_tag
+      expect: *id005
+      evidence:
+        create_sql:
+        - ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R12_TAGS SET TAG COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.COVERAGE_TAG='a'
+        - CREATE STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R12_TAGS URL = $$s3://coverage-audit-bucket/path/$$ directory
+          = (ENABLE = FALSE)
+        L4_sql:
+        - ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R12_TAGS?domain=STAGE SET
+        L4: 'Snowflake rejects the SQL: ProgrammingError: 001003 (42000): SQL compilation error: syntax error line 1 at position
+          20 unexpected ''COVERAGE_STAGE_EXTERNAL_S3_603ECC77''. on: ALTER TAG REFERENCE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.R12_TAGS?domain=STAGE
+          SET'
+        L5: fails because L4 fails
   excluded: []
   snowcap:
     class: ExternalStage
-    test: untested
+    test: live
     field_notes:
       type: 'snowcap-only: discriminator that picks InternalStage or ExternalStage, not a Snowflake property.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    - CREATE STORAGE INTEGRATION {database}_S3_A TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' ENABLED = TRUE STORAGE_AWS_ROLE_ARN
+      = 'arn:aws:iam::001234567890:role/coverage' STORAGE_ALLOWED_LOCATIONS = ('s3://coverage-audit-bucket/')
+    - CREATE STORAGE INTEGRATION {database}_S3_B TYPE = EXTERNAL_STAGE STORAGE_PROVIDER = 'S3' ENABLED = TRUE STORAGE_AWS_ROLE_ARN
+      = 'arn:aws:iam::001234567890:role/coverage' STORAGE_ALLOWED_LOCATIONS = ('s3://coverage-audit-bucket/')
+    teardown:
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_S3_A
+    - DROP STORAGE INTEGRATION IF EXISTS {database}_S3_B
+    create_args:
+      url: s3://coverage-audit-bucket/path/
+    truth: *id006
+    combined:
+      fields:
+      - comment
+      - storage_integration
+      - url
+      sql:
+      - ALTER STAGE COVERAGE_STAGE_EXTERNAL_S3_603ECC77.PUBLIC.COMBINED SET URL = $$s3://coverage-audit-bucket/path2/$$ STORAGE_INTEGRATION
+        = COVERAGE_STAGE_EXTERNAL_S3_603ECC77_S3_B COMMENT = $$b$$
+      result: pass
+    tested_inputs: c0011c4abb89
 - object: STAGE
   variant: external_s3compat
   scope_level: schema
@@ -59950,13 +60517,21 @@ objects:
       field: url
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates:
       - 'L4: ALTER cannot change it, but neither triggers_replacement nor the update handler covers it, so snowcap plans an
         ALTER'
+      sample:
+      - s3compat://coverage-audit-bucket/path/
+      - s3compat://coverage-audit-bucket/path2/
+      truth: url
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): ENDPOINT on: CREATE
+          STAGE COVERAGE_STAGE_EXTERNAL_S3COMPAT_C8D37CD4.PUBLIC.R00_URL URL = $$s3compat://coverage-audit-bucket/path/$$
+          credentials = (AWS_KE ...'
   - name: endpoint
     sql: ENDPOINT = '<s3_api_compatible_endpoint>'
     kind: identity
@@ -60000,11 +60575,24 @@ objects:
       note: ExternalStage props credentials PropSet has aws_key_id=StringProp("aws_key_id").
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000001
+      - aws_key_id: AKIACOVERAGE00000002
+        aws_secret_key: coverageSecretKey0000000000000000000001
+      truth: stage_credentials.aws_key_id
+      expect:
+      - AKIACOVERAGE00000001
+      - AKIACOVERAGE00000002
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): ENDPOINT on: CREATE
+          STAGE COVERAGE_STAGE_EXTERNAL_S3COMPAT_C8D37CD4.PUBLIC.R01_CREDENTIALS_AWS_KEY_ID URL = $$s3compat://coverage-audit-bucket/path/$$
+          cr ...'
   - name: credentials.aws_secret_key
     sql: AWS_SECRET_KEY = '<string>'
     kind: property
@@ -60023,11 +60611,20 @@ objects:
       note: ExternalStage props credentials PropSet has aws_secret_key=StringProp("aws_secret_key").
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000001
+      - aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000002
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): ENDPOINT on: CREATE
+          STAGE COVERAGE_STAGE_EXTERNAL_S3COMPAT_C8D37CD4.PUBLIC.R02_CREDENTIALS_AWS_SECRET_KEY URL = $$s3compat://coverage-audit-bucket/path/$
+          ...'
   - name: directory.enable
     sql: DIRECTORY = ( ENABLE = { TRUE | FALSE } )
     kind: property
@@ -60047,11 +60644,22 @@ objects:
       note: ExternalStage props directory PropSet has enable=BoolProp("ENABLE").
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - enable: false
+      - enable: true
+      truth: directory_enabled
+      expect:
+      - false
+      - true
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): ENDPOINT on: CREATE
+          STAGE COVERAGE_STAGE_EXTERNAL_S3COMPAT_C8D37CD4.PUBLIC.R03_DIRECTORY_ENABLE URL = $$s3compat://coverage-audit-bucket/path/$$
+          credenti ...'
   - name: directory.refresh
     sql: REFRESH
     kind: property
@@ -60177,11 +60785,19 @@ objects:
       field: comment
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - a
+      - b
+      truth: comment
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): ENDPOINT on: CREATE
+          STAGE COVERAGE_STAGE_EXTERNAL_S3COMPAT_C8D37CD4.PUBLIC.R04_COMMENT URL = $$s3compat://coverage-audit-bucket/path/$$
+          credentials = (AW ...'
   - name: dcm_project
     sql: DCM PROJECT
     kind: relationship
@@ -60260,20 +60876,49 @@ objects:
       field: tags
       levels:
         L1: pass
-        L2: untested
+        L2: fail
         L3: untested
         L4: untested
         L5: untested
       candidates: []
+      sample:
+      - '{database}.PUBLIC.COVERAGE_TAG': a
+      - '{database}.PUBLIC.COVERAGE_TAG': b
+      truth: coverage_tag
+      expect:
+      - a
+      - b
+      evidence:
+        L2: 'create failed: ProgrammingError: 002029 (42601): SQL compilation error: Missing option(s): ENDPOINT on: CREATE
+          STAGE COVERAGE_STAGE_EXTERNAL_S3COMPAT_C8D37CD4.PUBLIC.R05_TAGS URL = $$s3compat://coverage-audit-bucket/path/$$
+          credentials = (AWS_K ...'
   excluded: []
   snowcap:
     class: ExternalStage
-    test: untested
+    test: live
     field_notes:
       encryption: 'Other variant: external_s3.'
       storage_integration: 'Other variant: external_s3.'
       type: 'snowcap-only: discriminator that picks InternalStage or ExternalStage, not a Snowflake property.'
     unmapped_fields: []
+    setup:
+    - CREATE TAG {database}.PUBLIC.COVERAGE_TAG
+    create_args:
+      url: s3compat://coverage-audit-bucket/path/
+      credentials:
+        aws_key_id: AKIACOVERAGE00000001
+        aws_secret_key: coverageSecretKey0000000000000000000001
+    truth:
+    - SHOW STAGES LIKE '{name}' IN SCHEMA {container}
+    - DESCRIBE STAGE {fqn}
+    - SELECT LOWER("parent_property") || '.' || LOWER("property") AS key, "property_value" AS value FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+      WHERE "parent_property" IN ('STAGE_CREDENTIALS', 'STAGE_INTEGRATION', 'DIRECTORY')
+    - SELECT 'coverage_tag' AS key, SYSTEM$GET_TAG('{database}.PUBLIC.COVERAGE_TAG', '{fqn}', 'stage') AS value
+    combined:
+      fields:
+      - comment
+      result: untested (needs two or more fields)
+    tested_inputs: d088d7394978
 - object: STAGE
   variant: internal
   scope_level: schema
