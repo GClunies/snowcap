@@ -32,6 +32,7 @@ from snowcap.lifecycle import (
     update__default,
     update_account_parameter,
     update_event_table,
+    update_masking_policy,
     update_mcp_server,
     update_procedure,
     update_role_grant,
@@ -214,7 +215,15 @@ class TestCreateAccountParameter:
         data = {"value": "America/New_York"}
         props = MockProps("")
         result = create_account_parameter(urn, data, props)
-        assert result == "ALTER ACCOUNT SET TIMEZONE = 'America/New_York'"
+        assert result == "ALTER ACCOUNT SET TIMEZONE = $$America/New_York$$"
+
+    def test_string_value_with_apostrophe(self):
+        """A value containing an apostrophe must not break out of the literal."""
+        urn = make_urn(ResourceType.ACCOUNT_PARAMETER, "QUERY_TAG")
+        data = {"value": "today's batch"}
+        props = MockProps("")
+        result = create_account_parameter(urn, data, props)
+        assert result == "ALTER ACCOUNT SET QUERY_TAG = $$today's batch$$"
 
     def test_numeric_value(self):
         """Test setting numeric parameter."""
@@ -576,9 +585,7 @@ class TestCreateScannerPackage:
         props = MockProps("")
         result = create_scanner_package(urn, data, props)
         assert "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION" in result
-        assert "'ENABLED'" in result
-        assert "'TRUE'" in result
-        assert "'CIS_BENCHMARKS'" in result
+        assert result == ("CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION( $$ENABLED$$, $$TRUE$$ , $$CIS_BENCHMARKS$$ )")
 
 
 class TestCreateSchema:
@@ -805,7 +812,7 @@ class TestUpdateAccountParameter:
         data = {"value": "UTC"}
         props = MockProps("")
         result = update_account_parameter(urn, data, props)
-        assert "ALTER ACCOUNT SET TIMEZONE = 'UTC'" in result
+        assert "ALTER ACCOUNT SET TIMEZONE = $$UTC$$" in result
 
 
 class TestUpdateEventTable:
@@ -841,6 +848,32 @@ class TestUpdateProcedure:
         assert "ALTER PROCEDURE" in result
         assert "SET COMMENT" in result
 
+    def test_execute_as_combined_with_other_fields_applies_all(self):
+        """EXECUTE AS has its own ALTER syntax, so it gets its own statement and the rest of the
+        delta is still applied."""
+        urn = URN(
+            ResourceType.PROCEDURE,
+            make_fqn("MY_PROC", database="MY_DB", schema="MY_SCHEMA", arg_types=[]),
+            "ABC123",
+        )
+        assert update_procedure(urn, {"execute_as": "CALLER", "comment": "hi"}, res.PythonStoredProcedure.props) == [
+            "ALTER PROCEDURE MY_DB.MY_SCHEMA.MY_PROC() EXECUTE AS CALLER",
+            "ALTER PROCEDURE MY_DB.MY_SCHEMA.MY_PROC() SET COMMENT = $$hi$$",
+        ]
+
+
+class TestUpdateMaskingPolicy:
+    """Tests for update_masking_policy function."""
+
+    def test_body_combined_with_other_fields_applies_all(self):
+        """SET BODY has its own ALTER syntax, so it gets its own statement and the rest of the
+        delta is still applied."""
+        urn = make_urn(ResourceType.MASKING_POLICY, "MY_POLICY", database="MY_DB", schema="MY_SCHEMA")
+        assert update_masking_policy(urn, {"body": "val", "comment": "hi"}, res.MaskingPolicy.props) == [
+            "ALTER MASKING POLICY MY_DB.MY_SCHEMA.MY_POLICY SET BODY -> val",
+            "ALTER MASKING POLICY MY_DB.MY_SCHEMA.MY_POLICY SET COMMENT = $$hi$$",
+        ]
+
 
 class TestUpdateRoleGrant:
     """Tests for update_role_grant function."""
@@ -864,7 +897,7 @@ class TestUpdateScannerPackage:
         props = MockProps("")
         result = update_scanner_package(urn, data, props)
         assert "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION" in result
-        assert "'schedule'" in result
+        assert "$$schedule$$" in result
         assert "USING CRON" in result
 
     def test_update_other_property(self):
@@ -873,8 +906,49 @@ class TestUpdateScannerPackage:
         data = {"enabled": "TRUE"}
         props = MockProps("")
         result = update_scanner_package(urn, data, props)
-        assert "'enabled'" in result
-        assert "'TRUE'" in result
+        assert "$$enabled$$" in result
+        assert "$$TRUE$$" in result
+
+    def test_update_enabled_bool_renders_sql_boolean(self):
+        """Python's str(False) is "False", but SET_CONFIGURATION needs the SQL spelling."""
+        urn = make_urn(ResourceType.SCANNER_PACKAGE, "CIS_BENCHMARKS")
+        data = {"enabled": False}
+        props = MockProps("")
+        result = update_scanner_package(urn, data, props)
+        assert "$$FALSE$$" in result
+
+    def test_update_comment_with_apostrophe(self):
+        """A value containing an apostrophe must not break out of the literal."""
+        urn = make_urn(ResourceType.SCANNER_PACKAGE, "CIS_BENCHMARKS")
+        data = {"comment": "the account's weekly scan"}
+        props = MockProps("")
+        result = update_scanner_package(urn, data, props)
+        assert "$$the account's weekly scan$$" in result
+
+    def test_update_package_name_with_apostrophe(self):
+        """A package name containing an apostrophe must be escaped in the literal."""
+        urn = make_urn(ResourceType.SCANNER_PACKAGE, "CIS'BENCHMARKS")
+        data = {"enabled": "TRUE"}
+        props = MockProps("")
+        result = update_scanner_package(urn, data, props)
+        assert "$$CIS'BENCHMARKS$$" in result
+
+    def test_update_schedule_ending_in_dollar(self):
+        """A trailing $ would close the dollar quote early, so the value falls back to single quotes."""
+        urn = make_urn(ResourceType.SCANNER_PACKAGE, "CIS_BENCHMARKS")
+        data = {"schedule": "0 * * * * UTC$"}
+        props = MockProps("")
+        result = update_scanner_package(urn, data, props)
+        assert "'USING CRON 0 * * * * UTC$'" in result
+
+    def test_multiple_fields_set_one_configuration_each(self):
+        """SET_CONFIGURATION sets one value per call, so each field in the delta gets its own call."""
+        urn = make_urn(ResourceType.SCANNER_PACKAGE, "CIS_BENCHMARKS")
+        data = {"enabled": "TRUE", "schedule": "0 0 * * * UTC"}
+        assert update_scanner_package(urn, data, MockProps("")) == [
+            "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION( $$enabled$$, $$TRUE$$ , $$CIS_BENCHMARKS$$ )",
+            "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION( $$schedule$$, $$USING CRON 0 0 * * * UTC$$ , $$CIS_BENCHMARKS$$ )",
+        ]
 
 
 class TestUpdateSchema:
@@ -905,13 +979,12 @@ class TestUpdateSchema:
             update_schema(urn, data, props)
 
     def test_transient_raises(self):
-        """Test that changing transient raises Exception."""
+        """Snowflake can't change a schema's transient property, so the update fails rather than
+        applying the other fields."""
         urn = make_urn(ResourceType.SCHEMA, "MY_SCHEMA", database="MY_DB")
-        data = {"transient": True}
-        props = MockProps("")
-        with pytest.raises(Exception) as exc_info:
-            update_schema(urn, data, props)
-        assert "Cannot change transient property" in str(exc_info.value)
+        data = {"comment": "hi", "transient": True}
+        with pytest.raises(NotImplementedError, match="Cannot change transient property"):
+            update_schema(urn, data, res.Schema.props)
 
     def test_enable_managed_access(self):
         """Test enabling managed access."""
@@ -933,9 +1006,39 @@ class TestUpdateSchema:
         """Test setting other property."""
         urn = make_urn(ResourceType.SCHEMA, "MY_SCHEMA", database="MY_DB")
         data = {"data_retention_time_in_days": 7}
-        props = MockProps("")
-        result = update_schema(urn, data, props)
-        assert "SET data_retention_time_in_days = 7" in result
+        result = update_schema(urn, data, res.Schema.props)
+        assert result == "ALTER SCHEMA MY_DB.MY_SCHEMA SET DATA_RETENTION_TIME_IN_DAYS = 7"
+
+    def test_multiple_fields_apply_all(self):
+        """Every field in the delta is applied: SET-able fields share one ALTER, and managed
+        access, which has its own ALTER syntax, gets its own statement."""
+        urn = make_urn(ResourceType.SCHEMA, "MY_SCHEMA", database="MY_DB")
+        data = {"comment": "hi", "max_data_extension_time_in_days": 9, "managed_access": True}
+        assert update_schema(urn, data, res.Schema.props) == [
+            "ALTER SCHEMA MY_DB.MY_SCHEMA ENABLE MANAGED ACCESS",
+            "ALTER SCHEMA MY_DB.MY_SCHEMA SET MAX_DATA_EXTENSION_TIME_IN_DAYS = 9 COMMENT = $$hi$$",
+        ]
+
+    def test_rename_combined_with_managed_access_raises(self):
+        """Any ALTER ordered after a RENAME TO would target the old name, so a rename must arrive
+        on its own."""
+        urn = make_urn(ResourceType.SCHEMA, "MY_SCHEMA", database="MY_DB")
+        with pytest.raises(NotImplementedError, match="'name'"):
+            update_schema(urn, {"managed_access": True, "name": "NEW_SCHEMA"}, res.Schema.props)
+
+    def test_set_comment_with_apostrophe(self):
+        """A comment containing an apostrophe must not break out of the literal."""
+        urn = make_urn(ResourceType.SCHEMA, "MY_SCHEMA", database="MY_DB")
+        data = {"comment": "the database's two-limb test"}
+        result = update_schema(urn, data, res.Schema.props)
+        assert result == "ALTER SCHEMA MY_DB.MY_SCHEMA SET COMMENT = $$the database's two-limb test$$"
+
+    def test_set_comment_containing_dollar_quote(self):
+        """A comment containing $$ falls back to a single-quoted literal."""
+        urn = make_urn(ResourceType.SCHEMA, "MY_SCHEMA", database="MY_DB")
+        data = {"comment": "costs $$ and it's dear"}
+        result = update_schema(urn, data, res.Schema.props)
+        assert result == "ALTER SCHEMA MY_DB.MY_SCHEMA SET COMMENT = 'costs $$ and it''s dear'"
 
 
 class TestUpdateTable:
@@ -957,6 +1060,22 @@ class TestUpdateTable:
         result = update_table(urn, data, props)
         assert "ALTER TABLE" in result
         assert "SET COMMENT" in result
+
+    def test_multiple_fields_apply_all(self):
+        """Every field in the delta is applied in one ALTER."""
+        urn = make_urn(ResourceType.TABLE, "MY_TABLE", database="MY_DB", schema="MY_SCHEMA")
+        data = {"comment": "hi", "data_retention_time_in_days": 3}
+        assert (
+            update_table(urn, data, res.Table.props)
+            == "ALTER TABLE MY_DB.MY_SCHEMA.MY_TABLE SET DATA_RETENTION_TIME_IN_DAYS = 3 COMMENT = $$hi$$"
+        )
+
+    def test_columns_combined_with_other_fields_raises(self):
+        """A column change can't be applied, so the update fails rather than applying the rest."""
+        urn = make_urn(ResourceType.TABLE, "MY_TABLE", database="MY_DB", schema="MY_SCHEMA")
+        data = {"columns": [{"name": "ID", "type": "INT"}], "comment": "hi"}
+        with pytest.raises(NotImplementedError):
+            update_table(urn, data, res.Table.props)
 
 
 class TestUpdateTask:
@@ -1026,6 +1145,15 @@ class TestUpdateIcebergTable:
         props = MockProps("")
         with pytest.raises(NotImplementedError):
             update_iceberg_table(urn, data, props)
+
+    def test_multiple_fields_apply_all(self):
+        """Every field in the delta is applied in one ALTER."""
+        urn = make_urn(ResourceType.ICEBERG_TABLE, "MY_TABLE", database="MY_DB", schema="MY_SCHEMA")
+        data = {"comment": "hi", "data_retention_time_in_days": 3}
+        assert (
+            update_iceberg_table(urn, data, res.SnowflakeIcebergTable.props)
+            == "ALTER ICEBERG TABLE MY_DB.MY_SCHEMA.MY_TABLE SET DATA_RETENTION_TIME_IN_DAYS = 3 COMMENT = $$hi$$"
+        )
 
 
 # ============================================================================
@@ -1277,8 +1405,9 @@ class TestDropScannerPackage:
         data = {}
         result = drop_scanner_package(urn, data)
         assert "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION" in result
-        assert "'ENABLED'" in result
-        assert "'FALSE'" in result
+        assert result == (
+            "CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION( $$ENABLED$$, $$FALSE$$ , $$CIS_BENCHMARKS$$ )"
+        )
 
 
 # ============================================================================
