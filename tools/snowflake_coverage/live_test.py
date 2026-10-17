@@ -35,6 +35,7 @@ import copy
 import datetime
 import io
 import re
+import subprocess
 import sys
 import traceback
 import uuid
@@ -42,21 +43,23 @@ from pathlib import Path
 
 import snowflake.connector
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO))
 
-from common import (
+from common import (  # noqa: E402
     build_resource,
     fill,
     live_inputs_digest,
     load_inventory,
     object_label,
     path_steps,
+    replace_text,
     resource_class,
     save_inventory,
     select_objects,
     testable_rows,
     top_field,
-)  # noqa: E402
+)
 from conftest import TEST_ROLE, TEST_WAREHOUSE, connection_params  # noqa: E402
 
 from snowcap import data_provider, lifecycle  # noqa: E402
@@ -117,21 +120,23 @@ class Account:
     def __init__(self, conn):
         self.conn = conn
         self.cur = conn.cursor(snowflake.connector.DictCursor)
-        self.edition = data_provider.fetch_session(conn)["account_edition"]
-        # Account-level test objects, which the throwaway database drop does not remove.
-        self.account_objects: dict[str, object] = {}
-
-    def provenance(self) -> dict:
-        """The account facts that the live results depend on."""
-        session = data_provider.fetch_session(self.conn)
-        return {
+        session = data_provider.fetch_session(conn)
+        self.edition = session["account_edition"]
+        self.version = session["version"]
+        # The facts every live result depends on.
+        self.facts = {
             "edition": str(session["account_edition"]),
             "cloud": str(session["cloud"]),
             "cloud_region": session["cloud_region"],
-            "snowflake_version": session["version"],
             "test_role": str(session["role"]),
-            "checked_on": datetime.date.today().isoformat(),
         }
+        self.locator = session["account_locator"]
+        # Account-level test objects, which the throwaway database drop does not remove.
+        self.account_objects: dict[str, object] = {}
+
+    def redact(self, value):
+        """The results are published, and snowcap urns and generated ids carry the account locator."""
+        return replace_text(value, self.locator, "<account>")
 
     def plan(self, resource) -> tuple[Blueprint, list]:
         blueprint = Blueprint(resources=[resource])
@@ -348,8 +353,11 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
     else:
         name = unique_name(obj, database, f"R{index:02d}_{re.sub(r'[^A-Za-z0-9]', '_', row['name']).upper()}")
     levels = meta.setdefault("levels", {})
-    evidence = {}
-    meta["evidence"] = evidence
+    evidence, failures = {}, {}
+    meta["evidence"], meta["failures"] = evidence, failures
+
+    def fail(level: str, kind: str, detail: str) -> None:
+        levels[level], evidence[level], failures[level] = "fail", detail, kind
 
     def make(value):
         # A blueprint finalizes its resources, so each plan needs a new instance.
@@ -359,37 +367,41 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         resource = make(before)
         evidence["create_sql"] = account.create(resource)
     except (Refused, Crashed, snowflake.connector.errors.Error) as err:
-        levels.update(L2="fail", L3="untested", L4="untested", L5="untested")
-        evidence["L2"] = f"create failed: {short(err)}"
+        levels.update(L3="untested", L4="untested", L5="untested")
+        fail("L2", "create", f"create failed: {short(err)}")
         return
 
     reported = account.truth(obj, resource, database).get(truth_key) if truth_key else None
     if truth_key:
         # L2 and L3 are separate checks against Snowflake's own value.
-        levels["L2"] = "pass" if norm(reported) == norm(expect[0]) else "fail"
-        if levels["L2"] == "fail":
-            evidence["L2"] = f"declared {before!r}, Snowflake reports {truth_key}={reported!r}"
+        if norm(reported) == norm(expect[0]):
+            levels["L2"] = "pass"
+        else:
+            fail("L2", "create", f"declared {before!r}, Snowflake reports {truth_key}={reported!r}")
     try:
         declared, fetched = read_back(account, resource, path)
     except Crashed as err:
-        levels["L3"] = "fail"
-        evidence["L3"] = f"snowcap fetch crashes: {err}"
+        fail("L3", "fetch_crash", f"snowcap fetch crashes: {err}")
     else:
         if not truth_key or (not is_plain(path) and levels["L2"] == "pass"):
             # No truth for the path's values: either no truth key at all, or a truth that reports one value of a
             # nested or tag path, which CREATE wrote. Compare the path's values to the declaration.
-            levels["L3"] = "pass" if fetched == declared else "fail"
-            if levels["L3"] == "fail":
-                evidence["L3"] = f"declared {declared!r}, snowcap fetches {fetched!r}"
+            if fetched == declared:
+                levels["L3"] = "pass"
+            else:
+                fail("L3", "not_read", f"declared {declared!r}, snowcap fetches {fetched!r}")
         elif is_plain(path) and reported is not None:
             # Snowflake can spell a value differently from the declaration (warehouse_size 'X-Small' for 'XSMALL'),
             # so a reported value that `expect` lists compares in its sample form.
             reference = {norm(e): s for e, s in zip(expect, (before, after))}.get(norm(reported), reported)
-            levels["L3"] = "pass" if norm(fetched) == norm(reference) else "fail"
-            if levels["L3"] == "fail":
-                evidence["L3"] = (
+            if norm(fetched) == norm(reference):
+                levels["L3"] = "pass"
+            else:
+                fail(
+                    "L3",
+                    "not_read",
                     f"Snowflake reports {truth_key}={reported!r} (declared form {reference!r}), "
-                    f"snowcap fetches {fetched!r}"
+                    f"snowcap fetches {fetched!r}",
                 )
         elif is_plain(path):
             levels["L3"] = "untested"
@@ -416,31 +428,29 @@ def test_row(account: Account, obj: dict, row: dict, database: str, index: int) 
         account.apply(blueprint, plan)
         applied = True
         ok, detail = landed(account, obj, changed, database, path, expected, truth_key)
-        levels["L4"] = "pass" if ok else "fail"
         if not ok:
-            evidence["L4"] = f"apply ran but the change did not land: {detail}"
-        elif row["alter"] == "none":
-            evidence["L4"] = (
-                "the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed"
-            )
+            fail("L4", "not_landed", f"apply ran but the change did not land: {detail}")
+        else:
+            levels["L4"] = "pass"
+            if row["alter"] == "none":
+                evidence["L4"] = (
+                    "the docs say ALTER cannot change it, but snowcap's change SQL (L4_sql) ran and the change landed"
+                )
     except Refused as err:
-        refused_ok = row["alter"] == "none"
-        levels["L4"] = "pass" if refused_ok else "fail"
-        evidence["L4"] = ("snowcap refuses: " if refused_ok else "snowcap refuses a change ALTER supports: ") + str(err)
+        if row["alter"] == "none":
+            levels["L4"], evidence["L4"] = "pass", f"snowcap refuses: {err}"
+        else:
+            fail("L4", "refuses_supported", f"snowcap refuses a change ALTER supports: {err}")
     except Crashed as err:
-        levels["L4"] = "fail"
-        evidence["L4"] = f"snowcap crashes: {err}"
+        fail("L4", "update_crash", f"snowcap crashes: {err}")
     except snowflake.connector.errors.Error as err:
-        levels["L4"] = "fail"
-        evidence["L4"] = f"Snowflake rejects the SQL: {short(err)}"
+        fail("L4", "bad_sql", f"Snowflake rejects the SQL: {short(err)}")
     except NotPlanned as err:
-        levels["L4"] = "fail"
-        evidence["L4"] = str(err)
+        fail("L4", "not_planned", str(err))
 
     drift_after_change = plan_drift(account, make(target), path) if applied else []
     if drift_after_create or drift_after_change:
-        levels["L5"] = "fail"
-        evidence["L5"] = f"plan after create: {drift_after_create}; plan after change: {drift_after_change}"
+        fail("L5", "drift", f"plan after create: {drift_after_create}; plan after change: {drift_after_change}")
     elif not applied and levels["L4"] == "pass":
         levels["L5"] = "n/a"
         evidence["L5"] = "no round trip: the property is immutable and snowcap correctly refuses the change"
@@ -496,7 +506,7 @@ def test_combined(account: Account, obj: dict, database: str) -> dict:
     return result
 
 
-def test_object(account: Account, obj: dict) -> None:
+def test_object(account: Account, obj: dict, snowcap_commit: str) -> None:
     label = object_label(obj)
     database = f"COVERAGE_{re.sub(r'[^A-Za-z0-9]', '_', label).upper()}_{uuid.uuid4().hex[:8].upper()}"
     account.cur.execute(f"CREATE DATABASE {database}")
@@ -505,13 +515,19 @@ def test_object(account: Account, obj: dict) -> None:
             account.cur.execute(statement)
         for index, row in enumerate(testable_rows(obj)):
             test_row(account, obj, row, database, index)
+            row["snowcap"]["evidence"] = account.redact(row["snowcap"]["evidence"])
             # Some account types allow one object per account (partner OAuth integrations), and others hold
             # account-unique values (a user's login_name), so each row's account object must go before the next.
             account.clean_up([])
             levels = row["snowcap"]["levels"]
             print(f"{label}.{row['name']}: " + " ".join(f"{k}={v}" for k, v in levels.items()), flush=True)
-        obj["snowcap"]["combined"] = test_combined(account, obj, database)
-        obj["snowcap"]["tested_inputs"] = live_inputs_digest(obj)
+        obj["snowcap"]["combined"] = account.redact(test_combined(account, obj, database))
+        obj["snowcap"]["tested"] = {
+            "inputs": live_inputs_digest(obj),
+            "snowcap_commit": snowcap_commit,
+            "snowflake_version": account.version,
+            "checked_on": datetime.date.today().isoformat(),
+        }
         print(f"{label} combined: {obj['snowcap']['combined']['result']}", flush=True)
     finally:
         account.cur.execute(f"USE ROLE {TEST_ROLE}")
@@ -523,16 +539,24 @@ def test_object(account: Account, obj: dict) -> None:
         account.clean_up([f"DROP DATABASE IF EXISTS {database}", *fill(obj["snowcap"].get("teardown", []), database)])
 
 
+def git(*args: str) -> str:
+    return subprocess.run(["git", "-C", str(REPO), *args], capture_output=True, text=True, check=True).stdout.strip()
+
+
 def main(labels: list[str]) -> None:
+    # Each result records the snowcap commit it ran on, which is true only when the package has no local changes.
+    if changes := git("status", "--porcelain", "--", "snowcap"):
+        sys.exit(f"Commit the snowcap changes before a live run, so the results name the code they tested:\n{changes}")
+    snowcap_commit = git("rev-parse", "--short", "HEAD")
     inventory = load_inventory()
     conn = snowflake.connector.connect(**connection_params())
     try:
         conn.cursor().execute("ALTER SESSION SET QUERY_TAG = 'snowcap_coverage_audit'")
         account = Account(conn)
-        inventory["account"] = account.provenance()
+        inventory["account"] = account.facts
         for obj in select_objects(inventory, labels):
             if obj["snowcap"]["test"] == "live":
-                test_object(account, obj)
+                test_object(account, obj, snowcap_commit)
                 save_inventory(inventory)
     finally:
         conn.close()

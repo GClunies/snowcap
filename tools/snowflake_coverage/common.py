@@ -31,11 +31,12 @@ Each property row has its own `snowcap` block:
       expect: [3, 5]                      # the values Snowflake reports under the truth key (default: sample)
       levels: {L1: pass, L2: ..., L5: ...}
       evidence: {L3: ...}
+      failures: {L3: not_read}            # how each failed live level failed (report.py KINDS)
       candidates: [...]                   # static findings to confirm live
 
-static_map.py writes L1, candidates, and the object's `unmapped_fields`. live_test.py writes L2 to L5,
-evidence, the object's `combined` result, and `tested_inputs`, a digest of the inputs that produced those results.
-Every other value is an input.
+static_map.py writes L1, candidates, and the object's `unmapped_fields`. live_test.py writes L2 to L5, evidence,
+failures, the object's `combined` result, and its `tested` block: `inputs`, a digest of the inputs that produced
+those results, and the snowcap commit, Snowflake version, and date of the run. Every other value is an input.
 """
 
 import hashlib
@@ -54,16 +55,16 @@ from snowcap.scope import DatabaseScope, SchemaScope
 INVENTORY = Path(__file__).with_name("inventory.yaml")
 LEVELS = ("L1", "L2", "L3", "L4", "L5")
 LIVE_LEVELS = LEVELS[1:]
-OBJECT_OUTPUTS = ("unmapped_fields", "combined", "tested_inputs")
-ROW_OUTPUTS = ("levels", "candidates", "evidence")
+OBJECT_OUTPUTS = ("unmapped_fields", "combined", "tested")
+ROW_OUTPUTS = ("levels", "candidates", "evidence", "failures")
 
 
 def load_inventory() -> dict:
     """Read the inventory and clear the live results of every object whose test inputs changed since its run."""
     inventory = yaml.safe_load(INVENTORY.read_text())
     for obj in select_objects(inventory, None):
-        tested = obj["snowcap"].get("tested_inputs")
-        if tested and tested != live_inputs_digest(obj):
+        tested = obj["snowcap"].get("tested")
+        if tested and tested["inputs"] != live_inputs_digest(obj):
             clear_live_results(obj)
             print(f"{object_label(obj)}: test inputs changed since the live run, live results cleared")
     return inventory
@@ -82,10 +83,11 @@ def live_inputs_digest(obj: dict) -> str:
 
 
 def clear_live_results(obj: dict) -> None:
-    for key in ("tested_inputs", "combined"):
+    for key in ("tested", "combined"):
         obj["snowcap"].pop(key, None)
     for row in obj["properties"]:
         row["snowcap"].pop("evidence", None)
+        row["snowcap"].pop("failures", None)
         if "levels" in row["snowcap"]:
             row["snowcap"]["levels"].update(dict.fromkeys(LIVE_LEVELS, "untested"))
 
@@ -122,15 +124,21 @@ def top_field(field: str) -> str:
     return path_steps(field)[0]
 
 
-def fill(value, database: str):
-    """Replace {database} in every string of value. Plain replacement, because SQL and code bodies contain braces."""
+def replace_text(value, old: str, new: str):
+    """Replace old with new in every string of value, dict keys included. Plain replacement, because SQL and code
+    bodies contain braces."""
     if isinstance(value, str):
-        return value.replace("{database}", database)
+        return value.replace(old, new)
     if isinstance(value, list):
-        return [fill(v, database) for v in value]
+        return [replace_text(v, old, new) for v in value]
     if isinstance(value, dict):
-        return {fill(k, database): fill(v, database) for k, v in value.items()}
+        return {replace_text(k, old, new): replace_text(v, old, new) for k, v in value.items()}
     return value
+
+
+def fill(value, database: str):
+    """Replace {database} in every string of value."""
+    return replace_text(value, "{database}", database)
 
 
 def build_resource(obj: dict, name: str, database: str, owner: str, values: Optional[dict] = None):
