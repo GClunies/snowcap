@@ -1,0 +1,33 @@
+tests/test_resource_types.py
+  s_334c7dd93c7a58::t_db13ba770e5e01 1093-1095
+  s_334c7dd93c7a58::t_f3c7e7c2cd5731 1079-1086,1096-1113
+  s_334c7dd93c7a58::t_fe8688635c5c68 1114
+docs/resources/resource_monitor.md
+  s_334c7dd93c7a58::t_894322601c8ad5 27-33,46-51,63-65
+snowcap/blueprint.py
+  s_334c7dd93c7a58::t_75cd5031d9dd2a 2305-2307,2310-2321,2604-2605
+snowcap/data_provider.py
+  s_334c7dd93c7a58::t_3633b85f073dbd 3746-3750
+tests/test_blueprint.py
+  s_334c7dd93c7a58::t_3166b859473cc0 2936-2942,2947-2949,2951,2953,2971-2990,3023-3049
+snowcap/resources/resource_monitor.py
+  s_334c7dd93c7a58::t_db13ba770e5e01 61
+  s_334c7dd93c7a58::t_4c42c46fd34944 91-92
+  s_334c7dd93c7a58::t_68ce37daf7447d 50-51,53,60,62-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "119f374722042145ae64d35ea5c3a5db69ec8901",
+  "prompts": {},
+  "sessions": {
+    "s_334c7dd93c7a58": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2ccaf22e-653f-41be-880f-02845bf60cdb",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
