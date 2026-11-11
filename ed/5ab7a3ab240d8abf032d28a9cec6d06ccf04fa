@@ -1,0 +1,27 @@
+tests/test_identifiers.py
+  s_ea00804d1a3825::t_69832079313d3c 6,112-140
+tests/test_resource_pointer.py
+  s_ea00804d1a3825::t_69832079313d3c 1-2,8,46-48,50,53-55
+  s_ea00804d1a3825::t_632c20b97b34d3 49,51-52,56-57
+snowcap/identifiers.py
+  s_ea00804d1a3825::t_632c20b97b34d3 1,213-233,243-244
+snowcap/resources/resource.py
+  s_ea00804d1a3825::t_632c20b97b34d3 741,754-762,779,787-793
+  s_ea00804d1a3825::t_cfc8b899b86972 794
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed5ab7a3ab240d8abf032d28a9cec6d06ccf04fa",
+  "prompts": {},
+  "sessions": {
+    "s_ea00804d1a3825": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d37c7ded-8a47-4101-aa1b-666aa4f949d2",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
