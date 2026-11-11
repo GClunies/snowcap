@@ -1,0 +1,42 @@
+tools/snowflake_coverage/static_map.py
+  s_ee75f266aa1528::t_7a120215f17225 52,54-57,69,141-142
+tools/snowflake_coverage/live_audit.py
+  s_ee75f266aa1528::t_93dc6965b498d7 11-15
+  s_ee75f266aa1528::t_51f21dca17ed0d 8,19-21,28-30,42,53,104-107,114,116-119,131-134,165,170-171,196-198,201-202,206-215,220-222,276,378-379,382-386,389-390,419-423,432-435,441-442,469,489-491,506-507,529-530,537-539,542,547,555-568,581-584,613,634-635
+  s_ee75f266aa1528::t_41dc796adf251e 216-219,544-546
+tools/snowflake_coverage/test_live_audit.py
+  s_ee75f266aa1528::t_152df01b7db444 100-244,257-275
+  s_ee75f266aa1528::t_2120cb153d3ba2 7-11
+  s_ee75f266aa1528::t_41dc796adf251e 245-256
+tools/snowflake_coverage/test_common.py
+  s_ee75f266aa1528::t_3396fdee5c5814 54-55
+  s_ee75f266aa1528::t_222363713193d0 3,42
+  s_ee75f266aa1528::t_f32168755be173 2,30-41,43-53,56-64
+tools/snowflake_coverage/test_report.py
+  s_ee75f266aa1528::t_f32168755be173 1-27
+tools/snowflake_coverage/test_static_map.py
+  s_ee75f266aa1528::t_70d909db105f39 32,35-38
+  s_ee75f266aa1528::t_f32168755be173 1,3,29-31,33-34,39-46
+tools/snowflake_coverage/FINDINGS.md
+  s_ee75f266aa1528::t_b4f5280dee529c 40,2119-2120,2125
+tools/snowflake_coverage/report.py
+  s_ee75f266aa1528::t_f5f564727b4b3c 27,33-53,126,128-130,231,237-238
+tools/snowflake_coverage/common.py
+  s_ee75f266aa1528::t_038b873e00db1c 52,55,74,123-124,126-127,129-132,162-163,194-195,205
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b2512ad2713f83421c8fe9165ff8cfbcc756b90",
+  "prompts": {},
+  "sessions": {
+    "s_ee75f266aa1528": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4375a20a-286b-4a02-8203-767195e2f1c4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
