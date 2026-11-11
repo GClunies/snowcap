@@ -1,0 +1,25 @@
+tests/test_blueprint.py
+  s_3f431fbbfa0812::t_482d11f9bf75ec 56,2863-2864,2877-2879,2899-2937,2943-2954
+  s_3f431fbbfa0812::t_168221fce7fd06 2938,2940-2942
+  s_3f431fbbfa0812::t_21715cc20a8d62 2939
+  s_3f431fbbfa0812::t_37fab426839e96 2955-2956
+snowcap/blueprint.py
+  s_3f431fbbfa0812::t_eb13d9d491f073 3,8,893-895,900-903,905-933,943-944
+  s_3f431fbbfa0812::t_4513a090b7a32c 945-946
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "303d08d94c19d016b75e14212abc3c7b1898dd31",
+  "prompts": {},
+  "sessions": {
+    "s_3f431fbbfa0812": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83551c23-63cf-4a0b-b83b-d589023938f6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
