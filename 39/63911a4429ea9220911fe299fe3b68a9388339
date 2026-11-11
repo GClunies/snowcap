@@ -1,0 +1,21 @@
+tests/test_lifecycle.py
+  s_e7cec415481494::t_760acd32099317 1153-1159,1169-1176,1181-1183,1187-1206,1215-1221,1753-1782,1784-1785
+snowcap/lifecycle.py
+  s_e7cec415481494::t_f34a2d65c175b2 440-441,443,453-472,592-614,618-628
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3963911a4429ea9220911fe299fe3b68a9388339",
+  "prompts": {},
+  "sessions": {
+    "s_e7cec415481494": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e622a2bc-0e75-4d16-b961-9aa3cb25da4f",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
