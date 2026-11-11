@@ -1,0 +1,32 @@
+snowcap/blueprint.py
+  h_54e5c83907823d 9,896-899,904,934-942,1251
+  s_3f431fbbfa0812::t_eb13d9d491f073 3,8,893-895,900-903,905-933,943-944
+  s_3f431fbbfa0812::t_4513a090b7a32c 945-946
+tests/test_blueprint.py
+  h_54e5c83907823d 2853-2862,2865-2876,2880-2898
+  s_3f431fbbfa0812::t_482d11f9bf75ec 56,2863-2864,2877-2879,2899-2937,2943-2954
+  s_3f431fbbfa0812::t_168221fce7fd06 2938,2940-2942
+  s_3f431fbbfa0812::t_21715cc20a8d62 2939
+  s_3f431fbbfa0812::t_37fab426839e96 2955-2956
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "15312c6a2c2b03880cf290e54f8d2fe43446d9f3",
+  "prompts": {},
+  "humans": {
+    "h_54e5c83907823d": {
+      "author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_3f431fbbfa0812": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "83551c23-63cf-4a0b-b83b-d589023938f6",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Gregory Clunies <greg.clunies@gmail.com>"
+    }
+  }
+}
